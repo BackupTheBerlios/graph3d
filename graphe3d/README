@@ -1,0 +1,50 @@
+
+
+Members of the groupe :
+=======================
+Catric Jerome
+Daubert Erwan
+Lino Christophe
+Magnin Arnaud
+Popa Iuliana
+
+
+Structure of the repository :
+================================
+
+graphe3d   	   	   	   		: main directory of the project
+|-- ant 	  	  	  		: main directory of Ant
+| 	|-- bin 	  	  		: contains launcher scripts
+| 	|-- build.xml 	  		: file build.xml
+| 	|-- etc 	  	  		: contains xsl goodies
+| 	`-- lib 	  	  		: contains Ant jars and others libraries (ant, jdepend, javancss, junit)
+|
+|-- build 	  	  	  		: the build directory
+| 	|-- class	  	  		: contains bytecode
+|	|-- jar					: contains the API jar and the editor jar
+| 	`-- web 	  	  		
+| 	  	|-- api 	  		: contains documentation of the API (javadoc)
+| 	  	|-- controle 	  	: contains mesures reports
+| 	  	| 	|-- jdepend 	: contains jdepend report
+| 	  	| 	`-- javancss 	: contains javancss report
+| 	  	|-- index.html 		: file index.html
+| 	  	|-- style 	  		: contains CSS styles
+| 	  	`-- test 	  		: contains tests reports
+|
+|-- docsrc 	  	  	  		: contains documentation
+|	|-- pdf 	  			: contains reports of conception in pdf
+|	`-- uml 	  	  	  	: contains UML diagrams
+|
+|-- src 	  	  	  		: contains Java files and Tests files.
+|-- ww 	  	  	  			: working directory
+|-- xml						: contains the XML schema and an example of XML document.
+`-- readme 	  	  			: file readme
+
+
+Configuration of ant (UNIX):
+============================
+
+The following sets up the environment :
+export ANT_HOME=~/workspace/graphe3d/ant (bash)
+setenv ANT_HOME ~/workspace/graphe3d/ant (tcsh)
+
