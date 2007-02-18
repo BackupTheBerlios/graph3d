@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="graphe3d"
+		default="class"
+		basedir="..">
+	
+	<!-- Directory for temporary files -->
+	<property name="tmp.dir" location="${basedir}/ww/" />
+
+	<!-- Java source directory -->
+	<property name="src.java.dir" location="${basedir}/src/" />
+
+	<!-- Documentation source directory -->
+	<property name="src.doc.dir" location="${basedir}/docs/" />
+
+	<!-- Build directory -->
+	<property name="build.dir" location="${basedir}/build/" />
+
+	<!-- Java class build directory -->
+	<property name="build.class.dir" location="${build.dir}/class/" />
+
+	<!-- Web directory -->
+	<property name="build.web.dir" location="${build.dir}/web/" />
+	
+	<!-- Jar directory -->
+	<property name="build.jar.dir" location="${build.dir}/jar/" />
+
+	<!-- Javadoc build directory -->
+	<property name="build.web.javadoc.dir" location="${build.web.dir}/api/" />
+	
+	<!-- Pdf build directory -->
+	<property name="build.web.pdf.dir" location="${build.web.dir}/pdf/" />
+	
+	<!-- Controle build directory -->
+	<property name="build.web.controle.dir" location="${build.web.dir}/controle/" />
+	
+	<!-- Style build directory -->
+	<property name="build.web.style.dir" location="${build.web.dir}/style/" />
+	
+	<!-- Javancss report build directory -->
+	<property name="build.web.javancss.dir" location="${build.web.controle.dir}/javancss/" />
+	
+	<!-- JDepend report build directory -->
+	<property name="build.web.jdepend.dir" location="${build.web.controle.dir}/jdepend/" />
+	
+	<!-- Junit report build directory -->
+	<property name="build.web.junit.dir" location="${build.web.dir}/test/" />
+	
+	<!-- Definition du classpath-->
+	<property name="classpath.dir" location="${build.class.dir};./ant/lib/junit-4.1.jar;./ant/lib/jdepend-2.9.jar" /> 
+
+	<!-- Execute all compilation -->
+	<target name="all" depends="clean,class,javadoc,javancss,jdepend,junit,jar"
+			description="Execute all compilation" />
+	
+	<!-- Execute all compilation (No Tests) -->
+	<target name="all-no-tests" depends="clean,class,javadoc,javancss,jdepend,jar"
+			description="Execute all compilation (but no tests)" />
+	
+	
+	<!-- Delete all generated files -->
+	<target name="clean" depends="clean-class,clean-javadoc,clean-javancss,clean-jdepend,clean-junit,clean-jar"
+			description="Delete all generated files" >
+		<delete dir="${tmp.dir}" />
+		<delete dir="${build.web.controle.dir}"/>
+	</target>
+		
+	<!-- Initialisation -->
+	<target name="init">
+		<echo message="Running ant for project '${ant.project.name}'" />
+		<tstamp />
+		<mkdir dir="${build.class.dir}" />
+		<mkdir dir="${build.web.javadoc.dir}" />
+		<mkdir dir="${build.web.javancss.dir}" />
+		<mkdir dir="${build.web.jdepend.dir}" />
+		<mkdir dir="${build.web.controle.dir}" />
+		<mkdir dir="${build.web.junit.dir}" />
+		<mkdir dir="${build.jar.dir}"/>
+		<mkdir dir="${tmp.dir}" />
+	</target>
+	
+	<!-- Sources compiling -->
+	<target name="class" depends="init" description="Sources compiling">
+		<javac srcdir="${src.java.dir}" destdir="${build.class.dir}"
+				debug="true" />
+	</target>
+	
+	<!-- Delete Sources compiling -->
+	<target name="clean-class" description="Delete class files">
+		<delete dir="${build.class.dir}" />
+	</target>
+		
+	<!-- Javadoc creation -->
+	<target name="javadoc" depends="init" description="Javadoc creation">
+		<javadoc sourcepath="${src.java.dir}" packagenames="*.*"
+				destdir="${build.web.javadoc.dir}"
+				author="true" version="true" use="true" private="false"
+				windowtitle="Meteo API">
+
+			<doctitle><![CDATA[<h1>Graphe 3D API</h1>]]></doctitle>
+			<bottom><![CDATA[<i>Copyright &copy; 2007 Catric - Daubert - Lino - Magnin - Popa.</i>]]></bottom>
+			<header><![CDATA[<meta HTTP-EQUIV='content-type' CONTENT='text/html; charset=UTF-8'>]]></header>
+		</javadoc>
+	</target>
+
+	<!-- Delete Javadoc generated -->
+	<target name="clean-javadoc" description="Delete javadoc files">
+		<delete dir="${build.web.javadoc.dir}" />
+	</target>
+	
+	
+	<!-- JavaNCSS report : HTML -->
+	<taskdef name="javancss" classname="javancss.JavancssAntTask" classpath="ant/lib/javancss.jar;ant/lib/ccl.jar;ant/lib/jhbasic.jar"/>
+	<target name="javancss" depends="init" description="Analyse JavaNCSS">
+		<!-- analyse -->
+		<javancss srcdir="${src.java.dir}" abortOnFail="false" includes="**/**/*.java" 
+					generateReport="true" outputfile="${build.web.javancss.dir}/javancss_metrics.xml" format="xml" />
+		<!-- transformation XSL pour générer une page HTML -->
+		<style basedir="${build.web.javancss.dir}" destdir="${build.web.javancss.dir}" 
+					includes="javancss_metrics.xml" style="ant/etc/javancss2html.xsl" />
+	</target>
+	
+	<!-- Delete Javancss generated -->
+	<target name="clean-javancss" description="Delete javadoc files">
+		<delete dir="${build.web.javancss.dir}" />
+	</target>
+	
+
+	<!-- JDepend report :  (XML and HTML) -->
+	<target name="jdepend" depends="class" description="JDepend report">
+		<jdepend outputfile="${tmp.dir}/jdepend-report.xml" format="xml">
+			<classespath>
+				<pathelement location="${build.class.dir}" />
+			</classespath>
+		</jdepend>
+		<style basedir="${tmp.dir}"
+				destdir="${build.web.jdepend.dir}"
+				style="ant/etc/jdepend.xsl"
+				force="true" />
+		<delete>
+			<fileset dir="${tmp.dir}" includes="*" />
+		</delete>
+	</target>
+
+	<!-- Delete JDepend report -->
+	<target name="clean-jdepend" description="Delete jdepend report">
+		<delete dir="${build.web.jdepend.dir}" />
+	</target>
+	
+	
+	<!-- JUnit report :  (XML and HTML) -->
+	<target name="junit" depends="class" description="JUnit report">
+		<junit>
+			<classpath>
+				<pathelement location="${build.class.dir}" />
+			</classpath>
+			<batchtest todir="${tmp.dir}">
+				<fileset dir="${build.class.dir}">
+					<include name="**/**/*Test.class"/>
+				</fileset>
+			</batchtest>
+			<formatter type="xml" />
+		</junit>
+
+		<junitreport todir="${build.web.junit.dir}">
+			<fileset dir="${tmp.dir}">
+				<include name="*.xml" />
+			</fileset>
+			<report format="frames" todir="${build.web.junit.dir}" />
+			<report format="noframes" todir="${build.web.junit.dir}" />
+		</junitreport>
+		<delete>
+			<fileset dir="${tmp.dir}" includes="*" />
+		</delete>
+	</target>
+	
+	<!-- Delete JUnit report -->
+	<target name="clean-junit" description="Delete junit report">
+		<delete dir="${build.web.junit.dir}" />
+	</target>
+	
+	<!-- Creating package jar -->
+	<target name="jar" depends="class" description="Creating package Jar">
+		
+		<!-- Editor of the API Graphe 3D -->
+		<jar destfile="${build.jar.dir}/Editor.jar" basedir="${build.class.dir}">
+			<manifest>
+				<attribute name="Manifest-Version" value="1.0"/>
+				<attribute name="Created-By" value="Catric - Daubert - Lino - Magnin - Popa."/>
+				<attribute name="Specification-Title" value="Editor of the API Graphe 3D"/>
+				<attribute name="Main-Class" value="editor.Editor"/>
+			</manifest>
+		</jar>
+
+	</target>
+	
+	<!-- Delete package jar -->
+	<target name="clean-jar" description="Delete package file">
+		<delete dir="${build.jar.dir}" />
+	</target>
+	
+</project>
