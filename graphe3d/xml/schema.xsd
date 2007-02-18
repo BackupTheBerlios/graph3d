@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+	<!-- définition de la balise racine du fichier XML -->
+	<xsd:element name="graph" type="graphType" />
+	
+	<!-- définition du contenu entre les balises racines (graph) -->
+	<xsd:complexType name="graphType">
+		<xsd:sequence>
+			<xsd:element name="node" type="nodeType" minOccurs="1" maxOccurs="unbounded" />
+			<xsd:element name="link" type="linkType" minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+		<xsd:attribute name="id" type="xsd:string" use="optional" />
+	</xsd:complexType>
+	
+	<!-- définition du contenu entre les balises node -->
+	<xsd:complexType name="nodeType">
+		<xsd:sequence>
+			<xsd:element name="enum-attr" type="attrType" minOccurs="0" maxOccurs="unbounded" />
+			<xsd:element name="coordonates" type="coordonatesType" minOccurs="1" maxOccurs="1" />
+		</xsd:sequence>
+		<xsd:attribute name="class" type="xsd:string" use="optional" />
+		<xsd:attribute name="name" type="xsd:string" use="required" />
+		
+	</xsd:complexType>
+
+	<!-- définition du contenu entre les balises link -->
+	<xsd:complexType name="linkType">
+		<xsd:sequence>
+			<xsd:element name="enum-attr" type="attrType" minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+		<xsd:attribute name="type" use="required">
+			<!-- cet attribut ne peut prendre que les valeurs spécifiées ci-dessous -->
+			<!-- une boucle est un arc ou une arête sur un seul noeud 
+				Par la suite les attributs link_start et link_end prendront le même nom de noeud
+			-->
+			<!-- un arc (arrow) est un lien orienté
+				une arête (bridge) est un lien sans orientation
+			-->
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:NMTOKEN">
+					<xsd:enumeration value="arrow" />
+					<xsd:enumeration value="bridge" />
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+		<xsd:attribute name="class" type="xsd:string" use="optional" />
+		<!-- l'attribut link_start spécifie, dans le cas d'un arrow, le noeud source du lien-->
+		<xsd:attribute name="link_start" type="xsd:string" use="required" />
+		<!-- l'attribut link_end spécifie, dans le cas d'un arrow, le noeud destination du lien-->
+		<xsd:attribute name="link_end" type="xsd:string" use="required" />
+	</xsd:complexType>
+	
+	<!-- définition du contenu entre les balises enum-attr -->
+	<xsd:complexType name="attrType">
+		<xsd:attribute name="attr-name" type="xsd:string" use="required" />
+		<xsd:attribute name="attr-type" use="required">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:NMTOKEN">
+					<xsd:enumeration value="short" />
+					<xsd:enumeration value="byte" />
+					<xsd:enumeration value="int" />
+					<xsd:enumeration value="long" />
+					<xsd:enumeration value="float" />
+					<xsd:enumeration value="double" />
+					<xsd:enumeration value="char" />
+					<xsd:enumeration value="String" />
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+		<xsd:attribute name="attr-value" type="xsd:string" use="required" />
+	</xsd:complexType>
+	
+	<!-- définition du contenu entre les balises coordonnates -->
+	<xsd:complexType name="coordonatesType">
+		<xsd:attribute name="x" type="xsd:string" use="required" />
+		<xsd:attribute name="y" type="xsd:string" use="required" />
+		<xsd:attribute name="z" type="xsd:string" use="required" />
+	</xsd:complexType>
+</xsd:schema>
+ 

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- pour tester la validation par le W3C : <graph xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sheik.valentine.free.fr/schema.xsd"> -->
+<graph id="réseau informatique" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:schema.xsd">
+	<node name="server" class="node">
+		<enum-attr attr-name="IP" attr-type="String" attr-value="192.168.1.1" />
+		<coordonates x="0" y="0" z="0" />
+	</node>
+	<node name="PC1" class="node">
+		<enum-attr attr-name="IP" attr-type="String" attr-value="192.168.1.101" />
+		<coordonates x="0" y="0" z="1" />
+	</node>
+	<node name="PC2" class="node">
+		<enum-attr attr-name="IP" attr-type="String" attr-value="192.168.1.101" />
+		<coordonates x="0" y="1" z="0" />
+	</node>
+	<node name="PC3" class="node">
+		<enum-attr attr-name="IP" attr-type="String" attr-value="192.168.1.101" />
+		<coordonates x="1" y="0" z="0" />
+	</node>
+	<node name="PC4" class="node">
+		<enum-attr attr-name="IP" attr-type="String" attr-value="192.168.1.101" />
+		<coordonates x="2" y="4" z="1" />
+	</node>
+	<node name="PC5" class="node">
+		<enum-attr attr-name="IP" attr-type="String" attr-value="192.168.1.101" />
+		<coordonates x="0" y="6" z="0" />
+	</node>
+	<node name="PC6" class="node">
+		<enum-attr attr-name="IP" attr-type="String" attr-value="192.168.1.101" />
+		<coordonates x="3" y="9" z="1" />
+	</node>
+	<node name="PC7" class="node">
+		<enum-attr attr-name="IP" attr-type="String" attr-value="192.168.1.101" />
+		<coordonates x="7" y="9" z="5" />
+	</node>
+	<node name="PC8" class="node">
+		<enum-attr attr-name="IP" attr-type="String" attr-value="192.168.1.101" />
+		<coordonates x="1" y="2" z="3" />
+	</node>
+	<node name="PC9" class="node">
+		<enum-attr attr-name="IP" attr-type="String" attr-value="192.168.1.101" />
+		<coordonates x="0" y="0" z="10" />
+	</node>
+	<link type="arrow" class="link" link_start="server" link_end="PC1">
+		<enum-attr attr-name="connectionType" attr-type="String" attr-value="wifi" />
+	</link>
+	<link type="arrow" class="link" link_start="server" link_end="PC2">
+		<enum-attr attr-name="connectionType" attr-type="String" attr-value="ethernet" />
+	</link>
+	<link type="arrow" class="link" link_start="server" link_end="PC3">
+		<enum-attr attr-name="connectionType" attr-type="String" attr-value="cable coaxial" />
+	</link>
+	<link type="arrow" class="link" link_start="server" link_end="PC4">
+		<enum-attr attr-name="connectionType" attr-type="String" attr-value="wifi" />
+	</link>
+	<link type="arrow" class="link" link_start="server" link_end="PC5">
+		<enum-attr attr-name="connectionType" attr-type="String" attr-value="ethernet" />
+	</link>
+	<link type="arrow" class="link" link_start="server" link_end="PC6">
+		<enum-attr attr-name="connectionType" attr-type="String" attr-value="ethernet" />
+	</link>
+	<link type="arrow" class="link" link_start="server" link_end="PC7">
+		<enum-attr attr-name="connectionType" attr-type="String" attr-value="ethernet" />
+	</link>
+	<link type="arrow" class="link" link_start="server" link_end="PC8">
+		<enum-attr attr-name="connectionType" attr-type="String" attr-value="wifi" />
+	</link>
+	<link type="arrow" class="link" link_start="server" link_end="PC9">
+		<enum-attr attr-name="connectionType" attr-type="String" attr-value="ethernet" />
+	</link>
+	<link type="arrow" class="link" link_start="PC1" link_end="PC2" />
+	<link type="arrow" class="link" link_start="PC2" link_end="PC3" />
+	<link type="arrow" class="link" link_start="PC3" link_end="PC4" />
+	<link type="arrow" class="link" link_start="PC4" link_end="PC5" />
+	<link type="arrow" class="link" link_start="PC5" link_end="PC6" />
+	<link type="arrow" class="link" link_start="PC6" link_end="PC7" />
+	<link type="arrow" class="link" link_start="PC7" link_end="PC8" />
+	<link type="arrow" class="link" link_start="PC8" link_end="PC9" />
+	<link type="arrow" class="link" link_start="PC1" link_end="PC1" />
+	<link type="arrow" class="link" link_start="PC1" link_end="PC9" />
+	<link type="arrow" class="link" link_start="PC2" link_end="PC8" />
+	<link type="arrow" class="link" link_start="PC4" link_end="PC2" />
+	<link type="arrow" class="link" link_start="PC4" link_end="PC7" />
+	<link type="arrow" class="link" link_start="PC4" link_end="PC9" />
+	<link type="arrow" class="link" link_start="PC7" link_end="PC1" />
+	<link type="arrow" class="link" link_start="PC9" link_end="PC6" />
+	
+</graph>

@@ -31,8 +31,8 @@ graphe3d   	   	   	   		: main directory of the project
 | 	  	|-- style 	  		: contains CSS styles
 | 	  	`-- test 	  		: contains tests reports
 |
-|-- docsrc 	  	  	  		: contains documentation
-|	|-- pdf 	  			: contains reports of conception in pdf
+|-- docs 	  	  	  		: contains documentation
+|	|-- pdf 	  			: contains reports of conception
 |	`-- uml 	  	  	  	: contains UML diagrams
 |
 |-- src 	  	  	  		: contains Java files and Tests files.
