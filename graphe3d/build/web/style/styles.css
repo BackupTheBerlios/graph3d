@@ -1,0 +1,105 @@
+/* CSS Document */
+
+body {
+	background-color: #6699FF;
+	margin-left:20px;
+	margin-right:20px;
+	margin-bottom:20px;
+	margin-top:20px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+}
+	
+div{
+	margin: 0ex; 
+}
+
+/* Cadre de haut de page */
+div#haut_page {
+	padding-bottom:10px;
+	width:100%;
+	height:100px;
+	background-color:#000099;
+	text-align:center;
+	color: #FFFFFF; 
+}
+
+/* Cadre de milieu de page */
+div#contenu {
+	width:100%;
+	background-color:#ffffff;
+	color: #000000; 
+	text-align:left;
+}
+
+/* Cadre à l'intérieur du cadre du milieu de page */
+div#contenu_interieur {
+	padding: 30px 10px 30px 10px;
+}
+
+/* Cadre de bas de page */	
+div#pied_page {
+	width:100%;
+	height:60px;
+	background-color:#000099;
+	text-align:center;
+	color: #FFFFFF; 
+}
+
+div#pied_page_interieur {                
+	padding: 10px 10px 10px 10px;
+}
+
+/* Logo UBS a gauche dans le cadre du haut */
+span#image_gauche {
+	float:left;
+	height:100px;
+	width:110px;
+	background-position: 10px 10px;
+	background-image :  url(ubs.png);
+    background-repeat: no-repeat;
+	text-align:left;
+}
+
+/* Logo IUP a droite dans le cadre du haut */
+span#image_droite {
+	float:right;
+	height:100px;
+	width:48px;
+	margin-right:10px;
+	background-position: 0px 12px;
+	background-image :  url(iup.png);
+    background-repeat: no-repeat;
+	text-align:right;
+}
+
+/* titre général de page */
+h1{
+	padding-top:30px;
+}
+
+/* titre secondaire de la page */
+h2 {
+	margin: 0px 0px 0px 10px;
+	padding: 0.3ex 0.5em 0.3ex 0.5em;
+	text-align: left;
+	color:#000099;
+}
+
+ul{
+	margin-top:0px; 
+	padding-left:4em;
+}
+
+/* Aspect des liens hypertextes */
+a:link {
+	color: #FF0000;
+}
+a:hover {
+	color: #FFFF00;
+}
+a:visited {
+	color: #6666FF;
+}
+a:active {
+	color: #00FF00;
+}
