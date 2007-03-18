@@ -49,6 +49,8 @@
 		<xsd:attribute name="link_start" type="xsd:string" use="required" />
 		<!-- l'attribut link_end spécifie, dans le cas d'un arrow, le noeud destination du lien-->
 		<xsd:attribute name="link_end" type="xsd:string" use="required" />
+		<!-- l'identifiant de l'objet link -->
+		<xsd:attribute name="name" type="xsd:string" use="required" />
 	</xsd:complexType>
 	
 	<!-- définition du contenu entre les balises enum-attr -->
