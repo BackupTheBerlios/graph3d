@@ -115,7 +115,7 @@
 		<javancss srcdir="${src.java.dir}" abortOnFail="false" includes="**/**/*.java" 
 					generateReport="true" outputfile="${build.web.javancss.dir}/javancss_metrics.xml" format="xml" />
 		<!-- transformation XSL pour générer une page HTML -->
-		<style basedir="${build.web.javancss.dir}" destdir="${build.web.javancss.dir}" 
+		<xslt basedir="${build.web.javancss.dir}" destdir="${build.web.javancss.dir}" 
 					includes="javancss_metrics.xml" style="ant/etc/javancss2html.xsl" />
 	</target>
 	
@@ -132,7 +132,7 @@
 				<pathelement location="${build.class.dir}" />
 			</classespath>
 		</jdepend>
-		<style basedir="${tmp.dir}"
+		<xslt basedir="${tmp.dir}"
 				destdir="${build.web.jdepend.dir}"
 				style="ant/etc/jdepend.xsl"
 				force="true" />
