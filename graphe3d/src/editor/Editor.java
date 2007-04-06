@@ -8,7 +8,7 @@ package editor;
 public class Editor {
 	
 	/**
-	 * Main procedure.
+	 * Main procedures.
 	 * 
 	 * @param args list of arguments.
 	 */
