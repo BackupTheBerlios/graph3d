@@ -31,9 +31,9 @@
 		</xsd:sequence>
 		<xsd:attribute name="type" use="required">
 			<!-- This attributs can only take values specified next
-			<!-- There are two type of link arrow and bridge
-				An arrow is a oriented link
-				A bridge is an non-oriented link
+				There are two type of link arrow and bridge
+					An arrow is a oriented link
+					A bridge is an non-oriented link
 			-->
 			<xsd:simpleType>
 				<xsd:restriction base="xsd:NMTOKEN">
@@ -42,20 +42,20 @@
 				</xsd:restriction>
 			</xsd:simpleType>
 		</xsd:attribute>
-		<xsd:attribute name="color" use="required/optional">
+		<xsd:attribute name="color" use="optional">
 			<!-- This attributs can only take values specified next
-			<!--  The colors defines are :
-				black
-				white
-				red
-				blue
-				cyan
-				grey
-				green
-				magenta
-				orange
-				pink
-				yellow
+				The colors defines are :
+					black
+					white
+					red
+					blue
+					cyan
+					grey
+					green
+					magenta
+					orange
+					pink
+					yellow
 			-->
 			<xsd:simpleType>
 				<xsd:restriction base="xsd:NMTOKEN">
