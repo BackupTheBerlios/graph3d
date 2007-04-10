@@ -94,7 +94,7 @@
 		<javadoc sourcepath="${src.java.dir}" packagenames="*.*"
 				destdir="${build.web.javadoc.dir}"
 				author="true" version="true" use="true" private="false"
-				windowtitle="Meteo API">
+				windowtitle="Graphe3D API">
 
 			<doctitle><![CDATA[<h1>Graphe 3D API</h1>]]></doctitle>
 			<bottom><![CDATA[<i>Copyright &copy; 2007 Catric - Daubert - Lino - Magnin - Popa.</i>]]></bottom>
