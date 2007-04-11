@@ -4,7 +4,7 @@ import graph3d.exception.GException;
 import graph3d.exception.GLinkAlreadyExistException;
 import graph3d.exception.MissingAttributeForClassException;
 import graph3d.exception.ToMuchAttributesForClassException;
-import graph3d.exception.UnvalidAttributeTypeException;
+import graph3d.exception.InvalidAttributeTypeException;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -26,6 +26,9 @@ public class GNode {
 	 */
 	private String name;
 
+	private static float DISTANCE = 4f;
+	
+	private float radius;
 	/**
 	 * This float[] contains X, Y, Z value which define the coordonates into a
 	 * 3D view.
@@ -33,11 +36,14 @@ public class GNode {
 	private float[] coordonates = new float[3];
 
 	/**
-	 * This Hashtable contains all attributes for a node. <b>Be careful</b> : A
-	 * GNode can't contains attributes. If you want declare attributes for a
-	 * node, you must create another class which inherite of this class.
+	 * This Hashtable contains all attributes define in a subclass of GNode. In
+	 * this class, there are not attributes. If you define a class inherited of
+	 * GNode, you must declare into this Hashtable all attributes which define
+	 * this class.
+	 * 
+	 * See tutorial for the exemple.
 	 */
-	private Hashtable<String, String[]> attributes;
+	protected Hashtable<String, String[]> attributes;
 
 	/**
 	 * This Hashtable contains links which is connected to a node.
@@ -55,7 +61,7 @@ public class GNode {
 	 *            the identifier of the GNode.
 	 */
 	public GNode(String _name) {
-		this(_name, 0, 0, 0);
+		this(_name, 0, 0, 0, 1);
 	}
 
 	/**
@@ -71,7 +77,25 @@ public class GNode {
 	 *            coordonate Z on the 3D view
 	 */
 	public GNode(String _name, float _x, float _y, float _z) {
+		this(_name, _x, _y, _z, 1);
+	}
+	
+	/**
+	 * The complete constructor of GNode
+	 * 
+	 * @param _name
+	 *            the identifier of the node
+	 * @param _x
+	 *            coordonate X on the 3D view
+	 * @param _y
+	 *            coordonate Y on the 3D view
+	 * @param _z
+	 *            coordonate Z on the 3D view
+	 * @param _radius  the radiaus of the sphere which represents this node
+	 */
+	public GNode(String _name, float _x, float _y, float _z, float _radius) {
 		this.name = _name;
+		this.radius = _radius;
 		this.coordonates[0] = _x;
 		this.coordonates[1] = _y;
 		this.coordonates[2] = _z;
@@ -84,7 +108,7 @@ public class GNode {
 	 * @return attributes
 	 */
 	public Hashtable<String, String[]> getAttributes() {
-		return attributes;
+		return this.attributes;
 	}
 
 	/**
@@ -119,7 +143,7 @@ public class GNode {
 	 * @return coordonates
 	 */
 	public float[] getCoordonates() {
-		return coordonates;
+		return this.coordonates;
 	}
 
 	/**
@@ -136,7 +160,7 @@ public class GNode {
 	 * @return name
 	 */
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	/**
@@ -159,7 +183,7 @@ public class GNode {
 	 *            boolean, char or String
 	 * @param _value
 	 *            the value of this attribute
-	 * @throws UnvalidAttributeTypeException
+	 * @throws InvalidAttributeTypeException
 	 *             if the parameter type is not <b>short, byte, int, long,
 	 *             float, double, char or String</b>
 	 * @throws ToMuchAttributesForClassException
@@ -169,7 +193,7 @@ public class GNode {
 	 *             if the parameter value is not valid for the parameter type.
 	 */
 	public void setAttributeByName(String _name, String _type, String _value)
-			throws UnvalidAttributeTypeException,
+			throws InvalidAttributeTypeException,
 			ToMuchAttributesForClassException, GException {
 		if (this.attributes.containsKey(_name)) {
 			if (_type.equals("short")) {
@@ -230,7 +254,7 @@ public class GNode {
 
 			} else {
 				// type is undefine
-				throw new UnvalidAttributeTypeException(_type);
+				throw new InvalidAttributeTypeException(_type);
 			}
 		} else {
 			// attribute doesn't exist
@@ -257,7 +281,7 @@ public class GNode {
 	 * @return links
 	 */
 	public Hashtable<String, GLink> getLinks() {
-		return links;
+		return this.links;
 	}
 
 	/**
@@ -335,7 +359,7 @@ public class GNode {
 	 */
 	public String toString() {
 		String toString = "node :\n";
-		toString += name + "\n";
+		toString += this.name + "\n";
 		toString += "\tcoordonates :\n";
 		toString += "\t\tX = " + this.getCoordonnateX() + "\n";
 		toString += "\t\tY = " + this.getCoordonnateY() + "\n";
@@ -351,5 +375,29 @@ public class GNode {
 
 		return toString;
 
+	}
+
+	/**
+	 * The getter of radiaus
+	 * @return radius
+	 */
+	public float getRadius() {
+		return this.radius;
+	}
+
+	/**
+	 * The setter of radius
+	 * @param radius the new value of the radius
+	 */
+	public void setRadius(float radius) {
+		this.radius = radius;
+	}
+
+	/**
+	 * The getter of distance
+	 * @return DISTANCE
+	 */
+	public static float getDISTANCE() {
+		return DISTANCE;
 	}
 }

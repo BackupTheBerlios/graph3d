@@ -3,7 +3,7 @@ package graph3d.elements;
 import graph3d.exception.GException;
 import graph3d.exception.MissingAttributeForClassException;
 import graph3d.exception.ToMuchAttributesForClassException;
-import graph3d.exception.UnvalidAttributeTypeException;
+import graph3d.exception.InvalidAttributeTypeException;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -26,6 +26,11 @@ public class GLink {
 	private String name;
 
 	/**
+	 * If type is true, this link is oriented, it's not else.
+	 */
+	private boolean type;
+
+	/**
 	 * This attribute define the color of the representation of the link
 	 */
 	private String color;
@@ -43,19 +48,14 @@ public class GLink {
 	private GNode secondNode;
 
 	/**
-	 * This Hashtable contains all attributes define in a subclass of link. In
+	 * This Hashtable contains all attributes define in a subclass of GLink. In
 	 * this class, there are not attributes. If you define a class inherited of
 	 * GLink, you must declare into this Hashtable all attributes which define
 	 * this class.
 	 * 
 	 * See tutorial for the exemple.
 	 */
-	private Hashtable<String, String[]> attributes;
-
-	/**
-	 * If type is true, this link is oriented, it's not else.
-	 */
-	private boolean type;
+	protected Hashtable<String, String[]> attributes;
 
 	/**
 	 * This constructor define the identifier of this link and his extremities.
@@ -69,12 +69,12 @@ public class GLink {
 	 *            a node which is another extremity.
 	 */
 	public GLink(String _name, GNode _first, GNode _second) {
-		this(false, _name, "", _first, _second);
+		this(false, _name, "white", _first, _second);
 	}
 
 	/**
 	 * This constructor define the identifier of this link, his color and his
-	 * extremitues. By default, a link is not oriented.
+	 * extremities. By default, a link is not oriented.
 	 * 
 	 * @param _name
 	 *            the identifier of this link
@@ -87,6 +87,18 @@ public class GLink {
 	 */
 	public GLink(String _name, String _color, GNode _first, GNode _second) {
 		this(false, _name, _color, _first, _second);
+	}
+	
+	/**
+	 * This constructor define the identifier of the link, his type (arrow or bridge)and his
+	 * extremities. By default, a link have the white color.
+	 * @param _type
+	 * @param _name
+	 * @param _first
+	 * @param _second
+	 */
+	public GLink(boolean _type, String _name, GNode _first, GNode _second) {
+		this(_type, _name, "white", _first, _second);
 	}
 
 	/**
@@ -123,7 +135,7 @@ public class GLink {
 	 * @return attributes
 	 */
 	public Hashtable<String, String[]> getAttributes() {
-		return attributes;
+		return this.attributes;
 	}
 
 	/**
@@ -158,7 +170,7 @@ public class GLink {
 	 * @return firstNode
 	 */
 	public GNode getFirstNode() {
-		return firstNode;
+		return this.firstNode;
 	}
 
 	/**
@@ -177,7 +189,7 @@ public class GLink {
 	 * @return name
 	 */
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	/**
@@ -196,7 +208,7 @@ public class GLink {
 	 * @return secondNode
 	 */
 	public GNode getSecondNode() {
-		return secondNode;
+		return this.secondNode;
 	}
 
 	/**
@@ -216,7 +228,7 @@ public class GLink {
 	 * @return type
 	 */
 	public boolean isType() {
-		return type;
+		return this.type;
 	}
 
 	/**
@@ -239,7 +251,7 @@ public class GLink {
 	 *            boolean, char or String
 	 * @param _value
 	 *            the value of this attribute
-	 * @throws UnvalidAttributeTypeException
+	 * @throws InvalidAttributeTypeException
 	 *             if the parameter type is not <b>short, byte, int, long,
 	 *             float, double, char or String</b>.
 	 * @throws ToMuchAttributesForClassException
@@ -249,7 +261,7 @@ public class GLink {
 	 *             if the parameter value is not valid for the parameter type.
 	 */
 	public void setAttributeByName(String _name, String _type, String _value)
-			throws UnvalidAttributeTypeException,
+			throws InvalidAttributeTypeException,
 			ToMuchAttributesForClassException, GException {
 		if (this.attributes.containsKey(_name)) {
 			if (_type.equals("short")) {
@@ -310,11 +322,11 @@ public class GLink {
 
 			} else {
 				// type is undefine
-				throw new UnvalidAttributeTypeException(_type);
+				throw new InvalidAttributeTypeException(_type);
 			}
 		} else {
 			// attribute doesn't exist
-			throw new ToMuchAttributesForClassException(this, name);
+			throw new ToMuchAttributesForClassException(this, this.name);
 		}
 		this.attributes.put(_name, new String[] { _name, _type, _value });
 	}
@@ -338,7 +350,7 @@ public class GLink {
 		String toString = "link :\n";
 		toString += this.name + "\n";
 		toString += "\t" + ((this.type) ? "oriented" : "non-oriented") + "\n";
-		toString += "\tto : " + this.firstNode.getName() + "\t\tfrom : "
+		toString += "\tfrom : " + this.firstNode.getName() + "\t\tto : "
 				+ this.secondNode.getName() + "\n";
 		toString += "\n\tattributes :\n";
 		final Enumeration<String> keys = this.attributes.keys();
@@ -357,7 +369,7 @@ public class GLink {
 	 * @return color
 	 */
 	public String getColor() {
-		return color;
+		return this.color;
 	}
 
 	/**

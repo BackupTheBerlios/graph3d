@@ -72,7 +72,7 @@ public class GGraph {
 		}
 	}
 
-	/* je dois tester si collision ou pas
+	/**
 	 * This function add a node into the list
 	 * 
 	 * @param node
@@ -84,6 +84,7 @@ public class GGraph {
 		GNode exist = this.nodes.get(node.getName());
 		if (exist == null) {
 			//appel de la fonction pour gestion de la collision
+			this.collision(node);
 			this.nodes.put(node.getName(), node);
 			return true;
 		} else {
@@ -91,6 +92,38 @@ public class GGraph {
 			return false;
 		}
 	}
+	
+	/**
+	 * This function define the coordonates of the node to prevent collision into the 3D view
+	 * @param node the node to test his coordonates
+	 */
+	public void collision(GNode node) {
+		
+		Enumeration<String> keys = this.nodes.keys();
+		while (keys.hasMoreElements()) {
+			String key = keys.nextElement();
+			GNode _node = this.nodes.get(key);
+			if (!this.distanceBetweenIsGood(node, _node)) {
+				this.putDistanceBetween(node, _node);
+				this.collision(node);
+				break;
+			}
+		}
+	}
+	
+	private boolean distanceBetweenIsGood(GNode _aNode, GNode _otherNode) {
+		return ( GNode.getDISTANCE() < (float) Math.sqrt(Math.pow(_aNode.getCoordonnateX() - _otherNode.getCoordonnateX(), 2) + Math.pow(_aNode.getCoordonnateY() - _otherNode.getCoordonnateY(), 2) + Math.pow(_aNode.getCoordonnateZ() - _otherNode.getCoordonnateZ(), 2)));
+	}
+	
+	private void putDistanceBetween(GNode _aNode, GNode _otherNode) {
+		float _add = (float)Math.sqrt(Math.pow(GNode.getDISTANCE(), 2)/2);
+		_aNode.setCoordonnateX(_otherNode.getCoordonnateX() + _add);
+		_aNode.setCoordonnateY(_otherNode.getCoordonnateY() + _add);
+		_aNode.setCoordonnateZ(_otherNode.getCoordonnateZ() + _add);
+		
+	}
+	
+	
 
 	/**
 	 * This function delete a link which is into the Hashtable links
@@ -118,7 +151,7 @@ public class GGraph {
 	 * @return links
 	 */
 	public Hashtable<String, GLink> getLinks() {
-		return links;
+		return this.links;
 	}
 
 	/**
@@ -137,7 +170,7 @@ public class GGraph {
 	 * @return name
 	 */
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	/**
@@ -156,7 +189,7 @@ public class GGraph {
 	 * @return nodes
 	 */
 	public Hashtable<String, GNode> getNodes() {
-		return nodes;
+		return this.nodes;
 	}
 
 	/**
