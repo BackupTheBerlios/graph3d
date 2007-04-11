@@ -1,118 +1,118 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<graph name="réseau informatique" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:schema.xsd">
-	<node name="server" class="node">
+<graph name="réseau informatique" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:/home/royalvein/workspace/graphe3d/xml/schema.xsd">
+	<node name="server" class="graph3d.elements.GNode">
 		<enum-attr attr-name="IP" attr-type="String" attr-value="192.168.1.1" />
 		<coordonates x="0" y="0" z="0" />
 	</node>
-	<node name="PC1" class="node">
+	<node name="PC1" class="graph3d.elements.GNode">
 		<enum-attr attr-name="IP" attr-type="String" attr-value="192.168.1.101" />
 		<coordonates x="0" y="0" z="1" />
 	</node>
-	<node name="PC2" class="node">
+	<node name="PC2" class="graph3d.elements.GNode">
 		<enum-attr attr-name="IP" attr-type="String" attr-value="192.168.1.101" />
 		<coordonates x="0" y="1" z="0" />
 	</node>
-	<node name="PC3" class="node">
+	<node name="PC3" class="graph3d.elements.GNode">
 		<enum-attr attr-name="IP" attr-type="String" attr-value="192.168.1.101" />
 		<coordonates x="1" y="0" z="0" />
 	</node>
-	<node name="PC4" class="node">
+	<node name="PC4" class="graph3d.elements.GNode">
 		<enum-attr attr-name="IP" attr-type="String" attr-value="192.168.1.101" />
 		<coordonates x="2" y="4" z="1" />
 	</node>
-	<node name="PC5" class="node">
+	<node name="PC5" class="graph3d.elements.GNode">
 		<enum-attr attr-name="IP" attr-type="String" attr-value="192.168.1.101" />
 		<coordonates x="0" y="6" z="0" />
 	</node>
-	<node name="PC6" class="node">
+	<node name="PC6" class="graph3d.elements.GNode">
 		<enum-attr attr-name="IP" attr-type="String" attr-value="192.168.1.101" />
 		<coordonates x="3" y="9" z="1" />
 	</node>
-	<node name="PC7" class="node">
+	<node name="PC7" class="graph3d.elements.GNode">
 		<enum-attr attr-name="IP" attr-type="String" attr-value="192.168.1.101" />
 		<coordonates x="7" y="9" z="5" />
 	</node>
-	<node name="PC8" class="node">
+	<node name="PC8" class="graph3d.elements.GNode">
 		<enum-attr attr-name="IP" attr-type="String" attr-value="192.168.1.101" />
 		<coordonates x="1" y="2" z="3" />
 	</node>
-	<node name="PC9" class="node">
+	<node name="PC9" class="graph3d.elements.GNode">
 		<enum-attr attr-name="IP" attr-type="String" attr-value="192.168.1.101" />
 		<coordonates x="0" y="0" z="10" />
 	</node>
-	<link name="link1" type="arrow" class="link" link_start="server" link_end="PC1" color="black">
+	<link name="link1" type="arrow" class="graph3d.elements.GLink" link_start="server" link_end="PC1" color="black">
 		<enum-attr attr-name="connectionType" attr-type="String" attr-value="wifi" />
 	</link>
-	<link name="link2" type="arrow" class="link" link_start="server" link_end="PC2" color="black">
+	<link name="link2" type="arrow" class="graph3d.elements.GLink" link_start="server" link_end="PC2" color="black">
 		<enum-attr attr-name="connectionType" attr-type="String" attr-value="ethernet" />
 	</link>
-	<link name="link3" type="arrow" class="link" link_start="server" link_end="PC3" color="black">
+	<link name="link3" type="arrow" class="ggraph3d.elements.GLink" link_start="server" link_end="PC3" color="black">
 		<enum-attr attr-name="connectionType" attr-type="String" attr-value="cable coaxial" />
 	</link>
-	<link name="link4" type="arrow" class="link" link_start="server" link_end="PC4" color="black">
+	<link name="link4" type="arrow" class="graph3d.elements.GLink" link_start="server" link_end="PC4" color="black">
 		<enum-attr attr-name="connectionType" attr-type="String" attr-value="wifi" />
 	</link>
-	<link name="link5" type="arrow" class="link" link_start="server" link_end="PC5" color="black">
+	<link name="link5" type="arrow" class="graph3d.elements.GLink" link_start="server" link_end="PC5" color="black">
 		<enum-attr attr-name="connectionType" attr-type="String" attr-value="ethernet" />
 	</link>
-	<link name="link6" type="arrow" class="link" link_start="server" link_end="PC6" color="black">
+	<link name="link6" type="arrow" class="graph3d.elements.GLink" link_start="server" link_end="PC6" color="black">
 		<enum-attr attr-name="connectionType" attr-type="String" attr-value="ethernet" />
 	</link>
-	<link name="link7" type="arrow" class="link" link_start="server" link_end="PC7" color="black">
+	<link name="link7" type="arrow" class="graph3d.elements.GLink" link_start="server" link_end="PC7" color="black">
 		<enum-attr attr-name="connectionType" attr-type="String" attr-value="ethernet" />
 	</link>
-	<link name="link8" type="arrow" class="link" link_start="server" link_end="PC8" color="black">
+	<link name="link8" type="arrow" class="ggraph3d.elements.GLink" link_start="server" link_end="PC8" color="black">
 		<enum-attr attr-name="connectionType" attr-type="String" attr-value="wifi" />
 	</link>
-	<link name="link9" type="arrow" class="link" link_start="server" link_end="PC9" color="black">
+	<link name="link9" type="arrow" class="graph3d.elements.GLink" link_start="server" link_end="PC9" color="black">
 		<enum-attr attr-name="connectionType" attr-type="String" attr-value="ethernet" />
 	</link>
-	<link name="link9" type="arrow" class="link" link_start="PC1" link_end="PC2" color="black">
+	<link name="link9" type="arrow" class="graph3d.elements.GLink" link_start="PC1" link_end="PC2" color="black">
 		<enum-attr attr-name="connectionType" attr-type="String" attr-value="wifi" />
 	</link>
-	<link name="link10" type="arrow" class="link" link_start="PC2" link_end="PC3" color="black">
+	<link name="link10" type="arrow" class="graph3d.elements.GLink" link_start="PC2" link_end="PC3" color="black">
 		<enum-attr attr-name="connectionType" attr-type="String" attr-value="wifi" />
 	</link>
-	<link name="link11" type="arrow" class="link" link_start="PC3" link_end="PC4" color="black">
+	<link name="link11" type="arrow" class="graph3d.elements.GLink" link_start="PC3" link_end="PC4" color="black">
 		<enum-attr attr-name="connectionType" attr-type="String" attr-value="wifi" />
 	</link>
-	<link name="link12" type="arrow" class="link" link_start="PC4" link_end="PC5" color="black">
+	<link name="link12" type="arrow" class="graph3d.elements.GLink" link_start="PC4" link_end="PC5" color="black">
 		<enum-attr attr-name="connectionType" attr-type="String" attr-value="wifi" />
 	</link>
-	<link name="link13" type="arrow" class="link" link_start="PC5" link_end="PC6" color="black">
+	<link name="link13" type="arrow" class="graph3d.elements.GLink" link_start="PC5" link_end="PC6" color="black">
 		<enum-attr attr-name="connectionType" attr-type="String" attr-value="wifi" />
 	</link>
-	<link name="link14" type="arrow" class="link" link_start="PC6" link_end="PC7" color="black">
+	<link name="link14" type="arrow" class="graph3d.elements.GLink" link_start="PC6" link_end="PC7" color="black">
 		<enum-attr attr-name="connectionType" attr-type="String" attr-value="wifi" />
 	</link>
-	<link name="link15" type="arrow" class="link" link_start="PC7" link_end="PC8" color="black">
+	<link name="link15" type="arrow" class="graph3d.elements.GLink" link_start="PC7" link_end="PC8" color="black">
 		<enum-attr attr-name="connectionType" attr-type="String" attr-value="wifi" />
 	</link>
-	<link name="link16" type="arrow" class="link" link_start="PC8" link_end="PC9" color="black">
+	<link name="link16" type="arrow" class="graph3d.elements.GLink" link_start="PC8" link_end="PC9" color="black">
 		<enum-attr attr-name="connectionType" attr-type="String" attr-value="wifi" />
 	</link>
-	<link name="link17" type="arrow" class="link" link_start="PC1" link_end="PC1" color="black">
+	<link name="link17" type="arrow" class="graph3d.elements.GLink" link_start="PC1" link_end="PC1" color="black">
 		<enum-attr attr-name="connectionType" attr-type="String" attr-value="wifi" />
 	</link>
-	<link name="link18" type="arrow" class="link" link_start="PC1" link_end="PC9" color="black">
+	<link name="link18" type="arrow" class="graph3d.elements.GLink" link_start="PC1" link_end="PC9" color="black">
 		<enum-attr attr-name="connectionType" attr-type="String" attr-value="wifi" />
 	</link>
-	<link name="link19" type="arrow" class="link" link_start="PC2" link_end="PC8" color="black">
+	<link name="link19" type="arrow" class="graph3d.elements.GLink" link_start="PC2" link_end="PC8" color="black">
 		<enum-attr attr-name="connectionType" attr-type="String" attr-value="wifi" />
 	</link>
-	<link name="link20" type="arrow" class="link" link_start="PC4" link_end="PC2" color="black">
+	<link name="link20" type="arrow" class="graph3d.elements.GLink" link_start="PC4" link_end="PC2" color="black">
 		<enum-attr attr-name="connectionType" attr-type="String" attr-value="wifi" />
 	</link>
-	<link name="link21" type="arrow" class="link" link_start="PC4" link_end="PC7" color="black">
+	<link name="link21" type="arrow" class="graph3d.elements.GLink" link_start="PC4" link_end="PC7" color="black">
 		<enum-attr attr-name="connectionType" attr-type="String" attr-value="wifi" />
 	</link>
-	<link name="link22" type="arrow" class="link" link_start="PC4" link_end="PC9" color="black">
+	<link name="link22" type="arrow" class="graph3d.elements.GLink" link_start="PC4" link_end="PC9" color="black">
 		<enum-attr attr-name="connectionType" attr-type="String" attr-value="wifi" />
 	</link>
-	<link name="link23" type="arrow" class="link" link_start="PC7" link_end="PC1" color="black">
+	<link name="link23" type="arrow" class="graph3d.elements.GLink" link_start="PC7" link_end="PC1" color="black">
 		<enum-attr attr-name="connectionType" attr-type="String" attr-value="wifi" />
 	</link>
-	<link name="link24" type="arrow" class="link" link_start="PC9" link_end="PC6" color="black">
+	<link name="link24" type="arrow" class="graph3d.elements.GLink" link_start="PC9" link_end="PC6" color="black">
 		<enum-attr attr-name="connectionType" attr-type="String" attr-value="wifi" />
 	</link>
 </graph>

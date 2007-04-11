@@ -21,6 +21,7 @@
 		</xsd:sequence>
 		<xsd:attribute name="class" type="xsd:string" use="optional" />
 		<xsd:attribute name="name" type="xsd:string" use="required" />
+		<xsd:attribute name="radius" type="xsd:float" use="optional" />
 		
 	</xsd:complexType>
 
