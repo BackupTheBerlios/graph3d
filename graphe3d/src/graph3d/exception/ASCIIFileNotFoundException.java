@@ -1,12 +1,11 @@
 package graph3d.exception;
 
-public class ASCIIFileNotFoundException extends GException {
+import javax.swing.JOptionPane;
 
-	private String ASCIIFileName;
+public class ASCIIFileNotFoundException extends GException {
 	
 	public ASCIIFileNotFoundException(String _ASCIIFileName) {
-		super();
-		this.ASCIIFileName = _ASCIIFileName;
+		super("the ASCII file (\"" + _ASCIIFileName + "\") is not found.\nWe use only GNode and Glink to define nodes and links.");
 	}
 
 	@Override
@@ -14,12 +13,9 @@ public class ASCIIFileNotFoundException extends GException {
 		super.printStackTrace();
 	}
 	
-	public void showError() {
-
-		super.showError();
-		this.getJdialog().setTitle(/* nom du fichier ASCII */"not found");
-
-		// message = "the ASCII file "nom du fichier" is not found.\nWe use only
-		// GNode and Glink to define nodes and links.
+	public boolean showError() {
+		Object[] options = new Object[] {"OK"};
+		JOptionPane.showOptionDialog(null, this.getMessage(), "ASCIIFileNotFoundException", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+		return true;
 	}
 }

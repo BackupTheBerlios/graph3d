@@ -1,21 +1,16 @@
 package graph3d.exception;
 
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
 import graph3d.elements.GLink;
 import graph3d.elements.GNode;
 
 public class SameNameException extends GException {
-
-	public SameNameException(GLink link, GLink theOtherLink) {
-		super();
-
-	}
-
-	public SameNameException(GNode node, GNode theOtherNode) {
-		super();
-
+	
+	public SameNameException(String _name) {
+		super("Two elements are the same name : " + _name);
 	}
 
 	@Override
@@ -23,15 +18,11 @@ public class SameNameException extends GException {
 		super.printStackTrace();
 	}
 	
-	public void showError() {
+	public boolean showError() {
 
-		super.showError();
-		// if () { si node
-		this.getJdialog().setTitle("Same name for two nodes");
-		// else { sinon
-		this.getJdialog().setTitle("Same name for two links");
+		Object[] options = new Object[] {"OK"};
+		int result = JOptionPane.showOptionDialog(null, this.getMessage(), "SameNameException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
 
-		// mettre en place les boutons et le texte du message
-		// message = Two elements have the same name : "le nom".
+		return true;
 	}
 }

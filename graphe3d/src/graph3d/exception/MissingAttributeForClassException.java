@@ -1,17 +1,19 @@
 package graph3d.exception;
 
+import javax.swing.JOptionPane;
+
 import graph3d.elements.GLink;
 import graph3d.elements.GNode;
 
 public class MissingAttributeForClassException extends GException {
 
 	public MissingAttributeForClassException(GLink link) {
-		super();
+		super("For this link(\"" + link.getName() + "\"), you must define more attributes.\nPlease add attributes for this element.\nTo know attribute of a class see the definition of the class.");
 
 	}
 
 	public MissingAttributeForClassException(GNode node) {
-		super();
+		super("For this node(\"" + node.getName() + "\"), you must define more attributes.\nPlease add attributes for this element\nTo know attribute of a class see the definition of the class.");
 
 	}
 
@@ -20,18 +22,10 @@ public class MissingAttributeForClassException extends GException {
 		super.printStackTrace();
 	}
 	
-	public void showError() {
+	public boolean showError() {
+		Object[] options = new Object[] {"OK"};
+		JOptionPane.showOptionDialog(null, this.getMessage(), "MissingAttributeForClassException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
 
-		super.showError();
-		this.getJdialog().setTitle("Missing attributes for this elements : "); // mettre
-		// le
-		// nom
-		// de
-		// l'élément
-
-		// mettre en place les boutons et le texte du message
-		// texte = This elements doesn't contain enough attributes.\nYou must
-		// specified all attributes define in the class which represents this
-		// element.
+		return true;
 	}
 }

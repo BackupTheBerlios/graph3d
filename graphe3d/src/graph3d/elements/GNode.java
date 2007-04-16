@@ -3,11 +3,12 @@ package graph3d.elements;
 import graph3d.exception.GException;
 import graph3d.exception.GLinkAlreadyExistException;
 import graph3d.exception.MissingAttributeForClassException;
-import graph3d.exception.ToMuchAttributesForClassException;
+import graph3d.exception.TooMuchAttributesForClassException;
 import graph3d.exception.InvalidAttributeTypeException;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.LinkedList;
 
 /**
  * This class define a node into a graph. A node is defined by a name,
@@ -26,7 +27,7 @@ public class GNode {
 	 */
 	private String name;
 
-	private static float DISTANCE = 4f;
+	private static float DISTANCE = 2f;
 	
 	private float radius;
 	/**
@@ -48,7 +49,7 @@ public class GNode {
 	/**
 	 * This Hashtable contains links which is connected to a node.
 	 */
-	private Hashtable<String, GLink> links;
+	private LinkedList<GLink> links;
 
 	/**
 	 * The default constructor You must specify the name. Coordonates are define
@@ -100,6 +101,7 @@ public class GNode {
 		this.coordonates[1] = _y;
 		this.coordonates[2] = _z;
 		this.attributes = new Hashtable<String, String[]>();
+		this.links = new LinkedList<GLink>();
 	}
 
 	/**
@@ -186,7 +188,7 @@ public class GNode {
 	 * @throws InvalidAttributeTypeException
 	 *             if the parameter type is not <b>short, byte, int, long,
 	 *             float, double, char or String</b>
-	 * @throws ToMuchAttributesForClassException
+	 * @throws TooMuchAttributesForClassException
 	 *             if the name of the parameter doesn't exist in the Hashtable.
 	 *             It's not an attribute.
 	 * @throws GException
@@ -194,7 +196,7 @@ public class GNode {
 	 */
 	public void setAttributeByName(String _name, String _type, String _value)
 			throws InvalidAttributeTypeException,
-			ToMuchAttributesForClassException, GException {
+			TooMuchAttributesForClassException, GException {
 		if (this.attributes.containsKey(_name)) {
 			if (_type.equals("short")) {
 				try {
@@ -254,11 +256,11 @@ public class GNode {
 
 			} else {
 				// type is undefine
-				throw new InvalidAttributeTypeException(_type);
+				throw new InvalidAttributeTypeException(this, _name, _type, _value);
 			}
 		} else {
 			// attribute doesn't exist
-			throw new ToMuchAttributesForClassException(this, _name);
+			throw new TooMuchAttributesForClassException(this, _name);
 		}
 		this.attributes.put(_name, new String[] { _name, _type, _value });
 	}
@@ -280,7 +282,7 @@ public class GNode {
 	 * 
 	 * @return links
 	 */
-	public Hashtable<String, GLink> getLinks() {
+	public LinkedList<GLink> getLinks() {
 		return this.links;
 	}
 
@@ -289,8 +291,8 @@ public class GNode {
 	 * @param link the link which you want add.
 	 */
 	public void addLink(GLink link) {
-		if (!this.links.containsKey(link.getName())) {
-			this.links.put(link.getName(), link);
+		if (!this.links.contains(link)) {
+			this.links.add(link);
 		} else {
 			throw new GLinkAlreadyExistException(this, link); 
 		}

@@ -4,6 +4,7 @@ import graph3d.elements.GGraph;
 import graph3d.elements.GLink;
 import graph3d.elements.GNode;
 import graph3d.exception.GException;
+import graph3d.exception.SameNameException;
 import graph3d.exception.XMLDefinitionException;
 
 import java.io.File;
@@ -85,10 +86,14 @@ public class GParser {
 				String nodeName = child.getNodeName();
 				if (nodeName.equals("node")) {
 					GNode node = this.createNode((Element) child);
-					this.graph.addNode(node);
+					if (!this.graph.addNode(node)) {
+						new SameNameException(node.getName());
+					}
 				} else if (nodeName.equals("link")) {
 					GLink link = this.createLink((Element) child);
-					this.graph.addLink(link);
+					if (!this.graph.addLink(link)) {
+						new SameNameException(link.getName());
+					}
 				}
 			}
 		}

@@ -1,26 +1,29 @@
 package graph3d.exception;
 
+import javax.swing.JOptionPane;
+
 public class XMLDefinitionException extends GException {
 
-	public XMLDefinitionException() {
-		super();
-
+	private String details;
+	
+	public XMLDefinitionException(String _details) {
+		super("The XML file doesn't respect the XSD schema.\nPlease correct errors or load an other XML File.");
+		this.details = _details;
 	}
 
 	@Override
 	public void printStackTrace() {
-		System.err.println("The XML file was not validated by the XSD schema");
-		super.printStackTrace();
+		System.err.println(this.getMessage());
+		System.err.println(this.details);
 	}
 	
-	public void showError() {
-
-		super.showError();
-		this.getJdialog().setTitle(
-				"The XML file doesn't respect the XSD schema");
-
-		// mettre en place les boutons et le texte du message
-		// message = the XML file doesn't respect the XSD schema.\n Please
-		// correct errors or load an other XML File.
+	public boolean showError() {
+		Object[] options = new Object[] {"OK", "DETAILS"};
+		int result = JOptionPane.showOptionDialog(null, this.getMessage(), "GException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+		if (result == 1) {
+			options = new Object[] {"OK"};
+			JOptionPane.showOptionDialog(null, this.details, "Details", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+		}
+		return true;
 	}
 }

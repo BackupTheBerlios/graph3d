@@ -1,46 +1,43 @@
 package graph3d.exception;
 
-import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 public class GException extends RuntimeException {
 
-	private JDialog jdialog;
-
-	private String message;
-
+	public static final int ERROR = 0;
+	public static final int WARNING = 1;
+	
+	private int messageType;
+	
 	public GException() {
-		jdialog = new JDialog();
-	}
-
-	public GException(String message) {
-		this.message = message;
+		this("Exception unknown", 1); //mettre icone
 	}
 	
+	public GException(String _message, int _typeMessage) {
+		super(_message);
+		this.messageType = _typeMessage;
+		
+		
+	}
+	
+	public GException(String _message) {
+		this(_message, 1);
+	}
+
 	@Override
 	public void printStackTrace() {
 		super.printStackTrace();
 	}
-
-	public void showError() {
-		jdialog.setSize(100, 100);
-		// affichage d'un pop-up qui nous fourni un message d'erreur.
-		// dans le cas générale afficher "printStackTrace"????
+	
+	public boolean showError() {
+		if (this.messageType == 0) {
+			Object[] options = new Object[] {"OK"};
+			JOptionPane.showOptionDialog(null, this.getMessage(), "GException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+		} else {
+			Object[] options = new Object[] {"OK"};
+			JOptionPane.showOptionDialog(null, this.getMessage(), "GException", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+		}
+		return true;
 	}
-
-	public JDialog getJdialog() {
-		return jdialog;
-	}
-
-	public void setJdialog(JDialog jdialog) {
-		this.jdialog = jdialog;
-	}
-
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
 }

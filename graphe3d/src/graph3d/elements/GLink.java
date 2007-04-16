@@ -2,7 +2,7 @@ package graph3d.elements;
 
 import graph3d.exception.GException;
 import graph3d.exception.MissingAttributeForClassException;
-import graph3d.exception.ToMuchAttributesForClassException;
+import graph3d.exception.TooMuchAttributesForClassException;
 import graph3d.exception.InvalidAttributeTypeException;
 
 import java.util.Enumeration;
@@ -127,6 +127,10 @@ public class GLink {
 		this.type = _type;
 
 		this.attributes = new Hashtable<String, String[]>();
+		this.firstNode.addLink(this);
+		if (!this.firstNode.getName().equals(this.secondNode.getName())) {
+			this.secondNode.addLink(this);
+		}
 	}
 
 	/**
@@ -254,7 +258,7 @@ public class GLink {
 	 * @throws InvalidAttributeTypeException
 	 *             if the parameter type is not <b>short, byte, int, long,
 	 *             float, double, char or String</b>.
-	 * @throws ToMuchAttributesForClassException
+	 * @throws TooMuchAttributesForClassException
 	 *             if the name of the parameter doesn't exist in the Hashtable.
 	 *             It's not an attribute.
 	 * @throws GException
@@ -262,7 +266,7 @@ public class GLink {
 	 */
 	public void setAttributeByName(String _name, String _type, String _value)
 			throws InvalidAttributeTypeException,
-			ToMuchAttributesForClassException, GException {
+			TooMuchAttributesForClassException, GException {
 		if (this.attributes.containsKey(_name)) {
 			if (_type.equals("short")) {
 				try {
@@ -322,11 +326,11 @@ public class GLink {
 
 			} else {
 				// type is undefine
-				throw new InvalidAttributeTypeException(_type);
+				throw new InvalidAttributeTypeException(this, _name, _type, _value);
 			}
 		} else {
 			// attribute doesn't exist
-			throw new ToMuchAttributesForClassException(this, this.name);
+			throw new TooMuchAttributesForClassException(this, this.name);
 		}
 		this.attributes.put(_name, new String[] { _name, _type, _value });
 	}
@@ -371,6 +375,7 @@ public class GLink {
 	public String getColor() {
 		return this.color;
 	}
+	
 
 	/**
 	 * THe setter of color

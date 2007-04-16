@@ -1,9 +1,11 @@
 package graph3d.exception;
 
+import javax.swing.JOptionPane;
+
 public class AddEventToNullCanvasException extends GException {
 
 	public AddEventToNullCanvasException() {
-		super();
+		super("You must define a Canvas3D before to add EventListener.");
 	}
 	
 	@Override
@@ -11,11 +13,10 @@ public class AddEventToNullCanvasException extends GException {
 		super.printStackTrace();
 	}
 
-	public void showError() {
+	public boolean showError() {
+		Object[] options = new Object[] {"OK"};
+		JOptionPane.showOptionDialog(null, this.getMessage(), "AddEventToNullCanvasException", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 
-		super.showError();
-		this.getJdialog().setTitle("Canvas3D is not created");
-
-		// message = "You must define a Canvas3D before to add EventListener."
+		return true;
 	}
 }
