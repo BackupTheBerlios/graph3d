@@ -1,22 +1,23 @@
+/**
+ * 
+ */
 package graph3dTest.elementsTest;
 
 import graph3d.elements.GNode;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import junit.framework.TestCase;
 
 /**
- * Classe de test pour la classe {@link GNode}
- * A completer
+ * A Completer
  * 
  * @author Jerome
+ *
  */
-public class GNodeTest {
+public class GNodeTest extends TestCase {
 
 	/**
-	 * Test du premier constructeur de la classe. 
-	 * GNode avec un nom et coordonnées par defaut.
+	 * Test method for {@link graph3d.elements.GNode#GNode(java.lang.String)}.
 	 */
-	@Test public void GNode1() {
+	public void testGNodeString() {
 		// Création des éléments à tester :
 		GNode node1 = new GNode("node one");
 
@@ -37,10 +38,9 @@ public class GNodeTest {
 	}
 
 	/**
-	 * Test du second constructeur de la classe. 
-	 * GNode avec un nom et des coodonnées.
+	 * Test method for {@link graph3d.elements.GNode#GNode(java.lang.String, float, float, float)}.
 	 */
-	@Test public void GNode2() {
+	public void testGNodeStringFloatFloatFloat() {
 		// Création des éléments à tester :
 		GNode node1 = new GNode("node two", 2, 4, 5);
 
@@ -59,13 +59,32 @@ public class GNodeTest {
 		// Verification de linitiation de la Liste de lien
 		assertNotNull(node1.getLinks());
 	}
-	
+
 	/**
-	 * Test de la méthode permettant de changer le nom d'un noeud.
-	 * On vérifie q'un changement effectué par l'appel du modificateur 
-	 * est correctement enregistré.
+	 * Test method for {@link graph3d.elements.GNode#GNode(java.lang.String, float, float, float, float)}.
 	 */
-	@Test public void setName(){
+	public void testGNodeStringFloatFloatFloatFloat() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link graph3d.elements.GNode#setAttributes(java.util.Hashtable)}.
+	 */
+	public void testSetAttributes() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link graph3d.elements.GNode#setCoordonates(float[])}.
+	 */
+	public void testSetCoordonates() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link graph3d.elements.GNode#setName(java.lang.String)}.
+	 */
+	public void testSetName() {
 		// Création des éléments à tester :
 		GNode node3 = new GNode("node three");
 
@@ -75,6 +94,55 @@ public class GNodeTest {
 		// Verification du nom du noeud
 		assertNotNull(node3.getName());
 		assertEquals(node3.getName(), "Node 3");
+	}
+
+	/**
+	 * Test method for {@link graph3d.elements.GNode#setAttributeByName(java.lang.String, java.lang.String, java.lang.String)}.
+	 */
+	public void testSetAttributeByName() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link graph3d.elements.GNode#getAttributeByName(java.lang.String)}.
+	 */
+	public void testGetAttributeByName() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link graph3d.elements.GNode#addLink(graph3d.elements.GLink)}.
+	 */
+	public void testAddLink() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link graph3d.elements.GNode#setCoordonnateX(float)}.
+	 */
+	public void testSetCoordonnateX() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link graph3d.elements.GNode#setCoordonnateY(float)}.
+	 */
+	public void testSetCoordonnateY() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link graph3d.elements.GNode#setCoordonnateZ(float)}.
+	 */
+	public void testSetCoordonnateZ() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link graph3d.elements.GNode#setRadius(float)}.
+	 */
+	public void testSetRadius() {
+		fail("Not yet implemented");
 	}
 
 }
