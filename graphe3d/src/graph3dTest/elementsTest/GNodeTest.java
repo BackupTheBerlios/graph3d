@@ -107,13 +107,6 @@ public class GNodeTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link graph3d.elements.GNode#getAttributeByName(java.lang.String)}.
-	 */
-	public void testGetAttributeByName() {
-		fail("Not yet implemented");
-	}
-
-	/**
 	 * Test method for {@link graph3d.elements.GNode#addLink(graph3d.elements.GLink)}.
 	 */
 	public void testAddLink() {
@@ -147,5 +140,77 @@ public class GNodeTest extends TestCase {
 	public void testSetRadius() {
 		fail("Not yet implemented");
 	}
+	
+
+	/**
+	 * Test method for {@link graph3d.elements.GNode#getAttributes()}.
+	 */
+	public void testGetAttributes() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link graph3d.elements.GNode#getCoordonates()}.
+	 */
+	public void testGetCoordonates() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link graph3d.elements.GNode#getName()}.
+	 */
+	public void testGetName() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link graph3d.elements.GNode#getAttributeByName(java.lang.String)}.
+	 */
+	public void testGetAttributeByName() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link graph3d.elements.GNode#getLinks()}.
+	 */
+	public void testGetLinks() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link graph3d.elements.GNode#getCoordonnateX()}.
+	 */
+	public void testGetCoordonnateX() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link graph3d.elements.GNode#getCoordonnateY()}.
+	 */
+	public void testGetCoordonnateY() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link graph3d.elements.GNode#getCoordonnateZ()}.
+	 */
+	public void testGetCoordonnateZ() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link graph3d.elements.GNode#getRadius()}.
+	 */
+	public void testGetRadius() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link graph3d.elements.GNode#getDISTANCE()}.
+	 */
+	public void testGetDISTANCE() {
+		fail("Not yet implemented");
+	}
+
 
 }

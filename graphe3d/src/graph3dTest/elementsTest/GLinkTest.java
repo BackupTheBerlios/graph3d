@@ -3,6 +3,8 @@
  */
 package graph3dTest.elementsTest;
 
+import graph3d.elements.GLink;
+import graph3d.elements.GNode;
 import junit.framework.TestCase;
 
 /**
@@ -90,6 +92,53 @@ public class GLinkTest extends TestCase {
 	 * Test method for {@link graph3d.elements.GLink#setColor(java.lang.String)}.
 	 */
 	public void testSetColor() {
+		fail("Not yet implemented");
+	}
+	
+	/**
+	 * Test method for {@link graph3d.elements.GLink#getAttributes()}.
+	 */
+	public void testGetAttributes() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link graph3d.elements.GLink#getFirstNode()}.
+	 */
+	public void testGetFirstNode() {
+		GNode node1 = new GNode("node1");
+		GLink link = new GLink("link",node1,new GNode("node2"));
+		assertEquals(link.getFirstNode(), node1);
+	}
+
+	/**
+	 * Test method for {@link graph3d.elements.GLink#getName()}.
+	 */
+	public void testGetName() {
+		GLink link = new GLink("link",new GNode("node1"),new GNode("node2"));
+		assertEquals(link.getName(), "link");
+	}
+
+	/**
+	 * Test method for {@link graph3d.elements.GLink#getSecondNode()}.
+	 */
+	public void testGetSecondNode() {
+		GNode node2 = new GNode("node2");
+		GLink link = new GLink("link",new GNode("node1"),node2);
+		assertEquals(link.getSecondNode(), node2);
+	}
+
+	/**
+	 * Test method for {@link graph3d.elements.GLink#getAttributeByName(java.lang.String)}.
+	 */
+	public void testGetAttributeByName() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link graph3d.elements.GLink#getColor()}.
+	 */
+	public void testGetColor() {
 		fail("Not yet implemented");
 	}
 

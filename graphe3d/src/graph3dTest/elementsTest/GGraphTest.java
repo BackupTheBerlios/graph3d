@@ -16,6 +16,7 @@ import junit.framework.TestCase;
  */
 public class GGraphTest extends TestCase {
 
+
 	/**
 	 * Test method for {@link graph3d.elements.GGraph#GGraph()}.
 	 */
@@ -80,9 +81,23 @@ public class GGraphTest extends TestCase {
 	}
 
 	/**
+	 * Test method for {@link graph3d.elements.GGraph#getLinks()}.
+	 */
+	public void testGetLinks() {
+		fail("Not yet implemented");
+	}
+
+	/**
 	 * Test method for {@link graph3d.elements.GGraph#setLinks(java.util.Hashtable)}.
 	 */
 	public void testSetLinks() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link graph3d.elements.GGraph#getName()}.
+	 */
+	public void testGetName() {
 		fail("Not yet implemented");
 	}
 
@@ -94,10 +109,30 @@ public class GGraphTest extends TestCase {
 	}
 
 	/**
+	 * Test method for {@link graph3d.elements.GGraph#getNodes()}.
+	 */
+	public void testGetNodes() {
+		fail("Not yet implemented");
+	}
+
+	/**
 	 * Test method for {@link graph3d.elements.GGraph#setNodes(java.util.Hashtable)}.
 	 */
 	public void testSetNodes() {
 		fail("Not yet implemented");
 	}
 
+	/**
+	 * Test method for {@link graph3d.elements.GGraph#getNode(java.lang.String)}.
+	 */
+	public void testGetNode() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link graph3d.elements.GGraph#getLink(java.lang.String)}.
+	 */
+	public void testGetLink() {
+		fail("Not yet implemented");
+	}
 }
