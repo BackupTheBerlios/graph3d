@@ -6,7 +6,12 @@ package graph3dTest.parserXMLTest;
 import junit.framework.TestCase;
 
 /**
- * @author tanuki
+ * A Completer
+ * 
+ * Remplacer la ligne :  fail("Not yet implemented");
+ * Par le code approprié
+ * 
+ * @author Jerome
  *
  */
 public class GParserTest extends TestCase {
