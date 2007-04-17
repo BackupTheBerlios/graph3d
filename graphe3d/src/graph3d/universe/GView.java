@@ -14,9 +14,8 @@ import javax.media.j3d.View;
 import javax.media.j3d.ViewPlatform;
 import javax.vecmath.Vector3f;
 
-/*
- * create : GView():GView
- * create : GView(canvas:Canvas3D):GView)
+/**
+ * This class create the graph3D's view.
  */
 public class GView extends BranchGroup{
 	
@@ -29,6 +28,10 @@ public class GView extends BranchGroup{
 	private View view;
 	private Canvas3D canvas;
 	
+	/**
+	 * This constructor is used to create a GView.
+	 * @param _bestViewToSee of type float [].
+	 */
 	public GView(float [] _bestViewToSee) {
 
 		super();
@@ -66,16 +69,22 @@ public class GView extends BranchGroup{
 	    this.transformGroup.setTransform(transform);
 	    System.out.println(this.view.getFieldOfView());
 	    System.out.println(Math.PI/4);
-	    
-	    
 	}
-
-	public Canvas3D getCanvas() {
-		
+	
+	/**
+	 * The getter of the Canvas3D.
+	 * @return a Canvas3D component.
+	 */
+	public Canvas3D getCanvas() {		
 		return this.canvas;
 	}
 
+	/**
+	 * The setter of the Canvas3D.
+	 * @param a Canvas3D component.
+	 */
 	public void setCanvas(Canvas3D canvas) {
 		this.canvas = canvas;
 	}
+
 }

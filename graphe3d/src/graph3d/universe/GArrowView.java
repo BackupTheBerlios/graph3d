@@ -2,27 +2,33 @@ package graph3d.universe;
 
 import graph3d.elements.GLink;
 
-import java.awt.Color;
-
 import javax.media.j3d.GeometryArray;
 import javax.media.j3d.LineArray;
-import javax.media.j3d.Shape3D;
-import javax.vecmath.Color3f;
 
+/**
+ * This class create a GArrowView.
+ */
 public class GArrowView extends GLinkView {
 
+	/**
+	 * This constructor is used to create a GArrowView.
+	 * @param _link of type GLink.
+	 */
 	public GArrowView(GLink _link) {
 		this.setLink(_link);
 		this.createLine();
 		this.add();
 	}
 	
+	/**
+	 * This function is used to create a line (with an arrow) of type LineArray.
+	 */
 	private void createLine() {
 		this.setLine(new LineArray(6, GeometryArray.COORDINATES | GeometryArray.COLOR_3));
 		this.getLine().setCoordinate(0, this.getLink().getFirstNode().getCoordonates());
 		this.getLine().setCoordinate(1, this.getLink().getSecondNode().getCoordonates());
 		
-		this.getLine().setCoordinate(2, this.getLink().getFirstNode().getCoordonates());//mettre coordonnÃ©es pour crÃ©er la flÃ¨che
+		this.getLine().setCoordinate(2, this.getLink().getFirstNode().getCoordonates());//mettre coordonnées pour créer la flèche
 		this.getLine().setCoordinate(3, this.getLink().getFirstNode().getCoordonates());
 		this.getLine().setCoordinate(4, this.getLink().getFirstNode().getCoordonates());
 		
@@ -32,4 +38,5 @@ public class GArrowView extends GLinkView {
 		this.getLine().setColor(3, this.getColor());
 		this.getLine().setColor(4, this.getColor());
 	}
+
 }

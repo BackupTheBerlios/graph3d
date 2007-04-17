@@ -3,7 +3,6 @@ package graph3d.universe;
 import graph3d.elements.GNode;
 
 import javax.media.j3d.Appearance;
-import javax.media.j3d.ColoringAttributes;
 import javax.media.j3d.ImageComponent2D;
 import javax.media.j3d.Texture;
 import javax.media.j3d.Texture2D;
@@ -17,10 +16,8 @@ import com.sun.j3d.utils.geometry.Sphere;
 import com.sun.j3d.utils.image.ImageException;
 import com.sun.j3d.utils.image.TextureLoader;
 
-/*
- * create GNodeView(node:GNode):GNodeView
- * create GNodeView(node:GNode,diametre:float):GNodeView
- * getGNode():GNode
+/**
+ * This class create a GNodeView.
  */
 public class GNodeView extends TransformGroup {
 	
@@ -29,8 +26,9 @@ public class GNodeView extends TransformGroup {
 	private Transform3D transform3D;
 	private GNode node;
 	
-	/*
-	 * create GNodeView(node:GNode):GNodeView
+	/**
+	 * This constructor is used to create a GNodeView.
+	 * @param _node of type GNode.
 	 */
 	public GNodeView(GNode _node){
 		this.node = _node;
@@ -47,6 +45,9 @@ public class GNodeView extends TransformGroup {
 		//positionner la sphere => normalement ok
 	}
 	
+	/**
+	 * This function is used to create an appearence.
+	 */
 	private void createAppearence() {
 		this.appearence = new Appearance();
 		
@@ -68,7 +69,5 @@ public class GNodeView extends TransformGroup {
 		this.appearence.setTextureAttributes(new TextureAttributes());
 	
 	}
-	
-	
-	
+
 }

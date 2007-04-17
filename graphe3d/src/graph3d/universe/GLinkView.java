@@ -11,6 +11,9 @@ import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.vecmath.Color3f;
 
+/**
+ * This abstract class create a TransformGroup which will represent à GArrowView or a GBridgView.
+ */
 public abstract class GLinkView extends TransformGroup {
 
 	private Shape3D shape;
@@ -19,44 +22,99 @@ public abstract class GLinkView extends TransformGroup {
 	private Transform3D transform3D;
 	private GLink link;
 	
-	
+	/**
+	 * This function is used to add a shape3D (objet which will reprensent a GLink) to a transformGroup.
+	 */
 	public void add() {
 		this.setShape(new Shape3D());
 		this.getShape().setGeometry(this.getLine());
 		this.addChild(this.getShape());
 	}
 	
+	/**
+	 * The getter of GLink's appearance.
+	 * @return appearence of type Appearance.
+	 */
 	public Appearance getAppearence() {
 		return appearence;
 	}
+	
+	/**
+	 * The setter of GLink's appearance.
+	 * @param appearence of type Appearance.
+	 */
 	public void setAppearence(Appearance appearence) {
 		this.appearence = appearence;
 	}
+	
+	/**
+	 * The getter of the GLink's LineArray.
+	 * @return line of the type LineArray.
+	 */
 	public LineArray getLine() {
 		return line;
 	}
+	
+	/**
+	 * The setter of the GLink's LineArray.
+	 * @param line of type LineArray.
+	 */
 	public void setLine(LineArray line) {
 		this.line = line;
 	}
+	
+	/**
+	 * The getter of GLink.
+	 * @return link of type GLink.
+	 */
 	public GLink getLink() {
 		return link;
 	}
+	
+	/**
+	 * The setter of GLink.
+	 * @param link of type GLink.
+	 */
 	public void setLink(GLink link) {
 		this.link = link;
 	}
+	
+	/**
+	 * The getter of the GLink's Transform3D, this object can us to move  the GLink (zoom,rotate...).
+	 * @return transform3D of type Transform3D.
+	 */
 	public Transform3D getTransform3D() {
 		return transform3D;
 	}
+	
+	/**
+	 * The setter of the GLink's Transform3D, this object can us to move  the GLink (zoom,rotate...).
+	 * @param transform3D of type Transform3D.
+	 */
 	public void setTransform3D(Transform3D transform3D) {
 		this.transform3D = transform3D;
 	}
+	
+	/**
+	 * The getter of shape3D (objet which will reprensent a GLink).
+	 * @return shape of type Shape3D.
+	 */
 	public Shape3D getShape() {
 		return shape;
 	}
+	
+	/**
+	 * The setter of shape3D (objet which will reprensent a GLink).
+	 * @param shape of type Shape3D.
+	 */
 	public void setShape(Shape3D shape) {
 		this.shape = shape;
 	}
 	
+	/**
+	 * The getter of the GLink's color.
+	 * @return _color og type Color3f.
+	 */
 	public Color3f getColor() {
 		String _color = this.getLink().getColor();
 		if (_color.equals("black")) {
