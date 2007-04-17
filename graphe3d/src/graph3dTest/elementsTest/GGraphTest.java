@@ -8,6 +8,9 @@ import junit.framework.TestCase;
 /**
  * A Completer
  * 
+ * Remplacer la ligne :  fail("Not yet implemented");
+ * Par le code approprié
+ * 
  * @author Jerome
  *
  */
