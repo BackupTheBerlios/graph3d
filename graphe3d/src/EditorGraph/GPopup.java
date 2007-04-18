@@ -1,7 +1,4 @@
-package EditorGraph;
-
-import graph3D.elements.GLink;
-import graph3D.elements.GNode;
+package editorGraph;
 
 import java.awt.GridLayout;
 import java.awt.Insets;
@@ -9,7 +6,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 
-import javax.print.DocFlavor.STRING;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -17,6 +13,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+
+import graph3d.elements.GLink;
+import graph3d.elements.GNode;
 
 /*
  * GPopup.java
@@ -28,25 +27,16 @@ import javax.swing.JTabbedPane;
  *
  * @author  lino christophe
  */
-public class GPopup extends JDialog {
+class GPopup extends JDialog {
 
-	public static void main(String[] args) {
-		GNode[]tab=new GNode[15];
-		for(int i=1;i<=15;i++) tab[i-1]=new GNode("noeud_"+i);
-		try{
-			GPopup p = GPopup.showPopup(tab,ARROW,Class.forName("graph3D.elements.GLink"));
-			p.setVisible(true);
-		}catch (Exception e) {
-			System.out.println(e.getMessage());
-		}//try
-	}//main
-	
-	public static final int ARROW = 0, BRIDGE = 1;
+	public static final boolean ARROW = true, BRIDGE = false;
 	public static GPopup POPUP;
-	public static boolean is_arrow;
+	private static boolean is_arrow;
+
+	private static GEditor owner;
 	private static Class link_class;
+	private static String link_type;
 	private static LinkedList<Association> list;
-	private static LinkedList<GLink> list_of_links;
 	private static final MouseAdapter
 	CHECKBOX_LISTENER = new CheckboxListener(),
 	BUTTON_LISTENER = new ButtonListener();
@@ -60,6 +50,7 @@ public class GPopup extends JDialog {
 
 	/** Creates new form GPopup */
 	private GPopup() {
+		super();
 		cancel_button = new JButton("Annuler");
 		ok_button = new JButton("Ok");
 
@@ -91,8 +82,8 @@ public class GPopup extends JDialog {
 	}
 
 	private void setArrows(GNode[] nodes){
+		setTitle("Fenêtre de création d'arcs");
 		tabbedPane.removeAll();
-		list = new LinkedList<Association>();
 		label.setText("veuillez sélectionner les arcs à créer :");
 		for(int i=0;i<nodes.length;i++){
 			JPanel panel = new JPanel(new GridLayout(nodes.length,1));
@@ -111,8 +102,8 @@ public class GPopup extends JDialog {
 	}//
 
 	private void setBridges(GNode[] nodes){
+		setTitle("Fenêtre de création d'arêtes");
 		tabbedPane.removeAll();
-		list = new LinkedList<Association>();
 		label.setText("veuillez sélectionner les arêtes à créer :");
 		for(int i=0;i<nodes.length-1;i++){
 			JScrollPane scrollPane = new JScrollPane();
@@ -124,29 +115,26 @@ public class GPopup extends JDialog {
 				panel.add(checkbox);
 			}
 			scrollPane.setViewportView(panel);
-			
-			tabbedPane.addTab(nodes[i].toString(), scrollPane);
+
+			tabbedPane.addTab(nodes[i].getName(), scrollPane);
 
 		}
 		remove(tabbedPane);
 		add(tabbedPane);
 	}//
 
-	public static GPopup showPopup(GNode[]nodes,int type,Class link_class) throws Exception{
+	public static void showPopup(GEditor editor, GNode[]nodes,boolean type,Class link_class, String link_type) throws Exception{
 		if(POPUP==null)POPUP = new GPopup();
-		if(type == ARROW)
+		list = new LinkedList<Association>();
+		if(type) // ARROW
 			POPUP.setArrows(nodes);
-		else if(type == BRIDGE)
+		else 	 // BRIDGE
 			POPUP.setBridges(nodes);
-		else
-			throw new Exception();
-		POPUP.link_class = link_class;
-		return POPUP;
-	}
-
-	public static GLink[] getCreatedLinks(){
-		return list_of_links.toArray(new GLink[0]);
-	}
+		GPopup.link_class = link_class;
+		GPopup.link_type = link_type;
+		owner = editor;
+		POPUP.setVisible(true);
+	}//showPopup
 
 	/**
 	 * 
@@ -171,66 +159,86 @@ public class GPopup extends JDialog {
 		public void mouseClicked(MouseEvent m){
 			if(m.getButton() == MouseEvent.BUTTON1){
 				JButton button = (JButton) m.getSource();
+
 				if(button == POPUP.cancel_button)
 					POPUP.setVisible(false);
 				else if(button == POPUP.ok_button){
-					list_of_links = new LinkedList<GLink>();
-					for(int i=0;i<list.size();i++){
-						try{
-							Class[] construct = new Class[]{Boolean.class,GNode.class,GNode.class};
-							Object[] param = new Object[3];
-							if(is_arrow) param[0] = Boolean.TRUE;
-							param[1] = list.get(i).node_1;
-							param[2] = list.get(i).node_2;
-							GLink e = (GLink) link_class
-							.getDeclaredConstructor(construct).newInstance(param);
-							list_of_links.add(e);
-							System.out.println(e);
-						}catch (Exception e) {
-							System.out.println(e);
+					try{
+						Object[] param = new Object[4];
+						param[1] = "";
+						param[0] = is_arrow;
+						Class[] construct = new Class[]{boolean.class, String.class, GNode.class, GNode.class};
+						for(int i=0;i<list.size();i++){
+							param[2] = list.get(i).node_1;
+							param[3] = list.get(i).node_2;
+
+							GLink link = (GLink) link_class.getDeclaredConstructor(construct).newInstance(param);
 							/*
-							 * on ne doit pas passer ici
+							 * trying to associate a non-used name for this link
 							 */
-						}//try
-					}//for
+							link.setName(link_type+"_");
+							String name = link.getName();
+							int j=1;
+							link.setName(name+j);
+							boolean good = owner.graph.addLink(link);
+							while( ! good ){
+								j++;
+								link.setName(name+j);
+								good = owner.graph.addLink(link);
+							}//while
+							owner.addComponent(link, true);
+							owner.tabArea.refreshList();
+						}//for
+					}catch (Exception e) {
+						e.printStackTrace();
+						/*
+						 * on ne doit pas passer ici
+						 */
+					}//try
+
+
 					POPUP.setVisible(false);
+
 				}//if2
+
 			}//if1
+
 		}//mouseClicked
+
 	}//listener
 
-/**
- * 
- * @author lino christophe
- *
- */
-public class Association{
-	GNode node_1,node_2;
+	/**
+	 * 
+	 * @author lino christophe
+	 *
+	 */
+	public class Association{
+		GNode node_1,node_2;
 
-	public Association() {
-		// TODO Auto-generated constructor stub
-	}
-}
-
-/**
- * 
- * @author lino christophe
- *
- */
-class GCheckbox extends JCheckBox{
-	Association association;
-
-	public GCheckbox(GNode node_1,GNode node_2,String link){
-		super(node_1.getName()+" "+link+" "+node_2.getName());
-		association = new Association();
-		association.node_1 = node_1;
-		association.node_2 = node_2;
+		public Association() {
+			// TODO Auto-generated constructor stub
+		}
 	}
 
-	public Association getAssociation(){
-		return association;
+	/**
+	 * 
+	 * @author lino christophe
+	 *
+	 */
+	class GCheckbox extends JCheckBox{
+		Association association;
+
+		public GCheckbox(GNode node_1,GNode node_2,String link){
+			super(node_1.getName()+" "+link+" "+node_2.getName());
+			association = new Association();
+			association.node_1 = node_1;
+			association.node_2 = node_2;
+		}
+
+		public Association getAssociation(){
+			return association;
+		}
 	}
-}
 
 
 

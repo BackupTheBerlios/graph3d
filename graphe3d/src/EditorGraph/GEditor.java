@@ -1,102 +1,111 @@
-package EditorGraph;
+package editorGraph;
 
-import graph3D.elements.GLink;
-import graph3D.elements.GNode;
-import graph3D.exception.BadElementTypeException;
-import graph3D.universe.GView;
+import graph3d.elements.Computer;
+import graph3d.elements.EthernetLink;
+import graph3d.elements.GGraph;
+import graph3d.elements.GLink;
+import graph3d.elements.GNode;
+import graph3d.exception.BadElementTypeException;
+import graph3d.universe.GView;
 
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Hashtable;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 public class GEditor extends JPanel{
 
+	/*
+	 * à virer !!
+	 */
+	GGraph graph = new GGraph();
+	
 	/**
 	 * 
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		JFrame f = new JFrame();
-		f.setSize(260,630);
+		f.setSize(300,630);
 		f.setLocation(100,100);
-		f.setVisible(true);
 		f.setTitle("éditeur de graphe 3D");
-		GEditor editor = new GEditor();
-		f.add(editor);
-//		try{
-//			editor.addComponent(new GNode("blabla"), true);
-//		}catch (Exception e) {
-//			// TODO: handle exception
-//		}
 		
+		GEditor editor = new GEditor("C:\\Documents and Settings\\lino christophe\\Mes documents\\IUP MIS\\L3 INFO\\INF1603 - graphe3d\\CODAGE\\fichiertype.txt");
+		
+		f.add(editor);
+		f.setVisible(true);
+		
+		GNode
+		node_1 = new GNode("blabla"),
+		node_2 = new GNode("blabla 2"),
+		comput = new Computer("my_computer");
+		
+		GLink
+		link = new GLink("toto",node_1,node_2),
+		link_2 = new EthernetLink("tutu",node_1,comput);
+		
+		editor.graph.addNode(node_1);
+		editor.graph.addNode(node_2);
+		editor.graph.addNode(comput);
+		editor.graph.addLink(link);
+		editor.graph.addLink(link_2);
+
+		editor.addComponent(node_1, true);
+		editor.addComponent(link,true);
+		editor.addComponent(node_2, false);
+		editor.addComponent(comput, true);
 	}//main
-	
+
 	/*
 	 * la vue associée
 	 */
-	private GView view;
+	GView view;
 
 	/*
 	 * les zones de l'éditeur
 	 */
-	protected GTabArea tabArea;
-	private GListArea listArea;
-	private GCreationArea creationArea;
+	GTabArea tabArea;
+	GListArea listArea;
+	GCreationArea creationArea;
 
 	/*
 	 * marges
 	 */
-	private static final Insets
-		BUTTON_INSETS = new Insets(2,2,2,2),
-		EDITOR_INSETS = new Insets(1,1,1,1);
-	
+	static final Insets
+	BUTTON_INSETS = new Insets(2,2,2,2),
+	EDITOR_INSETS = new Insets(1,1,1,1);
+
 	/*
 	 * les contraintes de positionnement des parties.
 	 */
-	private GridBagConstraints
-	/*
-	 * int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, 
-	 * int anchor, int fill, Insets insets, int ipadx, int ipady 
-	 */
-	TAB_AREA_CONSTRAINTS = new GridBagConstraints(0,0,1,1,100,55,GridBagConstraints.CENTER, GridBagConstraints.BOTH,EDITOR_INSETS,1,1),
-	LIST_AREA_CONSTRAINTS = new GridBagConstraints(0,1,1,1,100,40,GridBagConstraints.CENTER, GridBagConstraints.BOTH,EDITOR_INSETS,1,1),
-	CREATE_AREA_CONSTRAINTS = new GridBagConstraints(0,2,1,1,100,5,GridBagConstraints.CENTER, GridBagConstraints.BOTH,EDITOR_INSETS,1,1);
+	GridBagConstraints
+	TAB_AREA_CONSTRAINTS
+	= new GridBagConstraints(0,0,1,1,100,55,GridBagConstraints.CENTER, GridBagConstraints.BOTH,EDITOR_INSETS,1,1),
+	LIST_AREA_CONSTRAINTS
+	= new GridBagConstraints(0,1,1,1,100,40,GridBagConstraints.CENTER, GridBagConstraints.BOTH,EDITOR_INSETS,1,1),
+	CREATE_AREA_CONSTRAINTS
+	= new GridBagConstraints(0,2,1,1,100,5,GridBagConstraints.CENTER, GridBagConstraints.BOTH,EDITOR_INSETS,1,1);
 
 
-	
+
 
 	/**
 	 * 
 	 */
-	public GEditor() {
+	public GEditor(String ascii_file) {
 		/*
 		 * nommage de l'éditeur
 		 */
@@ -108,11 +117,11 @@ public class GEditor extends JPanel{
 		GridBagLayout gbl = new GridBagLayout();
 		setLayout(gbl);
 		/*
-		 * creéation des zones
+		 * création des zones
 		 */
-		tabArea = new GTabArea();
-		listArea = new GListArea(new JList());
-		creationArea = new GCreationArea("C:\\Documents and Settings\\lino christophe\\Mes documents\\IUP MIS\\L3 INFO\\INF1603 - graphe3d\\CODAGE\\fichiertype.txt");
+		tabArea = new GTabArea(this);
+		listArea = new GListArea(new JList(), this);
+		creationArea = new GCreationArea(ascii_file,this);
 		/*
 		 * placement des zones
 		 */
@@ -135,17 +144,39 @@ public class GEditor extends JPanel{
 	 * @param focus
 	 * 		est-ce qu'il sera l'élément courant.
 	 */
-	public void addComponent(Object component, boolean focus) throws BadElementTypeException{
+	public void addComponent(Object component, boolean focus) {
+		if( tabArea.elements.indexOf(component) == -1 ){ // component is not already selected 
+			
+			Hashtable<Class, String> table_types = new Hashtable<Class, String>();
+			Object[] types_link = creationArea.table_link.keySet().toArray();
+			Object[] types_node = creationArea.table_node.keySet().toArray();
+			
+			for(int i=0;i<types_link.length;i++)
+				table_types.put(creationArea.table_link.get(types_link[i]), (String)types_link[i]);
+			for(int i=0;i<types_node.length;i++)
+				table_types.put(creationArea.table_node.get(types_node[i]), (String)types_node[i]);
 
-		if( component instanceof GNode || component instanceof GLink ){
-			Class cl = component.getClass();
-			/*
-			 * créer une nouvelle sélection
-			 */
-		}else{
-			throw new BadElementTypeException();
-		}//if
+			GTab tab = new GTab(component, tabArea.tabbedpane, table_types, view);
+			if( component instanceof GNode ){
+				GNode node = (GNode) component;
+				tabArea.elements.add(tabArea.nb_nodes,node);
+				tabArea.tabbedpane.add(tab,tabArea.nb_nodes);
+				tabArea.tabbedpane.setTitleAt(tabArea.nb_nodes, node.getName());			
+				tabArea.nb_nodes++;
+			}else if( component instanceof GLink ){
+				GLink link = (GLink) component;
+				tabArea.elements.add(link);
+				tabArea.tabbedpane.add(tab,link.getName());
+			}else
+				System.err.println(new BadElementTypeException("graph element").getMessage());
 
+			if(focus) tabArea.tabbedpane.setSelectedComponent(tab);
+			tabArea.remove.setEnabled(true);
+			tabArea.remove_all.setEnabled(true);
+			tabArea.unselect.setEnabled(true);
+			tabArea.unselect_all.setEnabled(true);
+		
+		}//if tabArea.elements.indexOf(component) == -1
 	}//addComponent
 
 	/**
@@ -155,417 +186,151 @@ public class GEditor extends JPanel{
 	public void setView(GView view) {
 		this.view = view;
 	}//addView
-	
+
 	public GView getView(){
 		return view;
 	}
 
-	/**
-	 * déselectionner tous les éléments (à voir si on la fait)
-	 *
-	 */
-	public void unselectAll(){
+	class ButtonListener extends MouseAdapter{
 
-		/*
-		 * enlever tous les éléments séléctionnés.
-		 */
-
-	}//unselectAll
-
-	/**
-	 * 
-	 * @author lino christophe
-	 *
-	 */
-	private class GTabArea extends JPanel{
-		/*
-		 * les onglets.
-		 */
-		public JTabbedPane tabbedpane;
-
-		/*
-		 * nombre de noeuds sélectionnés.
-		 */
-		public LinkedList<GNode> nodes;
-
-		/*
-		 * boutons pour la déselection de l'élément courant des onglets, tous les onglets.
-		 * boutons pour la suppression de l'élément courant des onglets, tous les onglets.
-		 */
-		private JButton unselect, unselect_all, remove, remove_all;
-
-		/*
-		 * marges entre les composants, et à l'intérieur des boutons.
-		 */
-		private final Insets 
-		COMPONANT_INSETS=new Insets(3,3,3,3);
-
-		/*
-		 * contraintes de placement des composants.
-		 */
-		private final double button_weighty=0.5;
-		private final GridBagConstraints
-		UNSELECT_CONSTRAINTS = new GridBagConstraints(0,1,1,1,40,button_weighty,GridBagConstraints.CENTER, GridBagConstraints.BOTH,COMPONANT_INSETS,1,1),
-		UNSELECT_ALL_CONSTRAINTS = new GridBagConstraints(1,1,1,1,60,button_weighty,GridBagConstraints.CENTER, GridBagConstraints.BOTH,COMPONANT_INSETS,1,1),
-		REMOVE_CONSTRAINTS = new GridBagConstraints(0,0,1,1,40,button_weighty,GridBagConstraints.CENTER, GridBagConstraints.BOTH,COMPONANT_INSETS,1,1),
-		REMOVE_ALL_CONSTRAINTS = new GridBagConstraints(1,0,1,1,GridBagConstraints.REMAINDER,button_weighty,GridBagConstraints.CENTER, GridBagConstraints.BOTH,COMPONANT_INSETS,1,1),
-		TABBEDPANE_CONSTRAINTS = new GridBagConstraints(0,2,2,1,100,100-2*button_weighty,GridBagConstraints.CENTER, GridBagConstraints.BOTH,COMPONANT_INSETS,1,1);
-
-		/**
-		 * 
-		 */
-		public GTabArea() {
-			/*
-			 * nommage de la zone.
-			 */
-			setBorder(new TitledBorder(new EtchedBorder(),"Elements sélectionnés"));
-			/*
-			 * initialisation
-			 */
-			nodes = new LinkedList<GNode>();
-			/*
-			 * création des boutons
-			 */
-			unselect = new JButton("déselectionner");
-			unselect_all = new JButton("déselectionner tout");
-			remove = new JButton("supprimer");
-			remove_all = new JButton("supprimer tout");
-			/*
-			 * modification des marges des boutons.
-			 * ajout d'un curseur main.
-			 * état initial : désactivés.
-			 */
-			unselect.setMargin(BUTTON_INSETS);
-			unselect_all.setMargin(BUTTON_INSETS);
-			remove.setMargin(BUTTON_INSETS);
-			remove_all.setMargin(BUTTON_INSETS);
-			
-			unselect.setCursor(new Cursor(Cursor.HAND_CURSOR));
-			unselect_all.setCursor(new Cursor(Cursor.HAND_CURSOR));
-			remove.setCursor(new Cursor(Cursor.HAND_CURSOR));
-			remove_all.setCursor(new Cursor(Cursor.HAND_CURSOR));
-			
-			remove.setEnabled(false);
-			remove_all.setEnabled(false);
-			unselect.setEnabled(false);
-			unselect_all.setEnabled(false);
-			/*
-			 * création des onglets. 
-			 */
-			tabbedpane = new JTabbedPane();
-			/*
-			 * placement.
-			 */
-			GridBagLayout gbl = new GridBagLayout();
-			setLayout(gbl);
-			/*
-			 * placement des composants.
-			 */
-			gbl.addLayoutComponent(unselect,UNSELECT_CONSTRAINTS);
-			gbl.addLayoutComponent(unselect_all,UNSELECT_ALL_CONSTRAINTS);
-			gbl.addLayoutComponent(remove,REMOVE_CONSTRAINTS);
-			gbl.addLayoutComponent(remove_all,REMOVE_ALL_CONSTRAINTS);
-			gbl.addLayoutComponent(tabbedpane,TABBEDPANE_CONSTRAINTS);
-			add(unselect);
-			add(unselect_all);
-			add(remove);
-			add(remove_all);
-			add(tabbedpane);
-			/*
-			 * ajout des actions
-			 */
-			GButtonListener buttonListener = new GButtonListener();
-			unselect.addMouseListener(buttonListener);
-			unselect_all.addMouseListener(buttonListener);
-			remove.addMouseListener(buttonListener);
-			remove_all.addMouseListener(buttonListener);
-		}//construct
-
-		/**
-		 * 
-		 */
-		public GNode[] getNodes(){
-			if(nodes.size()==0)return null;
-			else return nodes.toArray(new GNode[0]);
-		}//getNodes
-
-	}//inner class GTabArea
-
-	/**
-	 * 
-	 * @author lino christophe
-	 *
-	 */
-	private class GListArea extends JScrollPane{
-
-		/*
-		 * zone de la liste de sélection avec les éléments associés à l'onglet courant.
-		 */
-		public JList list;
-
-		/**
-		 * 
-		 */
-		public GListArea(JList list) {
-			/*
-			 * création à partir d'une JList vide,
-			 * et récupération de celle-ci.
-			 */
-			super(list);
-			this.list= list;
-			list.addMouseListener(new GListListener());
-			list.setVisibleRowCount(7);
-			/*
-			 * nommage de la zone
-			 */
-			setBorder(new TitledBorder(new EtchedBorder(),"Elements associés"));
-		}//construct
-
-		/**
-		 * place des éléments de même type dans la liste (doivent être soit des GNode, soit des GLink).
-		 * @param components
-		 * @throws BadElementTypeException
-		 */
-		public void show(Object[] components) throws BadElementTypeException{
-			if(!(components instanceof GNode[]) && !(components instanceof GLink[]))
-				throw new BadElementTypeException();
-			else
-				list.setListData(components);
-		}//show
-
-		class GListListener extends MouseAdapter{
-
-			public void mouseClicked(MouseEvent m){
-
-			}//mouseClicked
-
-		}//inner class GListListener
-
-	}//inner class GListArea
-
-	/**
-	 * 
-	 * @author lino christophe
-	 *
-	 */
-	private class GCreationArea extends JPanel{
-
-		/*
-		 * 2 boutons pour la création d'un (plusieurs) lien(s).
-		 * 1 bouton pour la création d'un noeud.
-		 */
-		JButton
-			button_arrow,
-			button_bridge,
-			button_node;
-		/*
-		 * choix déroulants des types
-		 */
-		JComboBox
-			combo_arrow,
-			combo_bridge,
-			combo_node;
-		
-		/*
-		 * champs formatés (double) pour les coordonnées
-		 */
-		JSpinner[]
-			coord_values=new JSpinner[3];
-		
-		/*
-		 * tables de hachage contenant les types connus.
-		 */
-		public Hashtable<String, Class>
-		table_link = new Hashtable<String, Class>(),
-		table_node   = new Hashtable<String, Class>();
-
-		public GCreationArea(String file){
-			/*
-			 * création de 2 zones
-			 */
-			JPanel links = new JPanel(), nodes = new JPanel();
-			/*
-			 * nommage des zones
-			 */			
-			links.setBorder(new TitledBorder(new EtchedBorder(),"liens"));
-			nodes.setBorder(new TitledBorder(new EtchedBorder(),"noeuds"));
-			/*
-			 * initialisation des éléments
-			 */
-			button_arrow = new JButton("créer arc(s)");
-			button_bridge = new JButton("créer arête(s)");
-			button_node = new JButton("créer noeud");
-			button_arrow.setMargin(BUTTON_INSETS);
-			button_bridge.setMargin(BUTTON_INSETS);
-			button_node.setMargin(BUTTON_INSETS);
-
-			combo_arrow = new JComboBox();
-			combo_arrow.setMaximumRowCount(5);
-			combo_bridge = new JComboBox();
-			combo_bridge.setMaximumRowCount(5);
-			combo_node = new JComboBox();
-			combo_node.setMaximumRowCount(5);
-
-			JLabel
-				x_label = new JLabel("x  ",SwingConstants.RIGHT),
-				y_label = new JLabel("y  ",SwingConstants.RIGHT),
-				z_label = new JLabel("z  ",SwingConstants.RIGHT);
-	
-				for(int i=0;i<3;i++)coord_values[i] = new JSpinner(new SpinnerNumberModel(0,-1*Double.MAX_VALUE,Double.MAX_VALUE,0.1));			
-			/*
-			 * chargement des types
-			 */
-			loadTypes(file);
-			/*
-			 * mise en place des types dans l'éditeur
-			 */
-			Object[]arrow_types = table_link.keySet().toArray();
-			if(arrow_types.length==0){
-				button_arrow.setEnabled(false);
-				combo_arrow.setEnabled(false);
-			}else
-				for(int i=0;i<arrow_types.length;i++) combo_arrow.addItem(arrow_types[i]);
-			
-			Object[]bridge_types = table_link.keySet().toArray();
-			if(bridge_types.length==0){
-				button_bridge.setEnabled(false);
-				combo_bridge.setEnabled(false);
-			}else
-				for(int i=0;i<bridge_types.length;i++) combo_bridge.addItem(bridge_types[i]);
-			
-			Object[]node_types = table_node.keySet().toArray();
-			if(node_types.length==0){
-				button_node.setEnabled(false);
-				combo_node.setEnabled(false);
-			}else
-				for(int i=0;i<node_types.length;i++) combo_node.addItem(node_types[i]);
-			/*
-			 * placement
-			 */
-			setLayout(new GridLayout(1,2));
-			links.setLayout(new GridLayout(5,1));
-			nodes.setLayout(new GridLayout(5,1));
-			/*
-			 * ajout des éléments
-			 */
-			links.add(button_arrow);
-			links.add(combo_arrow);
-			links.add(button_bridge);
-			links.add(combo_bridge);
-			links.add(new JPanel());
-
-			nodes.add(button_node);
-			nodes.add(combo_node);
-			JPanel coord[] = new JPanel[]{new JPanel(),new JPanel(),new JPanel()};
-			for(int i=0;i<3;i++){
-				coord[i].setLayout(new GridLayout(1,2));
-				nodes.add(coord[i]);	
-			}//for
-			coord[0].add(x_label);
-			coord[0].add(coord_values[0]);
-			coord[1].add(y_label);
-			coord[1].add(coord_values[1]);
-			coord[2].add(z_label);
-			coord[2].add(coord_values[2]);
-
-			add(links);
-			add(nodes);
-			/*
-			 * ajout des actions
-			 */
-			GButtonListener buttonListener = new GButtonListener();
-			button_arrow.addMouseListener(buttonListener);
-			button_bridge.addMouseListener(buttonListener);
-			button_node.addMouseListener(buttonListener);
-			
-		}//construct
-
-		private void loadTypes(String filename){
-			File file = new File(filename);
-			try{
-				BufferedReader buf = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-				String line;
-				int line_count=0;
-				while((line = buf.readLine())!=null){
-					line_count++;
-					String data[] = line.split(":");
-					try{
-						if(Class.forName(data[1]).newInstance() instanceof GLink){
-							table_link.put(data[0],Class.forName(data[1]));
-						}else if(Class.forName(data[1]).newInstance() instanceof GNode){
-							table_node.put(data[0],Class.forName(data[1]));
-						}else{
-							throw new BadElementTypeException();
-							/*
-							 * 
-							 */
-						}//if
-					}catch (BadElementTypeException e) {
-						System.err.println("line "+line_count+" \""+data[1]+"\" : this class is not an instance of a graph element");
-					}catch (Exception e) {
-						System.err.println("line "+line_count+" \""+data[1]+"\" : this class does not exist or is not accessible");
-					}
-				}//while
-			}catch (FileNotFoundException e) {
-				/*
-				 * 
-				 */
-			}catch (IOException e) {
-				/*
-				 * 
-				 */
-			}//try
-
-		}//loadTypes
-
-	}//inner class GCreationArea
-	
-	class GButtonListener extends MouseAdapter{
-		
 		public void mouseClicked(MouseEvent m){
 			JButton button = (JButton) m.getSource();
 			if(button == tabArea.remove){
 				/*
-				 * 
+				 * suppression
 				 */
+				GTab tab = (GTab) tabArea.tabbedpane.getSelectedComponent();
+				if(tab.getElement() instanceof GNode){
+					GNode node = (GNode) tab.getElement();
+					graph.removeNode(node.getName());
+				}else{
+					GLink link = (GLink) tab.getElement();
+					graph.removeLink(link.getName());
+				}//if
+				/*
+				 * unselect
+				 */
+				unselect();
 			}else if(button == tabArea.remove_all){
+				JTabbedPane tabbedpane = tabArea.tabbedpane;
 				/*
-				 * 
+				 * suppressions
 				 */
+				for(int i=0; i<tabbedpane.getComponentCount(); i++){
+					GTab tab = (GTab) tabbedpane.getComponentAt(i);
+					if(tab.getElement() instanceof GNode){
+						GNode node = (GNode) tab.getElement();
+						graph.removeNode(node.getName());
+					}else{
+						GLink link = (GLink) tab.getElement();
+						graph.removeLink(link.getName());
+					}//if
+				}//for
+				/*
+				 * unselect_all
+				 */
+				unselectAll();
 			}else if(button == tabArea.unselect){
-				GTab tab = (GTab)tabArea.tabbedpane.getSelectedComponent();
-				if(tabArea.tabbedpane.getSelectedIndex()<=tabArea.nodes.size())
-					tabArea.nodes.remove(tabArea.tabbedpane.getSelectedIndex());
-				tabArea.tabbedpane.remove(tabArea.tabbedpane.getSelectedIndex());
+				unselect();
 			}else if(button == tabArea.unselect_all){
-				tabArea.tabbedpane.removeAll();
-				tabArea.nodes = new LinkedList<GNode>();
+				unselectAll();
 			}else if(button == creationArea.button_arrow){
-				String type = (String) creationArea.combo_arrow.getSelectedItem();
-				GNode[]nodes = tabArea.nodes.toArray(new GNode[0]);
-				/*
-				 * 
-				 */
+				JComboBox combo = creationArea.combo_arrow;
+				String type_of_links  = (String) combo.getSelectedItem();
+				Class link_class = creationArea.table_link.get(type_of_links);
+				GNode[]nodes = new GNode[tabArea.nb_nodes];
+				for(int i=0; i<nodes.length;i++)
+					nodes[i] = (GNode) tabArea.elements.get(i);
+				try{
+					GPopup.showPopup(GEditor.this,nodes, GPopup.ARROW, link_class,type_of_links);
+				}catch (Exception e) {
+					System.out.println(e+" button listener : button_arrow");
+					/*
+					 * on ne devrait pas arriver ici
+					 */
+				}//try
 			}else if(button == creationArea.button_bridge){
-				String type = (String) creationArea.combo_bridge.getSelectedItem();
-				GNode[]nodes = tabArea.nodes.toArray(new GNode[0]);
-				/*
-				 * 
-				 */
+				JComboBox combo = creationArea.combo_bridge;
+				String type_of_links = (String) combo.getSelectedItem();
+				Class link_class = creationArea.table_link.get(type_of_links);
+				GNode[]nodes = new GNode[tabArea.nb_nodes];
+				for(int i=0; i<nodes.length;i++)
+					nodes[i] = (GNode) tabArea.elements.get(i);
+				try{
+					System.out.println(type_of_links);
+					GPopup.showPopup(GEditor.this,nodes, GPopup.BRIDGE, link_class, type_of_links);
+				}catch (Exception e) {
+					System.out.println(e+" button listener : button_bridge");
+					/*
+					 * on ne devrait pas arriver ici
+					 */
+				}//try
 			}else if(button == creationArea.button_node){
-				String type = (String) creationArea.combo_node.getSelectedItem();
-				/*
-				 * 
-				 */
+				JComboBox combo = creationArea.combo_node;
+				String type_of_node = (String) combo.getSelectedItem();
+				Class node_class = creationArea.table_node.get(type_of_node);
+				Class[] construct_param = new Class[]{String.class, float.class, float.class, float.class};
+				try{
+					/*
+					 * getting back the coordonates x y z from the spinners
+					 */
+					float
+					x = ( (Double) creationArea.coord_values[0].getValue() ).floatValue(),
+					y = ( (Double) creationArea.coord_values[1].getValue() ).floatValue(),
+					z = ( (Double) creationArea.coord_values[2].getValue() ).floatValue();
+					/*
+					 * and creating a new node with this parameters
+					 */
+					GNode node = (GNode) node_class.getConstructor(construct_param).newInstance("",x,y,z);
+					/*
+					 * trying to associate a non-used name for this node
+					 */
+					node.setName(type_of_node+"_");
+					String name = node.getName();
+					int j=1;
+					node.setName(name+j);
+					boolean good = graph.addNode(node);
+					while( ! good ){
+						j++;
+						node.setName(name+j);
+						good = graph.addNode(node);
+					}//while
+					addComponent(node, true);
+					tabArea.refreshList();
+				}catch (Exception e) {
+					System.out.println(e+" button listener : button_node");
+				}//try
 			}//if
 			if(tabArea.tabbedpane.getComponentCount()==0){
 				tabArea.remove.setEnabled(false);
 				tabArea.remove_all.setEnabled(false);
 				tabArea.unselect.setEnabled(false);
 				tabArea.unselect_all.setEnabled(false);
-			}
+			}//if
+			for(int i=0; i<graph.getNodes().size();i++)
+				System.out.println(graph.getNodes().keySet().toArray()[i]);
+
+			for(int i=0; i<graph.getLinks().size();i++)
+				System.out.println(graph.getLinks().keySet().toArray()[i]);			
 		}//mouseClicked
-		
+
+		private void unselect(){
+			int index = tabArea.tabbedpane.getSelectedIndex();
+			tabArea.elements.remove(index);
+			if(index < tabArea.nb_nodes){
+				tabArea.nb_nodes--;
+			}//if
+			tabArea.tabbedpane.remove(index);
+			tabArea.refreshList();
+		}//unselect
+
+		private void unselectAll(){
+			tabArea.tabbedpane.removeAll();
+			tabArea.elements = new LinkedList<Object>();
+			tabArea.nb_nodes = 0;
+			tabArea.refreshList();
+		}//unselectAll
+
 	}//inner class GButtonListener
 
 }//class GEditor
