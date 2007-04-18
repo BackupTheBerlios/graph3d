@@ -15,6 +15,7 @@ import javax.media.j3d.Canvas3D;
 import javax.media.j3d.Locale;
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.VirtualUniverse;
+import javax.vecmath.Vector3f;
 import javax.media.j3d.Background;
 import javax.media.j3d.BoundingBox;
 import javax.media.j3d.BoundingSphere;
@@ -33,7 +34,7 @@ public class GGrapheUniverse extends VirtualUniverse{
 	private Locale locale;
 	private GGraph graph;
 	private GView view;
-	private BranchGroup sceneCompiled;//peut-�tre pas n�cessaire si possibilit� de modifier la scene m�me si elle est compil�e
+	private BranchGroup sceneCompiled;//peut-être pas nécessaire si possibilité de modifier la scene même si elle est compilée
 	private Hashtable<String, TransformGroup> ComponentsView;
 	
 	private BranchGroup scene;
@@ -67,24 +68,101 @@ public class GGrapheUniverse extends VirtualUniverse{
 		while (keys.hasMoreElements()) {
 			String key = keys.nextElement();
 			this.addGLink(links.get(key));
-			
 		}
 	}
 	/**
 	 * This function is used to create the view.
 	 */
 	private void createView() {
-		float[] bestPlaceToSee = this.graph.getBestPlaceToSee();
-		this.view = new GView(bestPlaceToSee);
+		this.view = new GView();
+		this.createBestView();
+	}
+	
+	private void createBestView() {		
+		float[] bestPointToSee = new float[3];
+		float fieldOfView = this.view.getFieldOfView();
+	
 		
+		float min=0, max = 0, minZ = 0, maxZ = 0;
 		
-		// il faut maintenant que � partir du barycentre, je "d�zoome pour que l'on puisse voir tous les nodes
-		// comment d�zoomer???
-		// trouver les noeuds extr�mes : plus grand X, plus grand Y, plus petit X, plus petit Y, plus grand Z
-		// puis construire un triangle(une pyramide plut�t) qui permettrait d'avoir ces 5 noeuds � l'int�rieur
+		Enumeration<String> keys = this.graph.getNodes().keys();
+		while (keys.hasMoreElements()) {
+			String key = keys.nextElement();
+			GNode node = this.graph.getNode(key);
+			
+			if (min > node.getCoordonnateX()) {
+				min = node.getCoordonnateX();
+			} else if (max < node.getCoordonnateX()) {
+				max = node.getCoordonnateX();
+			}
+			if (min > node.getCoordonnateY()) {
+				min = node.getCoordonnateY();
+			} else if (max < node.getCoordonnateY()) {
+				max = node.getCoordonnateY();
+			}
+			if (minZ > node.getCoordonnateZ()) {
+				minZ = node.getCoordonnateZ();
+			} else if (maxZ < node.getCoordonnateZ()) {
+				maxZ = node.getCoordonnateZ();
+			}
+		}
 		
+		//construction des points extrèmes qui sont le plus proche de la caméra
+		//si ces points passent dans la vue les autres points existant aussi.
+		float[] xyZ = new float [] {min, min, maxZ};
+		float[] xYZ = new float [] {min, max, maxZ};
+		//float[] XYZ = new float [] {maxX, maxX, maxZ};
+		//float[] XyZ = new float [] {maxX, minX, maxZ};
+		//les deux derniers points ne sont pas utiles d'où le commentaire
 		
+		//calcul du barycentre de ces points pour connaitre X et Y que l'on recherche pour la caméra
+		float[] barycenter = new float[] {(min + max) / 2, (min + max) / 2, maxZ};
 		
+		//calcul de la distance nécessaire pour voir les 4 points
+		//cette distance correspond à la distance entre le barycentre précédemment calculé et le point où doit se situer la caméra.
+		// en effet :
+		//
+		// *    E    D     *
+		//	*     C       *
+		//	 *           *
+		//    * A     B *
+		//	   *       *
+		//	    *     *
+		//       *   *
+		//        * *
+		//		   *
+		//
+		// si A et B sont contenu dans le champ de vision alors obligatoirement, 
+		//les points possédant des coordonnées qui ne sont pas supérieurs seront aussi présent dans le champ de vision
+		
+		//la base correspond à la longueur entre le barycentre et l'extrémité du champ de vision.
+		// cette extrémité se trouve sur l'un des 4 côté que forme les 4 points précédemment calculés.
+		float[] base = new float[3] ;
+		//calcul de X de la base
+		base[0] = xyZ[0] + ((xYZ[0] - xyZ[0]) / 2);
+		//calcul de Y de la base
+		base[1] = xyZ[1] + ((xYZ[1] - xyZ[1]) / 2);
+		//calcul de Z de la base
+		base[2] = xyZ[2] + ((xYZ[2] - xyZ[2]) / 2);
+		
+		//calcul de la distance
+		float lengthBetween = this.getLengthBetween(barycenter, base);
+		
+		float length = (float)(lengthBetween / Math.tan(fieldOfView/ 2));
+		
+		bestPointToSee[0] = barycenter[0];
+		bestPointToSee[1] = barycenter[1];
+		bestPointToSee[2] = barycenter[2] + length;
+		
+		//définition de la vue
+		System.out.println(bestPointToSee[0]);
+		System.out.println(bestPointToSee[1]);
+		System.out.println(bestPointToSee[2]);
+		this.view.putOnBestPointToSee(bestPointToSee);
+	}
+	
+	private float getLengthBetween(float[] one, float[] second) {
+		return (float) Math.sqrt(Math.pow(one[0] - second[0], 2) + Math.pow(one[1] - second[1], 2) + Math.pow(one[2] - second[2], 2));
 	}
 	
 	/**

@@ -2,6 +2,7 @@ package graph3d.elements;
 
 import graph3d.exception.CollisionException;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -86,6 +87,7 @@ public class GGraph {
 			this.nodes.put(node.getName(), node);
 			return true;
 		} else {
+			//pourquoi pas throw SameNameException?????
 			return false;
 		}
 	}
@@ -95,74 +97,23 @@ public class GGraph {
 	 * @param node the node to test his coordonates
 	 */
 	public void collision(GNode node) {
-		
+		boolean newCollision = true;
 		Enumeration<String> keys = this.nodes.keys();
 		while (keys.hasMoreElements()) {
 			String key = keys.nextElement();
 			GNode _node = this.nodes.get(key);
 			if (!this.distanceBetweenIsGood(node, _node)) {
-				(new CollisionException()).showError();
+				if (newCollision) {
+					(new CollisionException()).showError();
+					newCollision = false;
+				}
 				this.putDistanceBetween(node, _node);
 				this.collision(node);
 				break;
 			}
 		}
 	}
-	
-	/**
-	 * This function is used to caclculate the barycenter of all nodes of this graph.
-	 * @return an float array which contains X, Y, Z coordonates of the barycenter.
-	 */
-	public float[] getBestPlaceToSee() {
-		float[] barycenter = new float[]{0, 0, 0};
-		
-		GNode nodeNull = new GNode("", 0, 0, 0);
-		GNode highterX = nodeNull;
-		GNode highterY = nodeNull;
-		GNode highterZ = nodeNull;
-		GNode smallerX = nodeNull;
-		GNode smallerY = nodeNull;
-		GNode smallerZ = nodeNull;
-		
-		
-		Enumeration<String> keys = this.nodes.keys();
-		while (keys.hasMoreElements()) {
-			String key = keys.nextElement();
-			GNode tmp = this.nodes.get(key);
-			float x = tmp.getCoordonnateX();
-			float y = tmp.getCoordonnateY();
-			float z = tmp.getCoordonnateZ();
-			barycenter[0] += x;
-			barycenter[1] += y;
-			barycenter[2] += z;
-			
-			if (x > highterX.getCoordonnateX()) {
-				highterX = tmp;
-			} else if (x < smallerX.getCoordonnateX()) {
-				smallerX = tmp;
-			}
-			if (y > highterY.getCoordonnateY()) {
-				highterY = tmp;
-			} else if (y < smallerY.getCoordonnateY()) {
-				smallerY = tmp;
-			}
-			if (z > highterZ.getCoordonnateZ()) {
-				highterZ = tmp;
-			} else if (z < smallerZ.getCoordonnateZ()) {
-				smallerZ = tmp;
-			}
-			
-			
-		}
-		barycenter[0] = barycenter[0]/this.nodes.size();
-		barycenter[1] = barycenter[1]/this.nodes.size();
-		barycenter[2] = barycenter[2]/this.nodes.size();
-		
-		barycenter[2] = barycenter[2] + highterZ.getCoordonnateZ() + highterZ.getRadius() + 5;
-			
-		return barycenter;
-	}
-	
+
 	/**
 	 * This function test if there are collisions.
 	 * @param node the node which potentially cause collision.

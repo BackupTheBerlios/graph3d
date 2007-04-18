@@ -28,11 +28,13 @@ public class GView extends BranchGroup{
 	private View view;
 	private Canvas3D canvas;
 	
+	private Vector3f bestPointToSee;
+	
 	/**
 	 * This constructor is used to create a GView.
 	 * @param _bestViewToSee of type float [].
 	 */
-	public GView(float [] _bestViewToSee) {
+	public GView() {
 
 		super();
 		
@@ -50,6 +52,9 @@ public class GView extends BranchGroup{
 	    this.view.attachViewPlatform(this.viewPlatform);
 	    this.view.setPhysicalBody(this.PHYSICALBODY);
 	    this.view.setPhysicalEnvironment(this.PHYSICALENVIRONMENT);
+	    
+	    //définition de la profondeur du champ de vision
+	    this.view.setBackClipDistance(20);
 
 	    // Creation du groupe de transformation qui permet de modifier la position
 	    // de la camera
@@ -62,13 +67,22 @@ public class GView extends BranchGroup{
 	    // Vue
 	    this.setCapability(BranchGroup.ALLOW_DETACH);
 	    this.addChild(this.transformGroup);
-	    
-	    Transform3D transform = new Transform3D();
-	    transform.setTranslation(new Vector3f(0f, 0f, 15f));
-	    //transform.setTranslation(new Vector3f(_bestViewToSee[0], _bestViewToSee[1], _bestViewToSee[2]));
-	    this.transformGroup.setTransform(transform);
-	    System.out.println(this.view.getFieldOfView());
-	    System.out.println(Math.PI/4);
+	}
+	
+	public void putOnBestPointToSee() {
+		 Transform3D transform = new Transform3D();
+		 transform.setTranslation(this.bestPointToSee);
+		 //transform.setTranslation(new Vector3f(0f, 0f, 40f));
+		 this.transformGroup.setTransform(transform);
+	}
+	
+	void putOnBestPointToSee(float[] _bestPointToSee) {
+		this.bestPointToSee = new Vector3f(_bestPointToSee);
+		this.putOnBestPointToSee();
+	}
+	
+	float getFieldOfView() {
+		return (float)this.view.getFieldOfView();
 	}
 	
 	/**
@@ -85,6 +99,14 @@ public class GView extends BranchGroup{
 	 */
 	public void setCanvas(Canvas3D canvas) {
 		this.canvas = canvas;
+	}
+
+	public Vector3f getBestPointToSee() {
+		return bestPointToSee;
+	}
+
+	public void setBestPointToSee(Vector3f bestPointToSee) {
+		this.bestPointToSee = bestPointToSee;
 	}
 
 }
