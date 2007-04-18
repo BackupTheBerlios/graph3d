@@ -94,7 +94,8 @@
 		<javadoc sourcepath="${src.java.dir}" packagenames="*.*"
 				destdir="${build.web.javadoc.dir}"
 				author="true" version="true" use="true" private="false"
-				windowtitle="Graphe3D API">
+				windowtitle="Graphe3D API" 
+				excludepackagenames="graph3dTest/*">
 
 			<doctitle><![CDATA[<h1>Graphe 3D API</h1>]]></doctitle>
 			<bottom><![CDATA[<i>Copyright &copy; 2007 Catric - Daubert - Lino - Magnin - Popa.</i>]]></bottom>
@@ -182,7 +183,7 @@
 	<target name="jar" depends="class" description="Creating package Jar">
 		
 		<!-- the API Graphe 3D -->
-		<jar destfile="${build.jar.dir}/graphe3d.jar" basedir="${build.class.dir}">
+		<jar destfile="${build.jar.dir}/graphe3d.jar" basedir="${build.class.dir}" excludes="**/**/*Test.class,EditorGraph/*.class">
 			<manifest>
 				<attribute name="Manifest-Version" value="1.0"/>
 				<attribute name="Created-By" value="Catric - Daubert - Lino - Magnin - Popa."/>
@@ -191,7 +192,7 @@
 		</jar>
 		
 		<!-- Editor of the API Graphe 3D -->
-		<jar destfile="${build.jar.dir}/editor.jar" basedir="${build.class.dir}">
+		<jar destfile="${build.jar.dir}/editor.jar" basedir="${build.class.dir}" excludes="**/**/*Test.class">
 			<manifest>
 				<attribute name="Manifest-Version" value="1.0"/>
 				<attribute name="Created-By" value="Catric - Daubert - Lino - Magnin - Popa."/>
