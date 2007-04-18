@@ -183,7 +183,8 @@
 	<target name="jar" depends="class" description="Creating package Jar">
 		
 		<!-- the API Graphe 3D -->
-		<jar destfile="${build.jar.dir}/graphe3d.jar" basedir="${build.class.dir}" excludes="**/**/*Test.class,EditorGraph/*.class">
+		<jar destfile="${build.jar.dir}/graphe3d.jar" basedir="${build.class.dir}" 
+				excludes="**/**/*Test.class,EditorGraph/*.class">
 			<manifest>
 				<attribute name="Manifest-Version" value="1.0"/>
 				<attribute name="Created-By" value="Catric - Daubert - Lino - Magnin - Popa."/>
@@ -192,7 +193,8 @@
 		</jar>
 		
 		<!-- Editor of the API Graphe 3D -->
-		<jar destfile="${build.jar.dir}/editor.jar" basedir="${build.class.dir}" excludes="**/**/*Test.class">
+		<jar destfile="${build.jar.dir}/editor.jar" basedir="${build.class.dir}" 
+				excludes="**/**/*Test.class">
 			<manifest>
 				<attribute name="Manifest-Version" value="1.0"/>
 				<attribute name="Created-By" value="Catric - Daubert - Lino - Magnin - Popa."/>
