@@ -15,7 +15,6 @@ import javax.media.j3d.Canvas3D;
 import javax.media.j3d.Locale;
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.VirtualUniverse;
-import javax.vecmath.Vector3f;
 import javax.media.j3d.Background;
 import javax.media.j3d.BoundingBox;
 import javax.media.j3d.BoundingSphere;
@@ -24,7 +23,7 @@ import javax.vecmath.Point3d;
 import com.sun.j3d.utils.behaviors.keyboard.KeyNavigatorBehavior;
 import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
 import com.sun.j3d.utils.behaviors.mouse.MouseTranslate;
-import com.sun.j3d.utils.behaviors.mouse.MouseZoom;
+import com.sun.j3d.utils.behaviors.mouse.MouseWheelZoom;
 
 /**
  * This class define a GGrapheUniverse.
@@ -160,7 +159,7 @@ public class GGrapheUniverse extends VirtualUniverse{
 		//calcul de Z de la base
 		base2[2] = xyZ[2] + ((XyZ[2] - xyZ[2]) / 2);
 		
-		//calcul de la longueur de la plus ongue base
+		//calcul de la longueur de la plus longue base
 		float lengthBetween = 0;
 		if (this.getLengthBetween(barycenter, base1) > this.getLengthBetween(barycenter, base2)) {
 			lengthBetween = this.getLengthBetween(barycenter, base1);
@@ -174,7 +173,7 @@ public class GGrapheUniverse extends VirtualUniverse{
 		bestPointToSee[1] = barycenter[1];
 		bestPointToSee[2] = barycenter[2] + length;
 		
-		//définition de la vue
+		//definition de la vue
 		System.out.println(bestPointToSee[0]);
 		System.out.println(bestPointToSee[1]);
 		System.out.println(bestPointToSee[2]);
@@ -251,31 +250,41 @@ public class GGrapheUniverse extends VirtualUniverse{
 	}
 	
 	/**
-	 * 
+	 * appel de la methode zoom de la classe view
+	 * zoom plus de 1
 	 */
-	public void zoom(){
-		
+	public void zoomMore(){
+		this.view.zoom(-1f);
 	}
 	
 	/**
-	 * 
+	 * appel de la methode zoom de la classe view
+	 * zoom moins de 1
+	 */
+	public void zoomLess(){
+		this.view.zoom(1f);
+	}
+	/**
+	 * appel de la methode zoom de la classe view
+	 * zoom de valeur de la variable zoom
 	 */
 	public void zoom(float zoom){
-		
+		this.view.zoom(zoom);
 	}
 	
 	/**
 	 * 
 	 */
-	public void rotate(){
+	public void rotate(){ // A quoi  elle sert cette methode ????
 		
 	}
 	
 	/**
-	 * 
+	 * appel de la methode rotate de la classe view
+	 * rotation d'angle de la valeur de la variable angle
 	 */
 	public void rotate(float angle){
-		
+		this.view.zoom(angle);
 	}
 	
 	/**
@@ -311,8 +320,8 @@ public class GGrapheUniverse extends VirtualUniverse{
 	    translate.setSchedulingBounds(new BoundingSphere());
 	    scene.addChild(translate);
 	
-	    // Creation comportement zoom a la souris
-	    MouseZoom zoom = new MouseZoom(mouseTransform);
+	    // Creation comportement zoom a la souris avec la molette
+	    MouseWheelZoom zoom = new MouseWheelZoom(mouseTransform);
 	    zoom.setSchedulingBounds(new BoundingSphere());
 	    scene.addChild(zoom);
 	}

@@ -12,6 +12,7 @@ import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.View;
 import javax.media.j3d.ViewPlatform;
+import javax.vecmath.AxisAngle4d;
 import javax.vecmath.Vector3f;
 
 /**
@@ -107,6 +108,51 @@ public class GView extends BranchGroup{
 
 	public void setBestPointToSee(Vector3f bestPointToSee) {
 		this.bestPointToSee = bestPointToSee;
+	}
+	
+	/**
+	 * The getter of the camera's position.
+	 * @return a Vector3f component
+	 */
+	public Vector3f getVector3fCamera(){
+		Transform3D transCamera=null;
+		this.transformGroup.getTransform(transCamera);
+		
+		Vector3f vectorCamera=null;
+		
+		transCamera.get(vectorCamera);
+		
+		return vectorCamera;
+	
+	}	
+			
+	/**
+	 * This fonction is used to move the camera's view to do a zoom
+	 * @param distance type of float
+	 */
+	public void zoom(float distance){ // pb : rafraichissement de la vue ?
+		
+		Transform3D zoom = new Transform3D();
+		Vector3f coordCamera=this.getVector3fCamera();
+		
+		zoom.setTranslation(new Vector3f(coordCamera.x, coordCamera.y , (coordCamera.z+(distance)) ));
+		
+		 this.transformGroup.setTransform(zoom);	
+	}
+	
+	/**
+	 * This fonction is used to move the camera's view to do a zoom
+	 * @param distance typr of float
+	 */
+	public void rotate(float angle){
+		
+		Transform3D rotate = new Transform3D();
+		Vector3f coordCamera=this.getVector3fCamera();
+		
+		rotate.setRotation(new AxisAngle4d(coordCamera.x,coordCamera.y,coordCamera.z,angle));
+		
+		this.transformGroup.setTransform(rotate);	
+
 	}
 
 }
