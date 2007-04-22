@@ -4,8 +4,6 @@
 package graph3dTest.elementsTest;
 
 import java.util.Hashtable;
-import java.util.LinkedList;
-
 import graph3d.elements.GLink;
 import graph3d.elements.GNode;
 import junit.framework.TestCase;
