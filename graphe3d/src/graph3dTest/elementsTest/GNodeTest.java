@@ -4,17 +4,16 @@
 package graph3dTest.elementsTest;
 
 import java.util.Hashtable;
+import java.util.LinkedList;
 
+import graph3d.elements.GLink;
 import graph3d.elements.GNode;
 import junit.framework.TestCase;
 
 /**
- * A Completer
+ * This class test all the methods of the GNode class.
  * 
- * Remplacer la ligne :  fail("Not yet implemented");
- * Par le code approprié
- * 
- * @author Jerome
+ * @author Jerome Catric
  *
  */
 public class GNodeTest extends TestCase {
@@ -69,7 +68,26 @@ public class GNodeTest extends TestCase {
 	 * Test method for {@link graph3d.elements.GNode#GNode(java.lang.String, float, float, float, float)}.
 	 */
 	public void testGNodeStringFloatFloatFloatFloat() {
-		fail("Not yet implemented");
+		// Création des éléments à tester :
+		GNode node1 = new GNode("node two", 2, 4, 5, 3);
+
+		// Verification du nom du noeud
+		assertNotNull(node1.getName());
+		assertEquals(node1.getName(), "node two");
+
+		// Verification des coordonnees
+		assertEquals(node1.getCoordonates()[0], new Float(2));
+		assertEquals(node1.getCoordonates()[1], new Float(4));
+		assertEquals(node1.getCoordonates()[2], new Float(5));
+
+		// Verification de l'initialisation de la table de hachage pour les  attributs
+		assertNotNull(node1.getAttributes());
+
+		// Verification de linitiation de la Liste de lien
+		assertNotNull(node1.getLinks());
+		
+		// Verification du rayon de la sphere
+		assertEquals(node1.getRadius(),new Float(3));
 	}
 
 	/**
@@ -93,7 +111,16 @@ public class GNodeTest extends TestCase {
 	 * Test method for {@link graph3d.elements.GNode#setCoordonates(float[])}.
 	 */
 	public void testSetCoordonates() {
-		fail("Not yet implemented");
+		// Création des éléments à tester :
+		GNode node = new GNode("node");
+		
+		//Modification des coordonnées du noeud.
+		node.setCoordonates(new float[]{2,3,4});
+		
+		//Verification de la modification.
+		assertEquals(node.getCoordonates()[0],new Float(2));
+		assertEquals(node.getCoordonates()[1],new Float(3));
+		assertEquals(node.getCoordonates()[2],new Float(4));
 	}
 
 	/**
@@ -115,14 +142,38 @@ public class GNodeTest extends TestCase {
 	 * Test method for {@link graph3d.elements.GNode#setAttributeByName(java.lang.String, java.lang.String, java.lang.String)}.
 	 */
 	public void testSetAttributeByName() {
-		fail("Not yet implemented");
+		// Création des éléments à tester :
+		GNode node = new GNode("node");
+		
+		// Ajout des attribues au noeud
+		String[] data = new String[]{"wifi","boolean","false"};
+		Hashtable<String, String[]> attributes = new Hashtable<String, String[]>();
+		attributes.put("wifi", data);
+		node.setAttributes(attributes);	
+		
+		// Modification d'un attribut du noeud
+		node.setAttributeByName("wifi","boolean","true");
+		
+		//Verification que l'attribut est bien présent.
+		assertEquals(node.getAttributeByName("wifi")[0],"wifi");
+		assertEquals(node.getAttributeByName("wifi")[1],"boolean");
+		assertEquals(node.getAttributeByName("wifi")[2],"true");
 	}
 
 	/**
 	 * Test method for {@link graph3d.elements.GNode#addLink(graph3d.elements.GLink)}.
 	 */
 	public void testAddLink() {
-		fail("Not yet implemented");
+		// Création des éléments à tester :
+		GNode node1 = new GNode("node1");
+		GNode node2 = new GNode("node2");
+		GLink link = new GLink("link",node2,node2);
+		
+		//Ajout du lien au noeud
+		node1.addLink(link);
+		
+		//Vérification que l'ajout d'un lien s'est bien passé.
+		assertEquals(node1.getLinks().getFirst(), link);
 	}
 
 	/**
@@ -178,14 +229,30 @@ public class GNodeTest extends TestCase {
 	 * Test method for {@link graph3d.elements.GNode#getAttributes()}.
 	 */
 	public void testGetAttributes() {
-		fail("Not yet implemented");
+		// Création des éléments à tester :
+		GNode node = new GNode("node");
+		
+		// Ajout des attribues au noeud
+		String[] data = new String[]{"wifi","boolean","false"};
+		Hashtable<String, String[]> attributes = new Hashtable<String, String[]>();
+		attributes.put("wifi", data);
+		node.setAttributes(attributes);	
+		
+		//Récuperation des attributs et vérification
+		assertEquals(node.getAttributes(), attributes);
 	}
 
 	/**
 	 * Test method for {@link graph3d.elements.GNode#getCoordonates()}.
 	 */
 	public void testGetCoordonates() {
-		fail("Not yet implemented");
+		// Création des éléments à tester :
+		GNode node = new GNode("node two", 2, 4, 5);
+		
+		//Récuperation des coordonnées et vérification
+		assertEquals(node.getCoordonates()[0],new Float(2));
+		assertEquals(node.getCoordonates()[1],new Float(4));
+		assertEquals(node.getCoordonates()[2],new Float(5));
 	}
 
 	/**
@@ -202,14 +269,31 @@ public class GNodeTest extends TestCase {
 	 * Test method for {@link graph3d.elements.GNode#getAttributeByName(java.lang.String)}.
 	 */
 	public void testGetAttributeByName() {
-		fail("Not yet implemented");
+		// Création des éléments à tester :
+		GNode node = new GNode("node");
+		
+		// Ajout des attribues au noeud
+		String[] data = new String[]{"wifi","boolean","false"};
+		Hashtable<String, String[]> attributes = new Hashtable<String, String[]>();
+		attributes.put("wifi", data);
+		node.setAttributes(attributes);	
+		
+		// Récuperation des données sur un attribut d'un noeud et vérification des valeurs.
+		assertEquals(node.getAttributeByName("wifi"), data);
 	}
 
 	/**
 	 * Test method for {@link graph3d.elements.GNode#getLinks()}.
 	 */
 	public void testGetLinks() {
-		fail("Not yet implemented");
+		// Création des éléments à tester :
+		GNode node1 = new GNode("node1");
+		GNode node2 = new GNode("node2");
+		GLink link = new GLink("link",node1,node2);
+		
+		//Vérification que l'ajout d'un lien s'est bien passé.
+		assertEquals(node1.getLinks().getFirst(), link);
+		assertEquals(node2.getLinks().getFirst(), link);
 	}
 
 	/**
