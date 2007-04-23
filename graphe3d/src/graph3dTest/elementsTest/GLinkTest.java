@@ -1,20 +1,14 @@
-/**
- * 
- */
 package graph3dTest.elementsTest;
 
+import java.util.Hashtable;
 import graph3d.elements.GLink;
 import graph3d.elements.GNode;
 import junit.framework.TestCase;
 
 /**
- * A Completer
+ * This class test all the methods of the GLink class.
  * 
- * Remplacer la ligne :  fail("Not yet implemented");
- * Par le code approprié
- * 
- * @author Jerome
- *
+ * @author Jerome Catric, Iuliana Popa
  */
 public class GLinkTest extends TestCase {
 
@@ -22,92 +16,221 @@ public class GLinkTest extends TestCase {
 	 * Test method for {@link graph3d.elements.GLink#GLink(java.lang.String, graph3d.elements.GNode, graph3d.elements.GNode)}.
 	 */
 	public void testGLinkStringGNodeGNode() {
-		fail("Not yet implemented");
+		// Création des éléments à tester
+		GNode node1 = new GNode("node");
+		GNode node2 = new GNode("node2");
+		GLink lien = new GLink("link", node1, node2);
+
+		// Vérification des éléments d'un lien
+		assertEquals(lien.getName(), "link");
+		assertEquals(lien.getFirstNode(), node1);
+		assertEquals(lien.getSecondNode(), node2);
+
 	}
 
 	/**
 	 * Test method for {@link graph3d.elements.GLink#GLink(java.lang.String, java.lang.String, graph3d.elements.GNode, graph3d.elements.GNode)}.
 	 */
 	public void testGLinkStringStringGNodeGNode() {
-		fail("Not yet implemented");
+		// Création des éléments à tester
+		GNode node1 = new GNode("node");
+		GNode node2 = new GNode("node2");
+		GLink lien = new GLink("link", "red", node1, node2);
+
+		// Vérification des éléments d'un lien
+		assertEquals(lien.getName(), "link");
+		assertEquals(lien.getColor(), "red");
+		assertEquals(lien.getFirstNode(), node1);
+		assertEquals(lien.getSecondNode(), node2);
 	}
 
 	/**
 	 * Test method for {@link graph3d.elements.GLink#GLink(boolean, java.lang.String, graph3d.elements.GNode, graph3d.elements.GNode)}.
 	 */
 	public void testGLinkBooleanStringGNodeGNode() {
-		fail("Not yet implemented");
+		// Création des éléments à tester
+		GNode node1 = new GNode("node");
+		GNode node2 = new GNode("node2");
+		GLink lien = new GLink(true, "link", node1, node2);
+
+		// Vérification des éléments d'un lien
+		assertEquals(lien.getName(), "link");
+		assertEquals(lien.isType(), true);
+		assertEquals(lien.getFirstNode(), node1);
+		assertEquals(lien.getSecondNode(), node2);
 	}
 
 	/**
 	 * Test method for {@link graph3d.elements.GLink#GLink(boolean, java.lang.String, java.lang.String, graph3d.elements.GNode, graph3d.elements.GNode)}.
 	 */
 	public void testGLinkBooleanStringStringGNodeGNode() {
-		fail("Not yet implemented");
+		// Création des éléments à tester
+		GNode node1 = new GNode("node");
+		GNode node2 = new GNode("node2");
+		GLink lien = new GLink(true, "link", "red", node1, node2);
+
+		// Vérification des éléments d'un lien
+		assertEquals(lien.getName(), "link");
+		assertEquals(lien.getColor(), "red");
+		assertEquals(lien.isType(), true);
+		assertEquals(lien.getFirstNode(), node1);
+		assertEquals(lien.getSecondNode(), node2);
 	}
 
 	/**
 	 * Test method for {@link graph3d.elements.GLink#setAttributes(java.util.Hashtable)}.
 	 */
 	public void testSetAttributes() {
-		fail("Not yet implemented");
+		// Création des éléments à tester
+		GNode node1 = new GNode("node");
+		GNode node2 = new GNode("node2");
+		GLink lien = new GLink(true, "link", "red", node1, node2);
+
+		// Modification des attributs
+		String[] data = new String[] { "ip", "int", "192.168.1.1" };
+		Hashtable<String, String[]> attributes = new Hashtable<String, String[]>();
+		attributes.put("ip", data);
+		lien.setAttributes(attributes);
+
+		// Vérification de la modification des attributs d'un lien.
+		assertEquals(lien.getAttributes(), attributes);
 	}
 
 	/**
 	 * Test method for {@link graph3d.elements.GLink#setFirstNode(graph3d.elements.GNode)}.
 	 */
 	public void testSetFirstNode() {
-		fail("Not yet implemented");
+		// Création des éléments à tester
+		GNode node = new GNode("node");
+		GNode node1 = new GNode("node1");
+		GNode node2 = new GNode("node2");
+		GLink lien = new GLink(true, "link", "red", node1, node2);
+
+		// Modification du premier noeud du lien
+		lien.setFirstNode(node);
+
+		// Vérification de la modification du premier noeud du lien
+		assertEquals(lien.getFirstNode(), node);
 	}
 
 	/**
 	 * Test method for {@link graph3d.elements.GLink#setName(java.lang.String)}.
 	 */
 	public void testSetName() {
-		fail("Not yet implemented");
+		// Création des éléments à tester
+		GNode node1 = new GNode("node1");
+		GNode node2 = new GNode("node2");
+		GLink lien = new GLink(true, "link", "red", node1, node2);
+
+		// Modification du nom d'un lien
+		lien.setName("lien");
+
+		// Verification que le nom du lien a changer
+		assertEquals(lien.getName(), "lien");
+
 	}
 
 	/**
 	 * Test method for {@link graph3d.elements.GLink#setSecondNode(graph3d.elements.GNode)}.
 	 */
 	public void testSetSecondNode() {
-		fail("Not yet implemented");
+		// Création des éléments à tester
+		GNode node = new GNode("node");
+		GNode node1 = new GNode("node1");
+		GNode node2 = new GNode("node2");
+		GLink lien = new GLink(true, "link", "red", node1, node2);
+
+		// Modification du second noeud du lien
+		lien.setSecondNode(node);
+
+		// Verification que le second noeud a changer		
+		assertEquals(lien.getSecondNode(), node);
 	}
 
 	/**
 	 * Test method for {@link graph3d.elements.GLink#setType(boolean)}.
 	 */
 	public void testSetType() {
-		fail("Not yet implemented");
+		// Création des éléments à tester
+		GNode node1 = new GNode("node1");
+		GNode node2 = new GNode("node2");
+		GLink lien = new GLink(true, "link", "red", node1, node2);
+
+		// Modification du type du lien
+		lien.setType(false);
+
+		// Verifie que le type du lien a bien changer
+		assertEquals(lien.isType(), false);
 	}
 
 	/**
 	 * Test method for {@link graph3d.elements.GLink#setAttributeByName(java.lang.String, java.lang.String, java.lang.String)}.
 	 */
 	public void testSetAttributeByName() {
-		fail("Not yet implemented");
+		// Création des éléments à tester :
+		GNode node1 = new GNode("node1");
+		GNode node2 = new GNode("node2");
+		GLink lien = new GLink(true, "link", "red", node1, node2);
+
+		// Ajout des attributs au lien
+		String[] data = new String[] { "wifi", "boolean", "false" };
+		Hashtable<String, String[]> attributes = new Hashtable<String, String[]>();
+		attributes.put("wifi", data);
+		lien.setAttributes(attributes);
+
+		// Modification d'un attribut du lien
+		lien.setAttributeByName("wifi", "boolean", "true");
+
+		// Verification des nouvelles valeurs de l'attribut.
+		assertEquals(lien.getAttributeByName("wifi")[0], "wifi");
+		assertEquals(lien.getAttributeByName("wifi")[1], "boolean");
+		assertEquals(lien.getAttributeByName("wifi")[2], "true");
 	}
 
 	/**
 	 * Test method for {@link graph3d.elements.GLink#setColor(java.lang.String)}.
 	 */
 	public void testSetColor() {
-		fail("Not yet implemented");
+		// Création des éléments à tester :
+		GNode node1 = new GNode("node1");
+		GNode node2 = new GNode("node2");
+		GLink lien = new GLink(true, "link", "red", node1, node2);
+
+		// Modification de la couleur du lien
+		lien.setColor("blue");
+
+		// Verification que la couleur du lien a bien changer
+		assertEquals(lien.getColor(), "blue");
 	}
-	
+
 	/**
 	 * Test method for {@link graph3d.elements.GLink#getAttributes()}.
 	 */
 	public void testGetAttributes() {
-		fail("Not yet implemented");
+		// Création des éléments à tester
+		GNode node1 = new GNode("node1");
+		GNode node2 = new GNode("node2");
+		GLink lien = new GLink(true, "link", "red", node1, node2);
+
+		// Ajout des attributs au lien
+		String[] data = new String[] { "ip", "int", "192.168.1.1" };
+		Hashtable<String, String[]> attributes = new Hashtable<String, String[]>();
+		attributes.put("ip", data);
+		lien.setAttributes(attributes);
+
+		// Verifie que la récuperation des attributs du lien est ok
+		assertEquals(lien.getAttributes(), attributes);
 	}
 
 	/**
 	 * Test method for {@link graph3d.elements.GLink#getFirstNode()}.
 	 */
 	public void testGetFirstNode() {
+		// Création des éléments à tester
 		GNode node1 = new GNode("node1");
-		GLink link = new GLink("link",node1,new GNode("node2"));
+		GLink link = new GLink("link", node1, new GNode("node2"));
+
+		// Verifie que la récuperation du premier noeud d'un lien est ok
 		assertEquals(link.getFirstNode(), node1);
 	}
 
@@ -115,7 +238,10 @@ public class GLinkTest extends TestCase {
 	 * Test method for {@link graph3d.elements.GLink#getName()}.
 	 */
 	public void testGetName() {
-		GLink link = new GLink("link",new GNode("node1"),new GNode("node2"));
+		// Création des éléments à tester		
+		GLink link = new GLink("link", new GNode("node1"), new GNode("node2"));
+
+		// Verifie que le nom d'un lien est le bon	
 		assertEquals(link.getName(), "link");
 	}
 
@@ -123,8 +249,11 @@ public class GLinkTest extends TestCase {
 	 * Test method for {@link graph3d.elements.GLink#getSecondNode()}.
 	 */
 	public void testGetSecondNode() {
+		// Création des éléments à tester			
 		GNode node2 = new GNode("node2");
-		GLink link = new GLink("link",new GNode("node1"),node2);
+		GLink link = new GLink("link", new GNode("node1"), node2);
+
+		// Verifie que la récuperation du second noeud d'un lien est ok		
 		assertEquals(link.getSecondNode(), node2);
 	}
 
@@ -132,14 +261,33 @@ public class GLinkTest extends TestCase {
 	 * Test method for {@link graph3d.elements.GLink#getAttributeByName(java.lang.String)}.
 	 */
 	public void testGetAttributeByName() {
-		fail("Not yet implemented");
+		// Création des éléments à tester
+		GNode node1 = new GNode("node1");
+		GNode node2 = new GNode("node2");
+		GLink lien = new GLink(true, "link", "red", node1, node2);
+
+		// Ajout des attribues au lien
+		String[] data = new String[] { "wifi", "boolean", "false" };
+		Hashtable<String, String[]> attributes = new Hashtable<String, String[]>();
+		attributes.put("wifi", data);
+		lien.setAttributes(attributes);
+
+		// Récuperation des données sur un attribut d'un lien et vérification
+		// des valeurs.
+		assertEquals(lien.getAttributeByName("wifi"), data);
 	}
 
 	/**
 	 * Test method for {@link graph3d.elements.GLink#getColor()}.
 	 */
 	public void testGetColor() {
-		fail("Not yet implemented");
+		// Création des éléments à tester
+		GNode node1 = new GNode("node1");
+		GNode node2 = new GNode("node2");
+		GLink lien = new GLink(true, "link", "red", node1, node2);
+
+		// Verification de la couleur d'un lien
+		assertEquals(lien.getColor(), "red");
 	}
 
 }
