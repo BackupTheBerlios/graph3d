@@ -6,7 +6,7 @@ import graph3d.elements.GNode;
 import junit.framework.TestCase;
 
 /**
- * This class test all the methods of the GLink class.
+ * This class test all the methods of the {@link GLink} class.
  * 
  * @author Jerome Catric, Iuliana Popa
  */

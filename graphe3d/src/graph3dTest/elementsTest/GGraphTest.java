@@ -7,7 +7,7 @@ import graph3d.elements.GNode;
 import junit.framework.TestCase;
 
 /**
- * This class test all the methods of the GLink class.
+ * This class test all the methods of the {@link GGraph} class.
  * 
  * @author Jerome Catric, Iuliana Popa
  */
@@ -20,7 +20,7 @@ public class GGraphTest extends TestCase {
 		// Création des éléments à tester
 		GGraph g = new GGraph();
 
-		// Vérification des élément d'un graph
+		// Vérification des élément d'un graphe
 		assertEquals(g.getName(), "default");
 		assertNotNull(g.getLinks());
 		assertNotNull(g.getNodes());
@@ -33,7 +33,7 @@ public class GGraphTest extends TestCase {
 		// Création des éléments à tester
 		GGraph g = new GGraph("graph");
 
-		// Vérification des élément d'un graph
+		// Vérification des élément d'un graphe
 		assertEquals(g.getName(), "graph");
 		assertNotNull(g.getLinks());
 		assertNotNull(g.getNodes());
@@ -46,7 +46,7 @@ public class GGraphTest extends TestCase {
 		// Création des éléments à tester
 		GNode node1 = new GNode("node1");
 		GNode node2 = new GNode("node2");
-		GLink lien = new GLink("link", "red", node1, node2);
+		GLink lien = new GLink("link", node1, node2);
 		GGraph g = new GGraph("graph");
 
 		// Ajout d'un lien dans le graphe
@@ -119,7 +119,7 @@ public class GGraphTest extends TestCase {
 		// Création des éléments à tester
 		GNode node1 = new GNode("node1");
 		GNode node2 = new GNode("node2");
-		GLink lien = new GLink("link", "red", node1, node2);
+		GLink lien = new GLink("link", node1, node2);
 		GGraph g = new GGraph("graph");
 		g.addLink(lien);
 
@@ -142,13 +142,13 @@ public class GGraphTest extends TestCase {
 		GGraph g = new GGraph("graph");
 		g.addNode(node1);
 		
-		// vérification de la présence du noeud dans le graph
+		// vérification de la présence du noeud dans le graphe
 		assertEquals(g.getNode("node1"), node1);
 		
-		// suppression du noeud du graph
+		// suppression du noeud du graphe
 		g.removeNode("node1");
 		
-		// verification que le noeud n'est plus dans le graph
+		// verification que le noeud n'est plus dans le graphe
 		assertEquals(g.getNodes().size(), 0);
 	}
 
@@ -159,16 +159,18 @@ public class GGraphTest extends TestCase {
 		// création des éléments à tester
 		GNode node1 = new GNode("node1");
 		GNode node2 = new GNode("node2");
-		GLink lien = new GLink(true, "link", "red", node1, node2);
+		GLink lien = new GLink("link", node1, node2);
+		GLink lien2 = new GLink("link2", node2, node2);
 		GGraph g = new GGraph("graph");
 
 		Hashtable<String, GLink> links = new Hashtable<String, GLink>();
 		links.put("link", lien);
+		links.put("link2", lien2);
 
-		// ajout des liens au graph
+		// ajout des liens au graphe
 		g.setLinks(links);
 
-		// vérification que la méthode rends tous les liens du graph.
+		// vérification que la méthode rends tous les liens du graphe.
 		assertEquals(g.getLinks(), links);
 	}
 
@@ -177,20 +179,21 @@ public class GGraphTest extends TestCase {
 	 */
 	public void testSetLinks() {
 		// création des éléments à tester		
-		GNode node1 = new GNode("n");
-		GNode node2 = new GNode("n2");
-		GLink lien = new GLink(true, "l", "red", node1, node2);
-		GNode node3 = new GNode("n3");
-		GNode node4 = new GNode("n4");
-		GLink lien2 = new GLink(false, "l2", "red", node3, node4);
-		GGraph g = new GGraph("gr");
+		GNode node1 = new GNode("node1");
+		GNode node2 = new GNode("node2");
+		GLink lien = new GLink("link1", node1, node2);
+		GNode node3 = new GNode("node3");
+		GNode node4 = new GNode("node4");
+		GLink lien2 = new GLink("link2", node3, node4);
+		GGraph g = new GGraph("graph");
 
 		Hashtable<String, GLink> links = new Hashtable<String, GLink>();
-		links.put("l", lien);
-		links.put("l2", lien2);
+		links.put("link1", lien);
+		links.put("link2", lien2);
 		
-		// ajout des liens au graph
+		// ajout des liens au graphe
 		g.setLinks(links);
+		
 		// vérification que l'ajout des liens au graph s'est bien passé.
 		assertEquals(g.getLinks(), links);
 	}
@@ -202,7 +205,7 @@ public class GGraphTest extends TestCase {
 		// création des éléments à tester	
 		GGraph g = new GGraph("graph");
 		
-		// Vérification du nom du graph
+		// Vérification du nom du graphe
 		assertEquals(g.getName(), "graph");
 	}
 
@@ -213,11 +216,11 @@ public class GGraphTest extends TestCase {
 		// création des éléments à tester
 		GGraph g = new GGraph("graph");
 		
-		// Modification du nom du graph
-		g.setName("graph");
+		// Modification du nom du graphe
+		g.setName("graph1");
 		
-		// Verification que le nom du graph a bien été modifier.
-		assertEquals(g.getName(), "graph");
+		// Verification que le nom du graphe a bien été modifier.
+		assertEquals(g.getName(), "graph1");
 
 	}
 
@@ -234,10 +237,10 @@ public class GGraphTest extends TestCase {
 		nodes.put("node1", node1);
 		nodes.put("node2", node2);
 
-		// ajout de noeuds au graph
+		// ajout de noeuds au graphe
 		g.setNodes(nodes);
 
-		//Récuperation des noeuds du graph
+		//Récuperation des noeuds du graphe
 		assertEquals(g.getNodes(), nodes);
 	}
 
@@ -269,7 +272,7 @@ public class GGraphTest extends TestCase {
 		GNode node1 = new GNode("node1");
 		GGraph g = new GGraph("graph");
 		
-		//Ajout du noeud au graph
+		//Ajout du noeud au graphe
 		g.addNode(node1);
 		
 		//vérifie la récuperation du noeud
@@ -292,4 +295,5 @@ public class GGraphTest extends TestCase {
 		//verifie la récuperation du lien
 		assertEquals(g.getLink("link"), lien);
 	}
-}// fin de la classe GGraphTest
+	
+}
