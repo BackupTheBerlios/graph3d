@@ -1,211 +1,295 @@
 package graph3dTest.elementsTest;
-import java.util.Enumeration;
-import java.util.Hashtable;
 
+import java.util.Hashtable;
 import graph3d.elements.GGraph;
 import graph3d.elements.GLink;
 import graph3d.elements.GNode;
 import junit.framework.TestCase;
 
-/** classe GGraphTest
- * @author Jerome,Iuliana
+/**
+ * This class test all the methods of the GLink class.
+ * 
+ * @author Jerome Catric, Iuliana Popa
  */
 public class GGraphTest extends TestCase {
 
-	/** 1)
+	/**
 	 * Test method for {@link graph3d.elements.GGraph#GGraph()}.
 	 */
 	public void testGGraph() {
-		GGraph g= new GGraph();
+		// Création des éléments à tester
+		GGraph g = new GGraph();
+
+		// Vérification des élément d'un graph
 		assertEquals(g.getName(), "default");
-	
+		assertNotNull(g.getLinks());
+		assertNotNull(g.getNodes());
 	}
 
-	/** 2)
+	/**
 	 * Test method for {@link graph3d.elements.GGraph#GGraph(java.lang.String)}.
 	 */
 	public void testGGraphString() {
-		GGraph g= new GGraph("gr");
-		assertEquals(g.getName(), "gr");
+		// Création des éléments à tester
+		GGraph g = new GGraph("graph");
+
+		// Vérification des élément d'un graph
+		assertEquals(g.getName(), "graph");
+		assertNotNull(g.getLinks());
+		assertNotNull(g.getNodes());
 	}
 
-	/** 3)
+	/**
 	 * Test method for {@link graph3d.elements.GGraph#addLink(graph3d.elements.GLink)}.
 	 */
 	public void testAddLink() {
-		GNode node1=new GNode("n");
-		GNode node2=new GNode("n2");
-		GLink lien =new GLink("l","red", node1,node2);	
-		GGraph g= new GGraph("gr");
+		// Création des éléments à tester
+		GNode node1 = new GNode("node1");
+		GNode node2 = new GNode("node2");
+		GLink lien = new GLink("link", "red", node1, node2);
+		GGraph g = new GGraph("graph");
+
+		// Ajout d'un lien dans le graphe
 		g.addLink(lien);
-		assertEquals(g.getLink("l"), lien);
+
+		// Verification que l'ajout s'est bien passé
+		assertEquals(g.getLink("link"), lien);
 	}
 
-	/** 4)
+	/**
 	 * Test method for {@link graph3d.elements.GGraph#addNode(graph3d.elements.GNode)}.
 	 */
 	public void testAddNode() {
-		GNode node1=new GNode("n");
-		GGraph g= new GGraph("gr");
+		// Création des éléments à tester
+		GNode node1 = new GNode("node");
+		GGraph g = new GGraph("graph");
+
+		// Ajout d'un lien dans le graphe
 		g.addNode(node1);
-		assertEquals(g.getNode("n"),node1);
+
+		// Verification que l'ajout s'est bien passé
+		assertEquals(g.getNode("node"), node1);
 	}
 
-	/** 5)
+	/**
 	 * Test method for {@link graph3d.elements.GGraph#collision(graph3d.elements.GNode)}.
 	 */
 	public void testCollision() {
-		
+		// Création des éléments à tester
+		GNode node1 = new GNode("node1");
+		GNode node2 = new GNode("node2");
+		GGraph g = new GGraph("graph");
+		g.addNode(node1);
+
+		// Verification des coordonnees
+		assertEquals(node2.getCoordonates()[0], new Float(0));
+		assertEquals(node2.getCoordonates()[1], new Float(0));
+		assertEquals(node2.getCoordonates()[2], new Float(0));
+
+		// Modification des coordonnées lors de la collision
+		g.collision(node2);
+
+		// Verification qu'il n'y a plus de collision.
+		assertFalse(g.haveCollision(node2));
+
+		// Vérification que les coordonnées du noeud 2 ont été modifié.
+		assertNotSame(node2.getCoordonates()[0], new Float(0));
+		assertNotSame(node2.getCoordonates()[1], new Float(0));
+		assertNotSame(node2.getCoordonates()[2], new Float(0));
 	}
 
-	/** 6)
-	 * Test method for {@link graph3d.elements.GGraph#getBestPlaceToSee()}.
-	 */
-	public void testGetBestPlaceToSee() {
-		
-	}
-	/** 7)
+	/**
 	 * Test method for {@link graph3d.elements.GGraph#haveCollision(graph3d.elements.GNode)}.
 	 */
 	public void testHaveCollision() {
-		
+		// Création des éléments à tester
+		GNode node1 = new GNode("node1");
+		GNode node2 = new GNode("node2");
+		GGraph g = new GGraph("graph");
+		g.addNode(node1);
+
+		// Vérification qu'il y a collision avec le node2
+		assertTrue(g.haveCollision(node2));
 	}
 
-	/** 8)
+	/**
 	 * Test method for {@link graph3d.elements.GGraph#removeLink(java.lang.String)}.
 	 */
 	public void testRemoveLink() {
-		GNode node1=new GNode("n");
-		GNode node2=new GNode("n2");
-		GLink lien =new GLink("l","red", node1,node2);	
-		GGraph g= new GGraph("gr");
+		// Création des éléments à tester
+		GNode node1 = new GNode("node1");
+		GNode node2 = new GNode("node2");
+		GLink lien = new GLink("link", "red", node1, node2);
+		GGraph g = new GGraph("graph");
 		g.addLink(lien);
-		assertEquals(g.getLink("l"), lien);	
-		g.removeLink("l");
-		assertEquals(g.getLinks().size(), 0);	
+
+		// Verification que le graph contient bien un lien avant la suppression
+		assertEquals(g.getLink("link"), lien);
+
+		// Suppression du lien du graphe
+		g.removeLink("link");
+
+		// Verification que le lien a bien été suprimé
+		assertEquals(g.getLinks().size(), 0);
 	}
 
-	/** 9)
+	/**
 	 * Test method for {@link graph3d.elements.GGraph#removeNode(java.lang.String)}.
 	 */
 	public void testRemoveNode() {
-		GNode node1=new GNode("n");
-		GGraph g= new GGraph("gr");
+		// Création des éléments à tester		
+		GNode node1 = new GNode("node1");
+		GGraph g = new GGraph("graph");
 		g.addNode(node1);
-		assertEquals(g.getNode("n"),node1);	
-		g.removeNode("n");
-		assertEquals(g.getNodes().size(), 0);	
+		
+		// vérification de la présence du noeud dans le graph
+		assertEquals(g.getNode("node1"), node1);
+		
+		// suppression du noeud du graph
+		g.removeNode("node1");
+		
+		// verification que le noeud n'est plus dans le graph
+		assertEquals(g.getNodes().size(), 0);
 	}
 
-	/** 10)
+	/**
 	 * Test method for {@link graph3d.elements.GGraph#getLinks()}.
 	 */
 	public void testGetLinks() {
-		GNode node1=new GNode("n");
-		GNode node2=new GNode("n2");
-		GLink lien =new GLink(true,"l","red", node1,node2);
-		GGraph g= new GGraph("gr");
-		
+		// création des éléments à tester
+		GNode node1 = new GNode("node1");
+		GNode node2 = new GNode("node2");
+		GLink lien = new GLink(true, "link", "red", node1, node2);
+		GGraph g = new GGraph("graph");
+
 		Hashtable<String, GLink> links = new Hashtable<String, GLink>();
-		links.put("l",lien);
-		
+		links.put("link", lien);
+
+		// ajout des liens au graph
 		g.setLinks(links);
-		
-		assertEquals(g.getLinks(),links);
+
+		// vérification que la méthode rends tous les liens du graph.
+		assertEquals(g.getLinks(), links);
 	}
 
-	/** 11)
+	/**
 	 * Test method for {@link graph3d.elements.GGraph#setLinks(java.util.Hashtable)}.
 	 */
 	public void testSetLinks() {
-		GNode node1=new GNode("n");
-		GNode node2=new GNode("n2");
-		GLink lien =new GLink(true,"l","red", node1,node2);
-		GNode node3=new GNode("n3");
-		GNode node4=new GNode("n4");
-		GLink lien2 =new GLink(false,"l2","red", node3,node4);	
-		GGraph g= new GGraph("gr");
-		
+		// création des éléments à tester		
+		GNode node1 = new GNode("n");
+		GNode node2 = new GNode("n2");
+		GLink lien = new GLink(true, "l", "red", node1, node2);
+		GNode node3 = new GNode("n3");
+		GNode node4 = new GNode("n4");
+		GLink lien2 = new GLink(false, "l2", "red", node3, node4);
+		GGraph g = new GGraph("gr");
+
 		Hashtable<String, GLink> links = new Hashtable<String, GLink>();
-		links.put("l",lien);
-		links.put("l2",lien2);
+		links.put("l", lien);
+		links.put("l2", lien2);
 		
+		// ajout des liens au graph
 		g.setLinks(links);
-		
-		assertEquals(g.getLinks(),links);
+		// vérification que l'ajout des liens au graph s'est bien passé.
+		assertEquals(g.getLinks(), links);
 	}
 
-	/** 12)
+	/**
 	 * Test method for {@link graph3d.elements.GGraph#getName()}.
 	 */
 	public void testGetName() {
-		GGraph g= new GGraph("gr");
-		assertEquals(g.getName(),"gr");
+		// création des éléments à tester	
+		GGraph g = new GGraph("graph");
+		
+		// Vérification du nom du graph
+		assertEquals(g.getName(), "graph");
 	}
 
-	/** 13)
+	/**
 	 * Test method for {@link graph3d.elements.GGraph#setName(java.lang.String)}.
 	 */
 	public void testSetName() {
-		GGraph g= new GGraph("gr");
-		g.setName("graph");
-		assertEquals(g.getName(),"graph");
+		// création des éléments à tester
+		GGraph g = new GGraph("graph");
 		
+		// Modification du nom du graph
+		g.setName("graph");
+		
+		// Verification que le nom du graph a bien été modifier.
+		assertEquals(g.getName(), "graph");
+
 	}
 
-	/** 14)
+	/**
 	 * Test method for {@link graph3d.elements.GGraph#getNodes()}.
 	 */
 	public void testGetNodes() {
-		GNode node1=new GNode("n1");
-		GNode node2=new GNode("n2");
-		GGraph g= new GGraph("gr");
-		
+		// création des éléments à tester
+		GNode node1 = new GNode("node1");
+		GNode node2 = new GNode("node2");
+		GGraph g = new GGraph("graph");
+
 		Hashtable<String, GNode> nodes = new Hashtable<String, GNode>();
-		nodes.put("n1",node1);
-		nodes.put("n2",node2);
-		
+		nodes.put("node1", node1);
+		nodes.put("node2", node2);
+
+		// ajout de noeuds au graph
 		g.setNodes(nodes);
-		
-		assertEquals(g.getNodes(), nodes);	
+
+		//Récuperation des noeuds du graph
+		assertEquals(g.getNodes(), nodes);
 	}
 
-	/** 15)
+	/**
 	 * Test method for {@link graph3d.elements.GGraph#setNodes(java.util.Hashtable)}.
 	 */
 	public void testSetNodes() {
-		GNode node1=new GNode("n1");
-		GNode node2=new GNode("n2");
-		GGraph g= new GGraph("gr");
-		
+		// création des éléments à tester
+		GNode node1 = new GNode("node1");
+		GNode node2 = new GNode("node2");
+		GGraph g = new GGraph("graph");
+
 		Hashtable<String, GNode> nodes = new Hashtable<String, GNode>();
-		nodes.put("n1",node1);
-		nodes.put("n2",node2);
+		nodes.put("node1", node1);
+		nodes.put("node2", node2);
 		
+		// ajout de noeuds au graph
 		g.setNodes(nodes);
-		
-		assertEquals(g.getNodes(), nodes);	
+
+		// Vérification que l'ajout des noeuds au graph est ok
+		assertEquals(g.getNodes(), nodes);
 	}
 
-	/** 16)
+	/**
 	 * Test method for {@link graph3d.elements.GGraph#getNode(java.lang.String)}.
 	 */
 	public void testGetNode() {
-		GNode node1=new GNode("n");
-		GGraph g= new GGraph("gr");
+		// création des éléments à tester
+		GNode node1 = new GNode("node1");
+		GGraph g = new GGraph("graph");
+		
+		//Ajout du noeud au graph
 		g.addNode(node1);
-		assertEquals(g.getNode("n"),node1);	
+		
+		//vérifie la récuperation du noeud
+		assertEquals(g.getNode("node1"), node1);
 	}
 
-	/** 17)
+	/**
 	 * Test method for {@link graph3d.elements.GGraph#getLink(java.lang.String)}.
 	 */
 	public void testGetLink() {
-		GNode node1=new GNode("n");
-		GNode node2=new GNode("n2");
-		GLink lien =new GLink("l","red", node1,node2);	
-		GGraph g= new GGraph("gr");
+		// création des éléments à tester
+		GNode node1 = new GNode("node1");
+		GNode node2 = new GNode("node2");
+		GLink lien = new GLink("link", "red", node1, node2);
+		GGraph g = new GGraph("graph");
+		
+		//Ajout d'un lien au graph
 		g.addLink(lien);
-		assertEquals(g.getLink("l"), lien);	
+		
+		//verifie la récuperation du lien
+		assertEquals(g.getLink("link"), lien);
 	}
 }// fin de la classe GGraphTest
