@@ -25,7 +25,6 @@ public class GGrapheUniverse extends VirtualUniverse{
 	private Locale locale;
 	private GGraph graph;
 	private GView view;
-	//private BranchGroup sceneCompiled;//peut-être pas nécessaire si possibilité de modifier la scene même si elle est compilée
 	private Hashtable<String, BranchGroup> ComponentsView;
 	
 	private BranchGroup scene;
@@ -189,17 +188,14 @@ public class GGrapheUniverse extends VirtualUniverse{
 	 * @return a Canvas3D component.
 	 */
 	public Canvas3D getCanvas() {
-		//this.sceneCompiled = this.scene;
-		
-		//this.sceneCompiled.compile();
 		this.scene.compile();
 		
 		this.locale.addBranchGraph(this.view);
-		//this.locale.addBranchGraph(this.sceneCompiled);
 		this.locale.addBranchGraph(this.scene);
 		
 		return this.view.getCanvas();
 	}
+
 	
 	/**
 	 * This function is used to add a GNode to the scene.
@@ -261,6 +257,72 @@ public class GGrapheUniverse extends VirtualUniverse{
 		
 	}
 	
+	public GGraph getGraph() {
+		return graph;
+	}
+
+	public void setGraph(GGraph graph) {
+		this.graph = graph;
+	}
+	
+	/**
+	 * appel de la methode zoom de la classe view
+	 * zoom plus de 1
+	 */
+	public void zoomMore(){
+		this.view.zoom(-1f);
+	}
+	
+	/**
+	 * appel de la methode zoom de la classe view
+	 * zoom moins de 1
+	 */
+	public void zoomLess(){
+		this.view.zoom(1f);
+	}
+	/**
+	 * appel de la methode zoom de la classe view
+	 * zoom de valeur de la variable zoom
+	 */
+	public void zoom(float zoom){
+		this.view.zoom(zoom);
+	}
+	
+	/**
+	 * 
+	 */
+	public void rotateTop(){
+		this.view.rotateY(-1f);
+	}
+	
+	/**
+	 * 
+	 */
+	public void rotateBottom(){
+		this.view.rotateY(1f);
+	}
+	
+	/**
+	 * 
+	 */
+	public void rotateLeft(){
+		this.view.rotateX(1f);
+	}
+	
+	/**
+	 * 
+	 */
+	public void rotateRight(){
+		this.view.rotateX(-1f);
+	}
+	
+	/**
+	 * center the view
+	 */
+	public void centerView(){
+		this.view.putOnBestPointToSee();
+	}
+	
 	/**
 	 * This function is used to add a background color to the scene.
 	 * @param color of type Color.
@@ -270,12 +332,5 @@ public class GGrapheUniverse extends VirtualUniverse{
 	    background.setApplicationBounds(new BoundingBox());
 	    scene.addChild(background);
 	}
-
-	public GGraph getGraph() {
-		return graph;
-	}
-
-	public void setGraph(GGraph graph) {
-		this.graph = graph;
-	}
+	
 }
