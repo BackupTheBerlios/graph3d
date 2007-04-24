@@ -163,8 +163,8 @@ public class GParser {
 			dbf.setIgnoringComments(true);
 			dbf.setNamespaceAware(true);
 			dbf.setValidating(true);
-			dbf.setFeature("http://xml.org/sax/features/validation", true);
-			dbf.setFeature("http://apache.org/xml/features/validation/schema",
+			dbf.setAttribute("http://xml.org/sax/features/validation", true);
+			dbf.setAttribute("http://apache.org/xml/features/validation/schema",
 					true);
 
 			dbf.setIgnoringElementContentWhitespace(true);
