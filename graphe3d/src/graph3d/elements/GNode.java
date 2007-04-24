@@ -367,6 +367,7 @@ public class GNode {
 		toString += "\t\tY = " + this.getCoordonnateY() + "\n";
 		toString += "\t\tZ = " + this.getCoordonnateZ() + "\n";
 		toString += "\n\tattributes :\n";
+		toString += "\t\tradius  = " + this.radius;
 		Enumeration<String> keys = this.attributes.keys();
 		while (keys.hasMoreElements()) {
 			String key = keys.nextElement();

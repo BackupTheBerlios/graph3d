@@ -2,7 +2,6 @@ package graph3d.elements;
 
 import graph3d.exception.CollisionException;
 
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -124,7 +123,7 @@ public class GGraph {
 		while (keys.hasMoreElements()) {
 			String key = keys.nextElement();
 			GNode _node = this.nodes.get(key);
-			if (!this.distanceBetweenIsGood(node, _node)) {
+			if (! (_node.equals(node)) && !this.distanceBetweenIsGood(node, _node)) {
 				return true;
 			}
 		}

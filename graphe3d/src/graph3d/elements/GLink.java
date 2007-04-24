@@ -357,6 +357,7 @@ public class GLink {
 		toString += "\tfrom : " + this.firstNode.getName() + "\t\tto : "
 				+ this.secondNode.getName() + "\n";
 		toString += "\n\tattributes :\n";
+		toString += "\t\tcolor  = " + this.color;
 		final Enumeration<String> keys = this.attributes.keys();
 		while (keys.hasMoreElements()) {
 			final String key = keys.nextElement();
