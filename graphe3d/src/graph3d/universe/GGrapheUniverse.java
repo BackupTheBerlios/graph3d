@@ -4,26 +4,18 @@ import graph3d.elements.GGraph;
 import graph3d.elements.GLink;
 import graph3d.elements.GNode;
 
-
+import java.awt.Color;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 
-import java.awt.Color;
-
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Canvas3D;
-import javax.media.j3d.Locale;
-import javax.media.j3d.TransformGroup;
-import javax.media.j3d.VirtualUniverse;
 import javax.media.j3d.Background;
 import javax.media.j3d.BoundingBox;
-import javax.media.j3d.BoundingSphere;
-import javax.vecmath.Point3d;
-
-import com.sun.j3d.utils.behaviors.keyboard.KeyNavigatorBehavior;
-import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
-import com.sun.j3d.utils.behaviors.mouse.MouseTranslate;
-import com.sun.j3d.utils.behaviors.mouse.MouseWheelZoom;
+import javax.media.j3d.BranchGroup;
+import javax.media.j3d.Canvas3D;
+import javax.media.j3d.Group;
+import javax.media.j3d.Locale;
+import javax.media.j3d.VirtualUniverse;
 
 /**
  * This class define a GGrapheUniverse.
@@ -33,8 +25,8 @@ public class GGrapheUniverse extends VirtualUniverse{
 	private Locale locale;
 	private GGraph graph;
 	private GView view;
-	private BranchGroup sceneCompiled;//peut-être pas nécessaire si possibilité de modifier la scene même si elle est compilée
-	private Hashtable<String, TransformGroup> ComponentsView;
+	//private BranchGroup sceneCompiled;//peut-être pas nécessaire si possibilité de modifier la scene même si elle est compilée
+	private Hashtable<String, BranchGroup> ComponentsView;
 	
 	private BranchGroup scene;
 
@@ -45,9 +37,9 @@ public class GGrapheUniverse extends VirtualUniverse{
 	public GGrapheUniverse(GGraph _graph){
 		this.locale = new Locale(this);
 		this.graph = _graph;
-		this.ComponentsView = new Hashtable<String, TransformGroup>();
-		this.createView();
+		this.ComponentsView = new Hashtable<String, BranchGroup>();
 		this.createScene();
+		this.createView();
 	}
 	
 	/**
@@ -55,6 +47,10 @@ public class GGrapheUniverse extends VirtualUniverse{
 	 */
 	private void createScene() {
 		this.scene = new BranchGroup();
+		
+		this.scene.setCapability(Group.ALLOW_CHILDREN_EXTEND);
+		this.scene.setCapability(Group.ALLOW_CHILDREN_WRITE);
+		this.scene.setCapability(Group.ALLOW_CHILDREN_READ);
 		
 		Hashtable<String, GNode> nodes = this.graph.getNodes();
 		Enumeration<String> keys = nodes.keys();
@@ -75,12 +71,13 @@ public class GGrapheUniverse extends VirtualUniverse{
 	private void createView() {
 		this.view = new GView();
 		this.createBestView();
+		this.view.addMouseListener();
+		this.view.addKeyListener();
 	}
 	
 	private void createBestView() {		
 		float[] bestPointToSee = new float[3];
 		float fieldOfView = this.view.getFieldOfView();
-	
 		
 		float minX=0, maxX = 0, minY = 0, maxY = 0, minZ = 0, maxZ = 0;
 		
@@ -124,12 +121,12 @@ public class GGrapheUniverse extends VirtualUniverse{
 		// *    E    D     *
 		//	*     C       *
 		//	 *           *
-		//    * A     B *
+		//    * A  M  B *
 		//	   *       *
 		//	    *     *
 		//       *   *
 		//        * *
-		//		   *
+		//		   C
 		//
 		// si A et B sont contenu dans le champ de vision alors obligatoirement, 
 		//les points possédant des coordonnées qui ne sont pas supérieurs seront aussi présent dans le champ de vision
@@ -171,13 +168,16 @@ public class GGrapheUniverse extends VirtualUniverse{
 		
 		bestPointToSee[0] = barycenter[0];
 		bestPointToSee[1] = barycenter[1];
-		bestPointToSee[2] = barycenter[2] + length;
+		bestPointToSee[2] = barycenter[2] + length /*+ 1*/;// ajout d'une marge par rapport au rayon des spheres
 		
-		//definition de la vue
-		System.out.println(bestPointToSee[0]);
-		System.out.println(bestPointToSee[1]);
-		System.out.println(bestPointToSee[2]);
+		//définition de la vue
 		this.view.putOnBestPointToSee(bestPointToSee);
+		
+		// définition de la profondeur de la vue avec une marge de 1
+		// la profonceur correspond à la distance jusqu'à laquelle les éléments vont apparaître dans la vue.
+		// distance entre la caméra et l'élément qui possède le plus petit Z comme coordonnées
+		// + une marge de 1 pour que la sphere apparaisse complètement
+		this.view.setBackClipDistance(bestPointToSee[2] - minZ + 1);
 	}
 	
 	private float getLengthBetween(float[] one, float[] second) {
@@ -189,12 +189,14 @@ public class GGrapheUniverse extends VirtualUniverse{
 	 * @return a Canvas3D component.
 	 */
 	public Canvas3D getCanvas() {
-		this.sceneCompiled = this.scene;
+		//this.sceneCompiled = this.scene;
 		
-		this.sceneCompiled.compile();
+		//this.sceneCompiled.compile();
+		this.scene.compile();
 		
 		this.locale.addBranchGraph(this.view);
-		this.locale.addBranchGraph(this.sceneCompiled);
+		//this.locale.addBranchGraph(this.sceneCompiled);
+		this.locale.addBranchGraph(this.scene);
 		
 		return this.view.getCanvas();
 	}
@@ -228,125 +230,35 @@ public class GGrapheUniverse extends VirtualUniverse{
 	 * This function is used to delete a GNode to the scene.
 	 * @param node of type GNode.
 	 */
-	public void deleteGNode(GNode node){
-		GNodeView nodeView = new GNodeView(node);
-		scene.removeChild(nodeView);
-		this.ComponentsView.remove(nodeView);
+	public void deleteGNode(String nodeName){
+		this.scene.removeChild(this.ComponentsView.get(nodeName));
+		this.graph.removeNode(nodeName);
+		this.ComponentsView.remove(nodeName);
 	}
 	
 	/**
 	 * This function is used to delete a GLink (arrow or bridge) to the scene.
 	 * @param link of type GLink.
 	 */
-	public void deleteGLink(GLink link){
-		GLinkView linkView;
-		if (link.isType()) {
-			linkView = new GArrowView(link);
-		} else {
-			linkView = new GBridgeView(link);
+	public void deleteGLink(String linkName){
+		scene.removeChild(this.ComponentsView.get(linkName));
+		this.graph.removeLink(linkName);
+		this.ComponentsView.remove(linkName);
+	}
+	
+	public void updateGNode(String nodeName) {
+		GNodeView nodeView = (GNodeView) this.ComponentsView.get(nodeName);
+		nodeView.update();
+		GNode node = this.graph.getNode(nodeName);
+		for (Iterator<GLink> i = node.getLinks().iterator(); i.hasNext();) {
+			GLink link = i.next();
+			if (link.isType()) {
+				((GArrowView)this.ComponentsView.get(link.getName())).update();
+			} else {
+				((GBridgeView)this.ComponentsView.get(link.getName())).update();
+			}
 		}
-		scene.removeChild(linkView);
-		this.ComponentsView.remove(linkView);
-	}
-	
-	/**
-	 * appel de la methode zoom de la classe view
-	 * zoom plus de 1
-	 */
-	public void zoomMore(){
-		this.view.zoom(-1f);
-	}
-	
-	/**
-	 * appel de la methode zoom de la classe view
-	 * zoom moins de 1
-	 */
-	public void zoomLess(){
-		this.view.zoom(1f);
-	}
-	/**
-	 * appel de la methode zoom de la classe view
-	 * zoom de valeur de la variable zoom
-	 */
-	public void zoom(float zoom){
-		this.view.zoom(zoom);
-	}
-	
-	/**
-	 * 
-	 */
-	public void rotate(){ // A quoi  elle sert cette methode ????
 		
-	}
-	
-	/**
-	 * appel de la methode rotate de la classe view
-	 * rotation d'angle de la valeur de la variable angle
-	 */
-	public void rotate(float angle){
-		this.view.zoom(angle);
-	}
-	
-	/**
-	 * 
-	 */
-	public boolean collision(){
-		boolean flag=false;
-		return flag;
-	}
-	
-	/**
-	 * This function is used to add the mouse's implements to the scene.
-	 * for rotate add MouseRotate.
-	 * for translate add MouseTranslate.
-	 * for zoom add MouseZoom.
-	 */
-	public void addMouseListener(){
-		
-		TransformGroup mouseTransform = new TransformGroup();
-		
-	    // Le groupe de transformation sera modifie par le comportement de la
-	    // souris
-	    mouseTransform.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
-	    mouseTransform.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-	
-	    // Creation comportement rotation a la souris
-	    MouseRotate rotate = new MouseRotate(mouseTransform);
-	    rotate.setSchedulingBounds(new BoundingSphere());
-	    scene.addChild(rotate);
-	
-	    // Creation comportement deplacement a la souris
-	    MouseTranslate translate = new MouseTranslate(mouseTransform);
-	    translate.setSchedulingBounds(new BoundingSphere());
-	    scene.addChild(translate);
-	
-	    // Creation comportement zoom a la souris avec la molette
-	    MouseWheelZoom zoom = new MouseWheelZoom(mouseTransform);
-	    zoom.setSchedulingBounds(new BoundingSphere());
-	    scene.addChild(zoom);
-	}
-	
-	/**
-	 * This function is used to add the keyboard's implements to the scene.
-	 * add KeyNavigatorBehavior.
-	 */
-	public void addKeyListener(){
-		
-		TransformGroup keyTransform = new TransformGroup();
-		
-	    // Le groupe de transformation sera modifie par le comportement de la
-	    // souris
-		keyTransform.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
-		keyTransform.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-		
-		// On associe l'objet TransformGroup tg au clavier
-	    KeyNavigatorBehavior keyNavigatorBehavior = new KeyNavigatorBehavior(keyTransform);
-
-	    // Champ d'action du clavier
-	    keyNavigatorBehavior.setSchedulingBounds(new BoundingSphere(new Point3d(), 1000));
-
-	    // Ajout du comportement du clavier a l'objet parent de la scene 3D
-	    scene.addChild(keyNavigatorBehavior);
 	}
 	
 	/**
@@ -357,5 +269,13 @@ public class GGrapheUniverse extends VirtualUniverse{
 	    Background background = new Background(color.getRed(),color.getGreen(),color.getBlue());
 	    background.setApplicationBounds(new BoundingBox());
 	    scene.addChild(background);
+	}
+
+	public GGraph getGraph() {
+		return graph;
+	}
+
+	public void setGraph(GGraph graph) {
+		this.graph = graph;
 	}
 }

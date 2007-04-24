@@ -3,6 +3,7 @@ package graph3d.universe;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 
+import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.GraphicsConfigTemplate3D;
@@ -12,13 +13,18 @@ import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.View;
 import javax.media.j3d.ViewPlatform;
-import javax.vecmath.AxisAngle4d;
+import javax.vecmath.Point3d;
 import javax.vecmath.Vector3f;
+
+import com.sun.j3d.utils.behaviors.keyboard.KeyNavigatorBehavior;
+import com.sun.j3d.utils.behaviors.mouse.MouseBehavior;
+import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
+import com.sun.j3d.utils.behaviors.mouse.MouseWheelZoom;
 
 /**
  * This class create the graph3D's view.
  */
-public class GView extends BranchGroup{
+public class GView extends BranchGroup {
 	
 	private final PhysicalBody PHYSICALBODY = new PhysicalBody();
 	private final PhysicalEnvironment PHYSICALENVIRONMENT = new PhysicalEnvironment();
@@ -30,6 +36,7 @@ public class GView extends BranchGroup{
 	private Canvas3D canvas;
 	
 	private Vector3f bestPointToSee;
+	private Vector3f camera;
 	
 	/**
 	 * This constructor is used to create a GView.
@@ -53,9 +60,6 @@ public class GView extends BranchGroup{
 	    this.view.attachViewPlatform(this.viewPlatform);
 	    this.view.setPhysicalBody(this.PHYSICALBODY);
 	    this.view.setPhysicalEnvironment(this.PHYSICALENVIRONMENT);
-	    
-	    //définition de la profondeur du champ de vision
-	    this.view.setBackClipDistance(20);
 
 	    // Creation du groupe de transformation qui permet de modifier la position
 	    // de la camera
@@ -66,19 +70,19 @@ public class GView extends BranchGroup{
 	    
 	    // Creation de l'objet parent qui est pere de tous les nodes de la classe
 	    // Vue
-	    this.setCapability(BranchGroup.ALLOW_DETACH);
+	    //this.setCapability(BranchGroup.ALLOW_DETACH); sans doute pas nécessaire	    
 	    this.addChild(this.transformGroup);
 	}
 	
 	public void putOnBestPointToSee() {
 		 Transform3D transform = new Transform3D();
 		 transform.setTranslation(this.bestPointToSee);
-		 //transform.setTranslation(new Vector3f(0f, 0f, 40f));
 		 this.transformGroup.setTransform(transform);
 	}
 	
 	void putOnBestPointToSee(float[] _bestPointToSee) {
 		this.bestPointToSee = new Vector3f(_bestPointToSee);
+		this.camera=new Vector3f(this.bestPointToSee);
 		this.putOnBestPointToSee();
 	}
 	
@@ -90,7 +94,7 @@ public class GView extends BranchGroup{
 	 * The getter of the Canvas3D.
 	 * @return a Canvas3D component.
 	 */
-	public Canvas3D getCanvas() {		
+	public Canvas3D getCanvas() {
 		return this.canvas;
 	}
 
@@ -109,50 +113,74 @@ public class GView extends BranchGroup{
 	public void setBestPointToSee(Vector3f bestPointToSee) {
 		this.bestPointToSee = bestPointToSee;
 	}
-	
-	/**
-	 * The getter of the camera's position.
-	 * @return a Vector3f component
-	 */
-	public Vector3f getVector3fCamera(){
-		Transform3D transCamera=null;
-		this.transformGroup.getTransform(transCamera);
-		
-		Vector3f vectorCamera=null;
-		
-		transCamera.get(vectorCamera);
-		
-		return vectorCamera;
-	
-	}	
 			
 	/**
 	 * This fonction is used to move the camera's view to do a zoom
 	 * @param distance type of float
 	 */
-	public void zoom(float distance){ // pb : rafraichissement de la vue ?
+	public void zoom(float distance){
 		
 		Transform3D zoom = new Transform3D();
-		Vector3f coordCamera=this.getVector3fCamera();
 		
-		zoom.setTranslation(new Vector3f(coordCamera.x, coordCamera.y , (coordCamera.z+(distance)) ));
-		
-		 this.transformGroup.setTransform(zoom);	
+		zoom.setTranslation(new Vector3f(camera.x, camera.y , (camera.z+(distance)) ));
+		this.camera.z += distance;
+		this.transformGroup.setTransform(zoom);	
 	}
 	
 	/**
-	 * This fonction is used to move the camera's view to do a zoom
-	 * @param distance typr of float
+	 * 
 	 */
-	public void rotate(float angle){
+	public void rotateX(double angle){
+		  Transform3D rotation = new Transform3D();
+		  rotation.rotX(angle);
+		  
+		  this.transformGroup.setTransform(rotation);	
+		  
+	}
+	
+	/**
+	 * This function is used to add the mouse's implements to the scene.
+	 * for rotate add MouseRotate.
+	 * for zoom add MouseZoom.
+	 */
+	public void addMouseListener(){
+	
+	    // Creation comportement rotation a la souris
+	    MouseRotate rotate = new MouseRotate(MouseBehavior.INVERT_INPUT);
+	    rotate.setTransformGroup(this.transformGroup);
+	    rotate.setFactor(0.002);
+	    rotate.setSchedulingBounds(new BoundingSphere(new Point3d(0, 0, 0), 100d));// il faut réorienté la caméra -_- 
+	    this.addChild(rotate);
+	
+	    // Creation comportement zoom a la souris avec la molette
+	    MouseWheelZoom zoom = new MouseWheelZoom(this.transformGroup);
+	    zoom.setFactor(1.2);
+	    zoom.setSchedulingBounds(new BoundingSphere(new Point3d(0,0,0), 10));
+	    this.addChild(zoom);
+	}
+	
+	/**
+	 * This function is used to add the keyboard's implements to the scene.
+	 * add KeyNavigatorBehavior.
+	 */
+	public void addKeyListener(){
 		
-		Transform3D rotate = new Transform3D();
-		Vector3f coordCamera=this.getVector3fCamera();
-		
-		rotate.setRotation(new AxisAngle4d(coordCamera.x,coordCamera.y,coordCamera.z,angle));
-		
-		this.transformGroup.setTransform(rotate);	
+		// On associe l'objet TransformGroup tg au clavier
+	    KeyNavigatorBehavior keyNavigatorBehavior = new KeyNavigatorBehavior(transformGroup);
 
+	    // Champ d'action du clavier
+	    keyNavigatorBehavior.setSchedulingBounds(new BoundingSphere(new Point3d(0,0,0), 10));
+
+	    // Ajout du comportement du clavier a l'objet parent de la scene 3D
+	    transformGroup.addChild(keyNavigatorBehavior);
 	}
 
+	public float getBackClipDistance() {
+		return (float)this.view.getBackClipDistance();
+	}
+
+	public void setBackClipDistance(float backClipDistance) {
+		this.view.setBackClipDistance(backClipDistance);
+	}
+	
 }
