@@ -51,7 +51,7 @@
 					red
 					blue
 					cyan
-					grey
+					gray
 					green
 					magenta
 					orange
@@ -64,7 +64,7 @@
 					<xsd:enumeration value="blue" />
 					<xsd:enumeration value="cyan" />
 					<xsd:enumeration value="green" />
-					<xsd:enumeration value="grey" />
+					<xsd:enumeration value="gray" />
 					<xsd:enumeration value="magenta" />
 					<xsd:enumeration value="orange" />
 					<xsd:enumeration value="pink" />
@@ -107,9 +107,9 @@
 	
 	<!-- define the content of the element coordonates -->
 	<xsd:complexType name="coordonatesType">
-		<xsd:attribute name="x" type="xsd:string" use="required" />
-		<xsd:attribute name="y" type="xsd:string" use="required" />
-		<xsd:attribute name="z" type="xsd:string" use="required" />
+		<xsd:attribute name="x" type="xsd:float" use="required" />
+		<xsd:attribute name="y" type="xsd:float" use="required" />
+		<xsd:attribute name="z" type="xsd:float" use="required" />
 	</xsd:complexType>
 </xsd:schema>
  
