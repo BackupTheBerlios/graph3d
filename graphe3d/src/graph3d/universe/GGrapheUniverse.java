@@ -3,6 +3,9 @@ package graph3d.universe;
 import graph3d.elements.GGraph;
 import graph3d.elements.GLink;
 import graph3d.elements.GNode;
+import graph3d.lists.GAttributesList;
+import graph3d.lists.GConnectionsList;
+import graph3d.universe.behaviors.SelectionBehavior;
 
 import java.awt.Color;
 import java.util.Enumeration;
@@ -195,7 +198,6 @@ public class GGrapheUniverse extends VirtualUniverse{
 		
 		return this.view.getCanvas();
 	}
-
 	
 	/**
 	 * This function is used to add a GNode to the scene.
@@ -257,72 +259,6 @@ public class GGrapheUniverse extends VirtualUniverse{
 		
 	}
 	
-	public GGraph getGraph() {
-		return graph;
-	}
-
-	public void setGraph(GGraph graph) {
-		this.graph = graph;
-	}
-	
-	/**
-	 * appel de la methode zoom de la classe view
-	 * zoom plus de 1
-	 */
-	public void zoomMore(){
-		this.view.zoom(-1f);
-	}
-	
-	/**
-	 * appel de la methode zoom de la classe view
-	 * zoom moins de 1
-	 */
-	public void zoomLess(){
-		this.view.zoom(1f);
-	}
-	/**
-	 * appel de la methode zoom de la classe view
-	 * zoom de valeur de la variable zoom
-	 */
-	public void zoom(float zoom){
-		this.view.zoom(zoom);
-	}
-	
-	/**
-	 * 
-	 */
-	public void rotateTop(){
-		this.view.rotateY(-1f);
-	}
-	
-	/**
-	 * 
-	 */
-	public void rotateBottom(){
-		this.view.rotateY(1f);
-	}
-	
-	/**
-	 * 
-	 */
-	public void rotateLeft(){
-		this.view.rotateX(1f);
-	}
-	
-	/**
-	 * 
-	 */
-	public void rotateRight(){
-		this.view.rotateX(-1f);
-	}
-	
-	/**
-	 * center the view
-	 */
-	public void centerView(){
-		this.view.putOnBestPointToSee();
-	}
-	
 	/**
 	 * This function is used to add a background color to the scene.
 	 * @param color of type Color.
@@ -332,5 +268,54 @@ public class GGrapheUniverse extends VirtualUniverse{
 	    background.setApplicationBounds(new BoundingBox());
 	    scene.addChild(background);
 	}
+
+	public GGraph getGraph() {
+		return graph;
+	}
+
+	public void setGraph(GGraph graph) {
+		this.graph = graph;
+	}
+	
+	public void addSelectionBehavior(GAttributesList _attributesList, GConnectionsList _connectionsList) {
+		Enumeration<String> keys = this.ComponentsView.keys();
+		while (keys.hasMoreElements()) {
+			String key = keys.nextElement();
+			BranchGroup componentView = this.ComponentsView.get(key);
+			if (componentView instanceof GNodeView) {
+				((GNodeView)componentView).addSelectionBehavior(_attributesList, _connectionsList);
+			} else {
+				((GLinkView)componentView).addSelectionBehavior(_attributesList, _connectionsList);
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	/*public void rotateTop(){
+		this.view.rotateY(-0.1f);
+	}
+	
+	/**
+	 * 
+	 */
+	/*public void rotateBottom(){
+		this.view.rotateY(0.1f);
+	}
+	
+	/**
+	 * 
+	 */
+	/*public void rotateLeft(){
+		this.view.rotateX(0.1f);
+	}
+	
+	/**
+	 * 
+	 */
+	/*public void rotateRight(){
+		this.view.rotateX(-0.1f);
+	}*/	
 	
 }

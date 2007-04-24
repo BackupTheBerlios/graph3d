@@ -1,6 +1,9 @@
 package graph3d.universe;
 
 import graph3d.elements.GNode;
+import graph3d.lists.GAttributesList;
+import graph3d.lists.GConnectionsList;
+import graph3d.universe.behaviors.SelectionBehavior;
 
 import javax.media.j3d.Appearance;
 import javax.media.j3d.BranchGroup;
@@ -36,21 +39,19 @@ public class GNodeView extends BranchGroup {
 		this.setCapability(BranchGroup.ALLOW_DETACH);
 		this.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
 		this.setCapability(BranchGroup.ALLOW_CHILDREN_READ);
-		
+		this.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
 		this.node = _node;
-		
 		this.transformGroup = new TransformGroup();
-		/*this.transform3D = new Transform3D();
-		this.transform3D.setTranslation(new Vector3f(this.node.getCoordonates()));
-		this.transformGroup.setTransform(this.transform3D);*/
 		this.update();
-		
 		this.createAppearence();
-		
 		this.sphere = new Sphere(this.node.getRadius(), Primitive.GENERATE_TEXTURE_COORDS, this.appearence);
-		
 		this.transformGroup.addChild(this.sphere);
 		this.addChild(this.transformGroup);
+	}
+	
+	public void addSelectionBehavior(GAttributesList _attributesList, GConnectionsList _connectionsList) {
+		SelectionBehavior selectionBehavior = new SelectionBehavior(_attributesList, _connectionsList, this.transformGroup, this.node);
+		this.addChild(selectionBehavior);
 	}
 	
 	public void update() {

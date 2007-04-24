@@ -1,6 +1,9 @@
 package graph3d.universe;
 
 import graph3d.elements.GLink;
+import graph3d.lists.GAttributesList;
+import graph3d.lists.GConnectionsList;
+import graph3d.universe.behaviors.SelectionBehavior;
 
 import java.awt.Color;
 
@@ -35,6 +38,7 @@ public abstract class GLinkView extends BranchGroup {
 		this.setCapability(BranchGroup.ALLOW_DETACH);
 		this.setCapability(BranchGroup.ALLOW_CHILDREN_READ);
 		this.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
+		this.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
 	}
 	
 	/**
@@ -146,5 +150,10 @@ public abstract class GLinkView extends BranchGroup {
 		}	else {
 			return new Color3f(Color.white);
 		}
+	}
+	
+	public void addSelectionBehavior(GAttributesList _attributesList, GConnectionsList _connectionsList) {
+		SelectionBehavior selectionBehavior = new SelectionBehavior(_attributesList, _connectionsList, this.transformGroup, this.link);
+		this.addChild(selectionBehavior);
 	}
 }

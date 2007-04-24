@@ -2,9 +2,13 @@ package graph3d.universe;
 
 import graph3d.universe.behaviors.GKeyBehavior;
 
+import java.awt.AWTEvent;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
+import java.awt.event.KeyEvent;
+import java.util.Enumeration;
 
+import javax.media.j3d.Behavior;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
@@ -15,11 +19,11 @@ import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.View;
 import javax.media.j3d.ViewPlatform;
+import javax.media.j3d.WakeupOnAWTEvent;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3f;
 
 import com.sun.j3d.utils.behaviors.keyboard.KeyNavigatorBehavior;
-import com.sun.j3d.utils.behaviors.mouse.MouseBehavior;
 import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
 import com.sun.j3d.utils.behaviors.mouse.MouseTranslate;
 import com.sun.j3d.utils.behaviors.mouse.MouseWheelZoom;
@@ -27,7 +31,7 @@ import com.sun.j3d.utils.behaviors.mouse.MouseWheelZoom;
 /**
  * This class create the graph3D's view.
  */
-public class GView extends BranchGroup{
+public class GView extends BranchGroup {
 	
 	private final PhysicalBody PHYSICALBODY = new PhysicalBody();
 	private final PhysicalEnvironment PHYSICALENVIRONMENT = new PhysicalEnvironment();
@@ -67,7 +71,7 @@ public class GView extends BranchGroup{
 	    this.view.attachViewPlatform(this.viewPlatform);
 	    this.view.setPhysicalBody(this.PHYSICALBODY);
 	    this.view.setPhysicalEnvironment(this.PHYSICALENVIRONMENT);
-	    
+
 	    // Creation du groupe de transformation qui permet de modifier la position
 	    // de la camera
 	    this.transformGroup = new TransformGroup();
@@ -75,6 +79,9 @@ public class GView extends BranchGroup{
 	    this.transformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 	    this.transformGroup.addChild(this.viewPlatform);
 	    
+	    // Creation de l'objet parent qui est pere de tous les nodes de la classe
+	    // Vue
+	    //this.setCapability(BranchGroup.ALLOW_DETACH); sans doute pas nécessaire	    
 	    this.addChild(this.transformGroup);
 	}
 	
@@ -89,6 +96,9 @@ public class GView extends BranchGroup{
 	
 	void putOnBestPointToSee(float[] _bestPointToSee) {
 		this.bestPointToSee = new Vector3f(_bestPointToSee);
+		if (this.keyBehavior != null) {
+			this.keyBehavior.setCamera(new Vector3f(_bestPointToSee));
+		}
 this.camera=new Vector3f(this.bestPointToSee);
 		if (this.keyBehavior != null) {
 			this.keyBehavior.setCamera(new Vector3f(_bestPointToSee));
@@ -104,7 +114,7 @@ this.camera=new Vector3f(this.bestPointToSee);
 	 * The getter of the Canvas3D.
 	 * @return a Canvas3D component.
 	 */
-	public Canvas3D getCanvas() {		
+	public Canvas3D getCanvas() {
 		return this.canvas;
 	}
 
@@ -128,180 +138,14 @@ this.camera=new Vector3f(this.bestPointToSee);
 	 * This fonction is used to move the camera's view to do a zoom
 	 * @param distance type of float
 	 */
-	public void zoom(float distance){
+	/*public void zoom(float distance){
 		
 		Transform3D zoom = new Transform3D();
 		
 		zoom.setTranslation(new Vector3f(camera.x, camera.y , (camera.z+(distance)) ));
 		this.camera.z += distance;
 		this.transformGroup.setTransform(zoom);	
-	}
-	
-	
-	/*public void rotateX(double angle){
-		
-		this.angleX += angle;
-		
-		Transform3D translate=new Transform3D();
-		Transform3D thetaRot = new Transform3D();
-		
-		thetaRot.rotX(this.angleX);
-		
-		translate.setTranslation(new Vector3f(0,0,camera.z));
-		
-		translate.mul(thetaRot);;
-
-		transformGroup.setTransform(translate);
 	}*/
-	
-	
-	public void rotateX(float factor){
-		
-		System.out.println("x->"+camera.x+" y->"+camera.y+" z->"+camera.z);
-
-		double phi, theta;
-		
-		Transform3D translate=new Transform3D();
-		Transform3D thetaRot = new Transform3D();
-		Transform3D phiRot = new Transform3D();
-
-		
-		if(camera.x+(Math.abs(factor)) >= 0 && camera.z-(Math.abs(factor)) >= 0){
-			theta = Math.atan(camera.x/camera.z);
-			phi = Math.atan(camera.y/camera.z);
-			
-			translate.setTranslation(new Vector3f(camera.x+factor, camera.y , camera.z-factor ));
-			this.camera.x += factor;
-			this.camera.z -= factor;
-
-			phiRot.rotX(-phi);
-			thetaRot.rotY(theta);
-
-			translate.setTranslation(new Vector3f(camera.x+factor, camera.y , camera.z-factor ));
-		}
-		if(camera.x-(Math.abs(factor)) >= 0 && camera.z-(Math.abs(factor)) <= 0){		
-			theta = Math.atan(camera.x/camera.z);
-			phi = Math.atan(camera.y/camera.z);
-			
-			//translate.setTranslation(new Vector3f(camera.x-factor, camera.y , camera.z-factor ));
-			this.camera.x -= factor;
-			this.camera.z -= factor;
-
-			phiRot.rotX(-phi);
-			thetaRot.rotY(theta);
-			
-			translate.setTranslation(new Vector3f(camera.x-factor, camera.y , camera.z-factor ));
-		}
-		if(camera.x-(Math.abs(factor)) <= 0 && camera.z+(Math.abs(factor)) <= 0){
-			theta = Math.atan(camera.x/camera.z);
-			phi = Math.atan(camera.y/camera.z);
-			
-			translate.setTranslation(new Vector3f(camera.x-factor, camera.y , camera.z+factor ));
-			this.camera.x -= factor;
-			this.camera.z += factor;
-
-			phiRot.rotX(-phi);
-			thetaRot.rotY(theta);
-			
-			translate.setTranslation(new Vector3f(camera.x-factor, camera.y , camera.z+factor ));
-		}
-		if(camera.x+(Math.abs(factor)) <= 0 && camera.z+(Math.abs(factor)) >= 0){
-			theta = Math.atan(camera.x/camera.z);
-			phi = Math.atan(camera.y/camera.z);
-			
-			translate.setTranslation(new Vector3f(camera.x+factor, camera.y , camera.z+factor ));
-			this.camera.x += factor;
-			this.camera.z += factor;
-
-			phiRot.rotX(-phi);
-			thetaRot.rotY(theta);
-			
-			translate.setTranslation(new Vector3f(camera.x+factor, camera.y , camera.z+factor ));
-		}
-
-
-		translate.mul(phiRot);
-		translate.mul(thetaRot);
-		
-
-		transformGroup.setTransform(translate);
-
-		
-	}
-	
-	public void rotateY(float factor){
-		
-		System.out.println("x->"+camera.x+" y->"+camera.y+" z->"+camera.z);
-		
-		double phi, theta;
-		
-		Transform3D translate=new Transform3D();
-		Transform3D thetaRot = new Transform3D();
-		Transform3D phiRot = new Transform3D();
-		
-		if(camera.y+(Math.abs(factor)) >= 0 && camera.z-(Math.abs(factor)) >= 0){
-			theta = Math.atan(camera.x/camera.y);
-			phi = Math.atan(camera.z/camera.y);
-			
-			translate.setTranslation(new Vector3f(camera.x, camera.y+factor , camera.z-factor ));
-			this.camera.y += factor;
-			this.camera.z -= factor;
-			
-			phiRot.rotX(-phi);
-			thetaRot.rotZ(theta);
-			
-			translate.setTranslation(new Vector3f(camera.x, camera.y+factor , camera.z-factor ));
-		}
-			
-		if(camera.y-(Math.abs(factor)) >= 0 && camera.z-(Math.abs(factor)) <= 0){
-			theta = Math.atan(camera.x/camera.z);
-			phi = Math.atan(camera.y/camera.z);
-				
-			translate.setTranslation(new Vector3f(camera.x, camera.y-factor , camera.z-factor ));
-			this.camera.y -= factor;
-			this.camera.z -= factor;
-				
-			phiRot.rotX(-phi);
-			thetaRot.rotY(theta);
-				
-			translate.setTranslation(new Vector3f(camera.x, camera.y-factor , camera.z-factor ));
-		}
-			
-			if(camera.y-(Math.abs(factor)) <= 0 && camera.z+(Math.abs(factor)) <= 0){
-				theta = Math.atan(camera.x/camera.z);
-				phi = Math.atan(camera.y/camera.z);
-					
-				translate.setTranslation(new Vector3f(camera.x, camera.y-factor , camera.z+factor ));
-				this.camera.y -= factor;
-				this.camera.z += factor;
-					
-				phiRot.rotX(-phi);
-				thetaRot.rotY(theta);
-					
-				translate.setTranslation(new Vector3f(camera.x, camera.y-factor , camera.z+factor ));
-			}
-					
-				if(camera.y+(Math.abs(factor)) <= 0 && camera.z+(Math.abs(factor)) >= 0){
-					theta = Math.atan(camera.x/camera.z);
-					phi = Math.atan(camera.y/camera.z);
-						
-					translate.setTranslation(new Vector3f(camera.x, camera.y+factor , camera.z+factor ));
-					this.camera.y += factor;
-					this.camera.z += factor;
-						
-					phiRot.rotX(-phi);
-					thetaRot.rotY(theta);
-						
-					translate.setTranslation(new Vector3f(camera.x, camera.y+factor , camera.z+factor ));
-				}
-
-
-		translate.mul(phiRot);
-		translate.mul(thetaRot);
-		
-		this.transformGroup.setTransform(translate);
-	}
-	
 	
 	/**
 	 * This function is used to add the mouse's implements to the scene.
@@ -315,7 +159,7 @@ this.camera=new Vector3f(this.bestPointToSee);
 	    // Creation comportement zoom a la souris avec la molette
 	    MouseWheelZoom zoom = new MouseWheelZoom(this.transformGroup);
 	    zoom.setFactor(1.2);
-	    zoom.setSchedulingBounds(new BoundingSphere(new Point3d(0,0,0), 1000));
+	    zoom.setSchedulingBounds(new BoundingSphere(new Point3d(0,0,0), 10));
 	    this.addChild(zoom);
 	}
 	
@@ -325,7 +169,7 @@ this.camera=new Vector3f(this.bestPointToSee);
 	 */
 	public void addKeyListener(){
 		this.keyBehavior = new GKeyBehavior(this.transformGroup, (Vector3f)this.bestPointToSee.clone());
-		this.keyBehavior.setSchedulingBounds(new BoundingSphere(new Point3d(0,0,0), 1000));
+		this.keyBehavior.setSchedulingBounds(new BoundingSphere(new Point3d(0,0,0), 10));
 		this.addChild(this.keyBehavior);
 	}
 
