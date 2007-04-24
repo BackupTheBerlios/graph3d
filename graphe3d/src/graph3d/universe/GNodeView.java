@@ -3,6 +3,7 @@ package graph3d.universe;
 import graph3d.elements.GNode;
 
 import javax.media.j3d.Appearance;
+import javax.media.j3d.BranchGroup;
 import javax.media.j3d.ImageComponent2D;
 import javax.media.j3d.Texture;
 import javax.media.j3d.Texture2D;
@@ -19,11 +20,12 @@ import com.sun.j3d.utils.image.TextureLoader;
 /**
  * This class create a GNodeView.
  */
-public class GNodeView extends TransformGroup {
+public class GNodeView extends BranchGroup {
 	
 	private Sphere sphere;
 	private Appearance appearence;
 	private Transform3D transform3D;
+	private TransformGroup transformGroup;
 	private GNode node;
 	
 	/**
@@ -31,18 +33,30 @@ public class GNodeView extends TransformGroup {
 	 * @param _node of type GNode.
 	 */
 	public GNodeView(GNode _node){
+		this.setCapability(BranchGroup.ALLOW_DETACH);
+		this.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
+		this.setCapability(BranchGroup.ALLOW_CHILDREN_READ);
+		
 		this.node = _node;
 		
-		this.transform3D = new Transform3D();
+		this.transformGroup = new TransformGroup();
+		/*this.transform3D = new Transform3D();
 		this.transform3D.setTranslation(new Vector3f(this.node.getCoordonates()));
+		this.transformGroup.setTransform(this.transform3D);*/
+		this.update();
 		
 		this.createAppearence();
 		
 		this.sphere = new Sphere(this.node.getRadius(), Primitive.GENERATE_TEXTURE_COORDS, this.appearence);
-		this.setTransform(this.transform3D);
-		this.addChild(this.sphere);
 		
-		//positionner la sphere => normalement ok
+		this.transformGroup.addChild(this.sphere);
+		this.addChild(this.transformGroup);
+	}
+	
+	public void update() {
+		this.transform3D = new Transform3D();
+		this.transform3D.setTranslation(new Vector3f(this.node.getCoordonates()));
+		this.transformGroup.setTransform(this.transform3D);
 	}
 	
 	/**
@@ -53,7 +67,7 @@ public class GNodeView extends TransformGroup {
 		
 		TextureLoader loader;
 		try {
-		loader = new TextureLoader("/textures/sphere.jpg", null);
+			loader = new TextureLoader("/textures/sphere.jpg", null);
 		} catch (ImageException e) {
 			loader = new TextureLoader("textures/sphere.jpg", null);
 		}

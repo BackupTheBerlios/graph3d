@@ -25,18 +25,22 @@ public class GArrowView extends GLinkView {
 	 */
 	private void createLine() {
 		this.setLine(new LineArray(6, GeometryArray.COORDINATES | GeometryArray.COLOR_3));
-		this.getLine().setCoordinate(0, this.getLink().getFirstNode().getCoordonates());
-		this.getLine().setCoordinate(1, this.getLink().getSecondNode().getCoordonates());
-		
-		this.getLine().setCoordinate(2, this.getLink().getFirstNode().getCoordonates());//mettre coordonnées pour créer la flèche
-		this.getLine().setCoordinate(3, this.getLink().getFirstNode().getCoordonates());
-		this.getLine().setCoordinate(4, this.getLink().getFirstNode().getCoordonates());
-		
+		this.update();
 		this.getLine().setColor(0, this.getColor());
 		this.getLine().setColor(1, this.getColor());
 		this.getLine().setColor(2, this.getColor());
 		this.getLine().setColor(3, this.getColor());
 		this.getLine().setColor(4, this.getColor());
+	}
+	
+	public void update() {
+		this.getLine().setCoordinate(0, this.getLink().getFirstNode().getCoordonates());
+		this.getLine().setCoordinate(1, this.getLink().getSecondNode().getCoordonates());
+		
+		//this.getCoordonatesToArrow();
+		this.getLine().setCoordinate(2, this.getLink().getFirstNode().getCoordonates());//mettre coordonnÃ©es pour crÃ©er la flÃ¨che
+		this.getLine().setCoordinate(3, this.getLink().getFirstNode().getCoordonates());
+		this.getLine().setCoordinate(4, this.getLink().getFirstNode().getCoordonates());
 	}
 
 }

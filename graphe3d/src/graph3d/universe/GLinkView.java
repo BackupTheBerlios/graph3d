@@ -5,6 +5,7 @@ import graph3d.elements.GLink;
 import java.awt.Color;
 
 import javax.media.j3d.Appearance;
+import javax.media.j3d.BranchGroup;
 import javax.media.j3d.LineArray;
 import javax.media.j3d.Shape3D;
 import javax.media.j3d.Transform3D;
@@ -12,23 +13,28 @@ import javax.media.j3d.TransformGroup;
 import javax.vecmath.Color3f;
 
 /**
- * This abstract class create a TransformGroup which will represent à GArrowView or a GBridgView.
+ * This abstract class create a TransformGroup which will represent a GArrowView or a GBridgView.
  */
-public abstract class GLinkView extends TransformGroup {
+public abstract class GLinkView extends BranchGroup {
 
 	private Shape3D shape;
 	private LineArray line;
 	private Appearance appearence;
 	private Transform3D transform3D;
+	private TransformGroup transformGroup;
 	private GLink link;
-	
 	/**
 	 * This function is used to add a shape3D (objet which will reprensent a GLink) to a transformGroup.
 	 */
 	public void add() {
+		this.transformGroup = new TransformGroup();
 		this.setShape(new Shape3D());
 		this.getShape().setGeometry(this.getLine());
-		this.addChild(this.getShape());
+		this.transformGroup.addChild(this.getShape());
+		this.addChild(this.transformGroup);
+		this.setCapability(BranchGroup.ALLOW_DETACH);
+		this.setCapability(BranchGroup.ALLOW_CHILDREN_READ);
+		this.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
 	}
 	
 	/**

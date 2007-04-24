@@ -26,12 +26,12 @@ public class GBridgeView extends GLinkView {
 	 */
 	private void createLine() {
 		this.setLine(new LineArray(2, GeometryArray.COORDINATES | GeometryArray.COLOR_3));
-		
+		this.update();
+	}
+	
+	public void update() {
 		this.getLine().setCoordinate(0, this.getLink().getFirstNode().getCoordonates());
 		this.getLine().setCoordinate(1, this.getLink().getSecondNode().getCoordonates());
-		
-		this.getLine().setColor(0, this.getColor());
-		this.getLine().setColor(1, this.getColor());
 	}
 
 }
