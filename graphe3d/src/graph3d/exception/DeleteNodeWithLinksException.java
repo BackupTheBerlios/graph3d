@@ -4,8 +4,18 @@ import javax.swing.JOptionPane;
 
 import graph3d.elements.GNode;
 
+/**
+ * This class define an exception which is generated when you try to delete a GNode which is connect to one or more GLink
+ * @author Erwan Daubert
+ * @version 1.0
+ *
+ */
 public class DeleteNodeWithLinksException extends GException {
 
+	/**
+	 * The constructor of this class
+	 * @param _node the GNode which you want delete
+	 */
 	public DeleteNodeWithLinksException(GNode _node) {
 		super("You want delete this node (\"" + _node.getName() + "\").\nBe Careful, If you delete this node, all links which are connected will be delete also.\n\nWould you want delete this node?");
 	}

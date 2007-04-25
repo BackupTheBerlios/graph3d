@@ -2,13 +2,21 @@ package graph3d.exception;
 
 import javax.swing.JOptionPane;
 
-import graph3d.elements.GLink;
-import graph3d.elements.GNode;
-
+/**
+ * This class define n exception wihch is generated when the XML file is not valid.
+ * An XML file which is not valid doesn't respect the syntax of the XML.
+ * @author Erwan Daubert
+ * @version 1.0
+ *
+ */
 public class InvalidXMLFileException extends GException {
 
 	private String details;
 	
+	/**
+	 * The constructor of this class
+	 * @param _details all details to describe the error
+	 */
 	public InvalidXMLFileException(String _details) {
 		super("The file is not a valid XML file.");
 		this.details = _details;
