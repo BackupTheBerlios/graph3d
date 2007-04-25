@@ -4,6 +4,8 @@ import graph3d.elements.GGraph;
 import graph3d.elements.GLink;
 import graph3d.elements.GNode;
 import graph3d.exception.GException;
+import graph3d.exception.InexistantClassException;
+import graph3d.exception.InvalidXMLFileException;
 import graph3d.exception.SameNameException;
 import graph3d.exception.XMLDefinitionException;
 
@@ -104,7 +106,7 @@ public class GParser {
 			// Exception permettant de signaler à l'utilisateur que la suite
 			// n'est pas pris en compte
 			throw new GException(
-					"The first graph is define but you don't define many graphs with one XML file.\nThe others graphs are not define.");
+					"The first graph is define but you don't define many graphs with one XML file.\nThe others graphs are not created.");
 		}
 		return this.graph;
 	}
@@ -125,18 +127,14 @@ public class GParser {
 			Transformer transformer = TransformerFactory.newInstance()
 					.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-			transformer
-					.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
 			transformer.setOutputProperty(OutputKeys.ENCODING, "utf-8");
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 			transformer.transform(source, resultat);
 		} catch (TransformerConfigurationException e) {
-			System.err.println("Impossible de créer un transformateur XML.");
-	
-			System.exit(1);
+			throw new GException("Error to created a \"transformer\".\nWe cannot save the graph.\nTo correct this error, please verify the version of your JDK or try again to save.");
 		} catch (TransformerException e) {
-	
-			e.printStackTrace();
+			throw new GException("Unknown error during the save.");
 		}
 	
 	}
@@ -175,12 +173,7 @@ public class GParser {
 			this.db.setErrorHandler(handler);
 			this.document = this.db.newDocument();
 		} catch (ParserConfigurationException e) {
-			System.out
-					.println("the XML parser used  doesn't support feature :");
-			System.out.println(e.getMessage());
-			System.out.println("Maybe your Java API is not a 1.5");
-			System.out.println("Update your JVM if it's necessary.");
-			// throw
+			throw new GException("Sorry, but we didn't created the XML parser.\nThe version of your JDK must be 1.5 or later");
 		}
 
 	}
@@ -189,20 +182,15 @@ public class GParser {
 		try {
 			this.document = this.db.parse(this.XMLFileName);
 		} catch (SAXException e) {
-			e.printStackTrace();
-			// throw
+			throw new GException("Parse Error", "Unknown Error during the parsing", 0);
 		} catch (IOException e) {
-			e.printStackTrace();
-			// throw new FileNotFoundException();
+			throw new InvalidXMLFileException("The XML file doesn't exist.");
 		}
-
-		// faire remonter les exceptions???
 	}
 
 	private GNode createNode(Element element) {
 		GNode node = null;
 		String name = element.getAttribute("name");
-
 		try {
 			Class<?> classe = Class.forName(element.getAttribute("class"));
 			java.lang.reflect.Constructor constructeur = classe
@@ -237,42 +225,30 @@ public class GParser {
 							node.setCoordonates(new float[] { x, y, z });
 						} catch (NumberFormatException e) {
 							throw new GException(
-									"Valeur des coordonées invalides.\n les coordonées sont des floats.");
+									"Invalid coordonates.\n les coordonées sont des floats.");
 						}
 					} else {
 						// normalement géré par le XSD
-						System.out.println(child.getNodeName());
+						//System.out.println(child.getNodeName());
+						throw new GException("Unknown Exception", "This exception mustn't appears.", 1);
 					}
 				}
 			}
 
 		} catch (SecurityException e) {
-
-			e.printStackTrace();
-			// throw
+			e.printStackTrace();//Don't appears because, we are sure to the signature of the constructor which we called.
 		} catch (NoSuchMethodException e) {
-
-			e.printStackTrace();
-			// throw
+			e.printStackTrace();//Don't appears because, we are sure to the signature of the constructor which we called.
 		} catch (IllegalArgumentException e) {
-
-			e.printStackTrace();
-			// throw
+			e.printStackTrace();//Don't appears because, we are sure to the signature of the constructor which we called.
 		} catch (InstantiationException e) {
-
-			e.printStackTrace();
-			// throw
+			e.printStackTrace();//Don't appears because, we are sure to the signature of the constructor which we called.
 		} catch (IllegalAccessException e) {
-
-			e.printStackTrace();
-			// throw
+			e.printStackTrace();//Don't appears because, we are sure to the signature of the constructor which we called.
 		} catch (InvocationTargetException e) {
-
-			e.printStackTrace();
-			// throw
+			e.printStackTrace();//Don't appears because, we are sure to the signature of the constructor which we called.
 		} catch (ClassNotFoundException e) {
-
-			e.printStackTrace();
+			throw new InexistantClassException(e.getMessage());
 		}
 		return node;
 	}
@@ -325,32 +301,19 @@ public class GParser {
 			return link;
 
 		} catch (SecurityException e) {
-
-			e.printStackTrace();
-			// throw
+			e.printStackTrace();//Don't appears because, we are sure to the signature of the constructor which we called.
 		} catch (NoSuchMethodException e) {
-
-			e.printStackTrace();
-			// throw
+			e.printStackTrace();//Don't appears because, we are sure to the signature of the constructor which we called.
 		} catch (IllegalArgumentException e) {
-
-			e.printStackTrace();
-			// throw
+			e.printStackTrace();//Don't appears because, we are sure to the signature of the constructor which we called.
 		} catch (InstantiationException e) {
-
-			e.printStackTrace();
-			// throw
+			e.printStackTrace();//Don't appears because, we are sure to the signature of the constructor which we called.
 		} catch (IllegalAccessException e) {
-
-			e.printStackTrace();
-			// throw
+			e.printStackTrace();//Don't appears because, we are sure to the signature of the constructor which we called.
 		} catch (InvocationTargetException e) {
-
-			e.printStackTrace();
-			// throw
+			e.printStackTrace();//Don't appears because, we are sure to the signature of the constructor which we called.
 		} catch (ClassNotFoundException e) {
-
-			e.printStackTrace();
+			throw new InexistantClassException(e.getMessage());
 		}
 		return link;
 
@@ -443,20 +406,16 @@ public class GParser {
 
 	class GErrorHandler implements ErrorHandler {
 
-		public void error(SAXParseException exception)
-				throws XMLDefinitionException {
-			System.err.println("error : ");
-			exception.printStackTrace();
+		public void error(SAXParseException exception) {
+			throw new XMLDefinitionException(exception.getMessage());
 		}
 
-		public void fatalError(SAXParseException exception) throws SAXException {
-			System.err.println("fatal error :");
-			exception.printStackTrace();
+		public void fatalError(SAXParseException exception) {
+			throw new InvalidXMLFileException(exception.getMessage());
 		}
 
 		public void warning(SAXParseException exception) throws SAXException {
 			System.err.println("warning :");
-			exception.printStackTrace();
 		}
 
 	}

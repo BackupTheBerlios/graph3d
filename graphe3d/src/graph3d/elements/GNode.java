@@ -202,57 +202,48 @@ public class GNode {
 				try {
 					Short.parseShort(_value);
 				} catch (NumberFormatException e) {
-					throw new GException(
-							"Valeur du paramètre invalide.\n un short attendu.");
+					throw new InvalidAttributeTypeException(this, _name, _type, _value);
 				}
 			} else if (_type.equals("byte")) {
 				try {
 					Byte.parseByte(_value);
 				} catch (NumberFormatException e) {
-					throw new GException(
-							"Valeur du paramètre invalide.\n un byte attendu.");
+					throw new InvalidAttributeTypeException(this, _name, _type, _value);
 				}
 			} else if (_type.equals("int")) {
 				try {
 					Integer.parseInt(_value);
 				} catch (NumberFormatException e) {
-					throw new GException(
-							"Valeur du paramètre invalide.\n un int attendu.");
+					throw new InvalidAttributeTypeException(this, _name, _type, _value);
 				}
 			} else if (_type.equals("long")) {
 				try {
 					Long.parseLong(_value);
 				} catch (NumberFormatException e) {
-					throw new GException(
-							"Valeur du paramètre invalide.\n un long attendu.");
+					throw new InvalidAttributeTypeException(this, _name, _type, _value);
 				}
 			} else if (_type.equals("float")) {
 				try {
 					Float.parseFloat(_value);
 				} catch (NumberFormatException e) {
-					throw new GException(
-							"Valeur du paramètre invalide.\n un float attendu.");
+					throw new InvalidAttributeTypeException(this, _name, _type, _value);
 				}
 			} else if (_type.equals("double")) {
 				try {
 					Double.parseDouble(_value);
 				} catch (NumberFormatException e) {
-					throw new GException(
-							"Valeur du paramètre invalide.\n un double attendu.");
+					throw new InvalidAttributeTypeException(this, _name, _type, _value);
 				}
 			} else if (_type.equals("boolean")) {
 				try {
 					Boolean.parseBoolean(_value);
 				} catch (NumberFormatException e) {
-					throw new GException(
-							"Valeur du paramètre invalide.\n un boolean attendu.");
+					throw new InvalidAttributeTypeException(this, _name, _type, _value);
 				}
 			} else if (_type.equals("char")) {
 				if (_value.toCharArray().length != 1) {
-					throw new GException(
-							"Valeur du paramètre invalide.\n un char attendu.");
+					throw new InvalidAttributeTypeException(this, _name, _type, _value);
 				}
-				// } else if (type.equals("String")) {
 
 			} else {
 				// type is undefine
@@ -381,7 +372,7 @@ public class GNode {
 	}
 
 	/**
-	 * The getter of radiaus
+	 * The getter of radius
 	 * @return radius
 	 */
 	public float getRadius() {
