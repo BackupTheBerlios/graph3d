@@ -22,29 +22,39 @@ import javax.swing.border.TitledBorder;
 import editorGraph.GEditor.ButtonListener;
 import graph3d.elements.GLink;
 import graph3d.elements.GNode;
+import graph3d.exception.ASCIIFileNotFoundException;
+import graph3d.exception.BadElementTypeException;
+import graph3d.exception.GException;
+import graph3d.exception.InexistantClassException;
 
 /**
+ * this class is used to implement the creation area of a graph editor.<br>
+ * there is in this area two areas for node and link adding in the associated graph.<br>
+ * <br>
+ * this class is a package class
  * 
  * @author lino christophe
+ * @version 1.0
+ * @since JDK 1.5
  *
  */
 class GCreationArea extends JPanel{
 
 	/*
-	 * the Geditor owner
+	 * the editor owner
 	 */
 	GEditor editor;
-	
+
 	/*
-	 * 2 boutons pour la création d'un (plusieurs) lien(s).
-	 * 1 bouton pour la création d'un noeud.
+	 * two buttons for link(s) creation.
+	 * one button for node creation.
 	 */
 	JButton
 	button_arrow,
 	button_bridge,
 	button_node;
 	/*
-	 * choix déroulants des types
+	 * types pulldown menu
 	 */
 	JComboBox
 	combo_arrow,
@@ -52,38 +62,46 @@ class GCreationArea extends JPanel{
 	combo_node;
 
 	/*
-	 * champs formatés (double) pour les coordonnées
+	 * formatted fields (double) for coordonates
 	 */
 	JSpinner[]
-	         coord_values=new JSpinner[3];
+	         coord_values = new JSpinner[3];
 
 	/*
-	 * tables de hachage contenant les types connus.
+	 * hash tables contening all known types
 	 */
 	public Hashtable<String, Class>
 	table_link = new Hashtable<String, Class>(),
-	table_node   = new Hashtable<String, Class>();
+	table_node = new Hashtable<String, Class>();
 
+	/**
+	 * constructs a creation area to put into an editor
+	 * @param file
+	 * 		the name of the file containing all the known classes which implements graph elements.
+	 * 		If it is null, only basic "node" and "link" types will be loaded.
+	 * @param owner
+	 * 		the editor owner
+	 */
 	public GCreationArea(String file, GEditor owner){
 		this.editor = owner;
 		/*
-		 * création de 2 zones
+		 * creation of 2 separated areas for links and for nodes
 		 */
 		JPanel links = new JPanel(), nodes = new JPanel();
 		/*
-		 * nommage des zones
+		 * areas namming
 		 */			
 		links.setBorder(new TitledBorder(new EtchedBorder(),"liens"));
 		nodes.setBorder(new TitledBorder(new EtchedBorder(),"noeuds"));
 		/*
-		 * initialisation des éléments
+		 * elements initialization
 		 */
 		button_arrow = new JButton("créer arc(s)");
 		button_bridge = new JButton("créer arête(s)");
 		button_node = new JButton("créer noeud");
-		button_arrow.setMargin(editor.BUTTON_INSETS);
-		button_bridge.setMargin(editor.BUTTON_INSETS);
-		button_node.setMargin(editor.BUTTON_INSETS);
+		button_arrow.setMargin(GEditor.BUTTON_INSETS);
+		button_bridge.setMargin(GEditor.BUTTON_INSETS);
+		button_node.setMargin(GEditor.BUTTON_INSETS);
 
 		combo_arrow = new JComboBox();
 		combo_arrow.setMaximumRowCount(5);
@@ -99,16 +117,19 @@ class GCreationArea extends JPanel{
 
 		for(int i=0;i<3;i++)coord_values[i] = new JSpinner(new SpinnerNumberModel(0,-1*Double.MAX_VALUE,Double.MAX_VALUE,0.1));			
 		/*
-		 * chargement des types
+		 * loading types
 		 */
+		file = (file == null) ? "" : file;
 		loadTypes(file);
 		/*
-		 * mise en place des types dans l'éditeur
+		 * we put types in place into the pulldown menus
 		 */
 		Object[]link_types = table_link.keySet().toArray();
 		if(link_types.length==0){
 			button_arrow.setEnabled(false);
 			combo_arrow.setEnabled(false);
+			button_bridge.setEnabled(false);
+			combo_bridge.setEnabled(false);
 		}else
 			for(int i=0;i<link_types.length;i++){
 				combo_arrow.addItem(link_types[i]);
@@ -121,6 +142,9 @@ class GCreationArea extends JPanel{
 			combo_node.setEnabled(false);
 		}else
 			for(int i=0;i<node_types.length;i++) combo_node.addItem(node_types[i]);
+		
+		Hashtable<Class, String> table_types = getTableTypes();
+		GTab.setTableTypes(table_types);
 		/*
 		 * placement
 		 */
@@ -128,7 +152,7 @@ class GCreationArea extends JPanel{
 		links.setLayout(new GridLayout(5,1));
 		nodes.setLayout(new GridLayout(5,1));
 		/*
-		 * ajout des éléments
+		 * elements addition
 		 */
 		links.add(button_arrow);
 		links.add(combo_arrow);
@@ -153,7 +177,7 @@ class GCreationArea extends JPanel{
 		add(links);
 		add(nodes);
 		/*
-		 * ajout des actions
+		 * actions addition
 		 */
 		ButtonListener buttonListener = editor.new ButtonListener();
 		button_arrow.addMouseListener(buttonListener);
@@ -162,40 +186,81 @@ class GCreationArea extends JPanel{
 
 	}//construct
 
+	/**
+	 * this method is used to load the known classes which implements graph elements from an ascii file
+	 * @param filename
+	 * 		the name of the file containing all the known classes which implements graph elements
+	 */
 	private void loadTypes(String filename){
 		File file = new File(filename);
 		try{
 			BufferedReader buf = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 			String line;
 			int line_count=0;
+			/*
+			 * reading all the lines of the source file
+			 */
 			while((line = buf.readLine())!=null){
 				line_count++;
 				String data[] = line.split(":");
 				try{
+					/*
+					 * boolean to check if it is a graph element, that's to say if its type is a
+					 * GNode or GLink (sub)type
+					 */
 					boolean graphe_element = false;
 					Class cl = Class.forName(data[1]);
 					while(cl!=null && !graphe_element){
 						if(cl == GNode.class){
 							graphe_element = true;
+							/*
+							 * we add it as a know node type
+							 */
 							table_node.put(data[0], Class.forName(data[1]));
 						}else if(cl == GLink.class){
 							graphe_element = true;
+							/*
+							 * we add it as a know link type
+							 */
 							table_link.put(data[0], Class.forName(data[1]));
 						}else
 							cl = cl.getSuperclass();
 					}//while
 					if(!graphe_element)
-						System.err.println("line "+line_count+" \""+data[1]+"\" : this class is not an instance of a graph element");
+						(new BadElementTypeException(data[1], line_count)).showError();
 				}catch (ClassNotFoundException e3){
-						System.err.println("line "+line_count+" \""+data[1]+"\" : this class does not exist or is not accessible");
+					(new InexistantClassException(data[1], line_count)).showError();
+				}catch (Exception e4){
+					String message = "line "+line_count+" : empty lines or incomplete lines are not allowed !";
+					(new GException(message)).showError();
 				}//try
 			}//while
 		}catch (FileNotFoundException e) {
-			System.err.println(filename+" : file not found !");
+			new ASCIIFileNotFoundException(filename).showError();
 		}catch (IOException e) {
 			System.err.println("an I/O error occurred while reading file : "+filename);	
 		}//try
-
+		if(!table_node.contains(GNode.class))
+			table_node.put("node", GNode.class);
+		if(!table_link.contains(GLink.class))
+			table_link.put("link", GLink.class);
 	}//loadTypes
+	
+	public Hashtable<Class, String> getTableTypes(){
+		/*
+		 * we create a reversed table from the link types and node types
+		 * and we send it to the GTab class
+		 */
+		Hashtable<Class, String> table_types = new Hashtable<Class, String>();
+		Object[] types_link = table_link.keySet().toArray();
+		Object[] types_node = table_node.keySet().toArray();
+
+		for(int i=0;i<types_link.length;i++)
+			table_types.put(table_link.get(types_link[i]), (String)types_link[i]);
+		for(int i=0;i<types_node.length;i++)
+			table_types.put(table_node.get(types_node[i]), (String)types_node[i]);
+		
+		return table_types;
+	}
 
 }//inner class GCreationArea

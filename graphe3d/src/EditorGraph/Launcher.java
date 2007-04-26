@@ -51,7 +51,6 @@ class Launcher {
 //		graph.addLink(link_2);
 		
 		GGrapheUniverse universe = new GGrapheUniverse(graph);
-		f.add(universe.getCanvas());
 		
 		GEditor editor;
 		try{
@@ -60,13 +59,17 @@ class Launcher {
 			editor = new GEditor("/types/fichiertype.txt", universe);
 		}
 //		GEditor editor = new GEditor("", universe);
-		
+
+		f.add(universe.getCanvas());
 		f.add(editor);
 		f.setVisible(true);
 		
-		String name = graph.getLinks().keys().nextElement();
+		String name = graph.getLinks().keySet().toArray(new String[0])[0];
 		GLink link = graph.getLink(name);
 		editor.addComponent(link, false);
+		name = graph.getNodes().keySet().toArray(new String[0])[1];
+		GNode  node = graph.getNode(name);
+		editor.addComponent(node, false);
 		
 	}//main
 

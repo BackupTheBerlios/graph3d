@@ -137,9 +137,9 @@ class GPopup extends JDialog {
 		setTitle("Fenêtre de création d'arêtes");
 		tabbedPane.removeAll();
 		label.setText("veuillez sélectionner les arêtes à créer :");
-		for(int i=0;i<nodes.length-1;i++){
+		for(int i=0;i<nodes.length;i++){
 			JScrollPane scrollPane = new JScrollPane();
-			JPanel panel = new JPanel(null);
+			JPanel panel = new JPanel(new GridLayout(nodes.length,1));
 			for(int j=i;j<nodes.length;j++){
 				GCheckbox checkbox = new GCheckbox(nodes[i],nodes[j],GCheckbox.BRIDGE);
 				checkbox.setBounds(10, 10+20*(j-i), 123, 20);

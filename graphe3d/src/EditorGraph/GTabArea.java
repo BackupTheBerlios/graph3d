@@ -17,6 +17,7 @@ import javax.swing.border.TitledBorder;
 import editorGraph.GEditor.ButtonListener;
 import graph3d.elements.GLink;
 import graph3d.elements.GNode;
+import graph3d.lists.GAttributesList;
 
 /**
  * this class is used to implement the tabs area in the graph editor.<br>
@@ -40,17 +41,7 @@ class GTabArea extends JPanel{
 	/*
 	 * the tabbedpane : contains all the selection tabs
 	 */
-	JTabbedPane tabbedpane;
-
-	/*
-	 * the whole list of selected graph elements
-	 */
-	LinkedList<Object> elements;
-
-	/*
-	 * the number of selected nodes
-	 */
-	int nb_nodes;
+	GAttributesList attributes_list;
 
 	/*
 	 * two buttons for unselecting all or only the current element from the tabbedpane
@@ -83,17 +74,12 @@ class GTabArea extends JPanel{
 	/**
 	 * construct a new area to put into an editor. 
 	 */
-	public GTabArea(GEditor owner) {
+	public GTabArea(GEditor owner, String _asciifile) {
 		this.editor = owner;
 		/*
 		 * area naming
 		 */
 		setBorder(new TitledBorder(new EtchedBorder(),"Elements sélectionnés"));
-		/*
-		 * initialization
-		 */
-		elements = new LinkedList<Object>();
-		nb_nodes = 0;
 		/*
 		 * buttons creation
 		 */
@@ -123,7 +109,11 @@ class GTabArea extends JPanel{
 		/*
 		 * tabs creation
 		 */
-		tabbedpane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
+		attributes_list = new GAttributesList(
+				editor.universe,
+				editor.creationArea.getTableTypes(),
+				true);
+		attributes_list.attachEditor(editor);
 		/*
 		 * placement.
 		 */
@@ -136,16 +126,16 @@ class GTabArea extends JPanel{
 		gbl.addLayoutComponent(unselect_all,UNSELECT_ALL_CONSTRAINTS);
 		gbl.addLayoutComponent(remove,REMOVE_CONSTRAINTS);
 		gbl.addLayoutComponent(remove_all,REMOVE_ALL_CONSTRAINTS);
-		gbl.addLayoutComponent(tabbedpane,TABBEDPANE_CONSTRAINTS);
+		gbl.addLayoutComponent(attributes_list,TABBEDPANE_CONSTRAINTS);
 		add(unselect);
 		add(unselect_all);
 		add(remove);
 		add(remove_all);
-		add(tabbedpane);
+		add(attributes_list);
 		/*
 		 * actions adding
 		 */
-		tabbedpane.addMouseListener(new TabbedPaneListener());
+		attributes_list.addMouseListener(new TabbedPaneListener());
 
 		ButtonListener buttonListener = editor.new ButtonListener();
 		unselect.addMouseListener(buttonListener);
@@ -158,8 +148,8 @@ class GTabArea extends JPanel{
 	 * this methods return the whole list of selected nodes as an array.
 	 */
 	public GNode[] getNodes(){
-		if(elements.size()==0)return null;
-		else return elements.toArray(new GNode[0]);
+		if(attributes_list.getElements().size()==0)return null;
+		else return attributes_list.getElements().toArray(new GNode[0]);
 	}//getNodes
 
 	/**
@@ -167,7 +157,7 @@ class GTabArea extends JPanel{
 	 * of the current editor.<br>
 	 */
 	void refreshList(){
-		GTab tab = (GTab) tabbedpane.getSelectedComponent();
+		GTab tab = (GTab) attributes_list.getSelectedComponent();
 		if( tab != null ){
 			Object element = tab.getElement();
 			if( element instanceof GNode){
@@ -193,10 +183,10 @@ class GTabArea extends JPanel{
 	 */
 	void unselectlinks(LinkedList<GLink> list_links){
 		for(int i=0;i<list_links.size();i++){
-			int idx = elements.indexOf(list_links.get(i));
+			int idx = attributes_list.getElements().indexOf(list_links.get(i));
 			if(idx!=-1){
-				tabbedpane.remove(idx);
-				elements.remove(idx);
+				attributes_list.remove(idx);
+				attributes_list.getElements().remove(idx);
 			}
 		}//for
 	}//unselectLinks

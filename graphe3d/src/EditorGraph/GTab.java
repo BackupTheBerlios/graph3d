@@ -17,6 +17,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -120,7 +121,24 @@ public class GTab extends JScrollPane{
 		spl.setHorizontalScrollBarPolicy(ScrollPaneLayout.HORIZONTAL_SCROLLBAR_NEVER);
 		setLayout(spl);
 		JPanel panel= new JPanel();
-		String title = "";
+		String title = "fermer";
+		/*
+		 * we check if the _comp argument is a valid Component
+		 * there are two cases :
+		 *  - it is a GAttributesList
+		 *  - it is a GEditor
+		 * otherwise a GException is thrown
+		 */
+		if(_comp instanceof GAttributesList){
+			GAttributesList attr_list = (GAttributesList) _comp;
+			this.tabbedpane = attr_list;
+			panel.add(new ExitCross(title,attr_list,this),0);
+		}else if(_comp instanceof GEditor){
+			GEditor editor = (GEditor) _comp;
+			this.tabbedpane = editor.tabArea.attributes_list;
+			panel.add(new ExitCross(title,editor,this),0);
+		}else
+			throw new GException("_comp must be of type GAttributesList or GEditor !");
 		if( _element instanceof GNode){
 			GNode node = (GNode) _element;
 			int size = node.getAttributes().size()+5/*type + name + coordonates*/;
@@ -131,9 +149,8 @@ public class GTab extends JScrollPane{
 
 			GridLayout layout = new GridLayout(1,2);
 			JPanel entry = new JPanel(layout);
-			JLabel label = new JLabel("name  ",JLabel.RIGHT);
+			JLabel label = new JLabel("nom  ",JLabel.RIGHT);
 			JTextField value = new JTextField(node.getName());
-			title = node.getName();
 			value.addFocusListener(new LostFocusListener());
 			value.setEditable(editable);
 			table_components.put(value, "name");
@@ -152,11 +169,17 @@ public class GTab extends JScrollPane{
 			panel.add(entry);
 
 			entry = new JPanel(layout);
-			label = new JLabel("coord X  ",JLabel.RIGHT);
+			label = new JLabel("coordonnée X  ",JLabel.RIGHT);
 			DecimalFormat format = new DecimalFormat();
+			DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+			dfs.setDecimalSeparator('.');
+			dfs.setGroupingSeparator(' ');
+			format.setDecimalFormatSymbols(dfs);
 			format.setDecimalSeparatorAlwaysShown(true);
+			format.setMinimumFractionDigits(1);
+			format.setMaximumFractionDigits(10);
 			value = new JFormattedTextField(format);
-			value.setText(node.getCoordonnateX()+"");
+			value.setText((node.getCoordonnateX()+"").replace(",", "."));
 			value.addFocusListener(new LostFocusListener());
 			value.setEditable(editable);
 			table_components.put(value, "coord X");
@@ -165,9 +188,9 @@ public class GTab extends JScrollPane{
 			panel.add(entry);
 
 			entry = new JPanel(layout);
-			label = new JLabel("coord Y  ",JLabel.RIGHT);
+			label = new JLabel("coordonnée Y  ",JLabel.RIGHT);
 			value = new JFormattedTextField(format);
-			value.setText(node.getCoordonnateY()+"");
+			value.setText((node.getCoordonnateY()+"").replace(",", "."));
 			value.addFocusListener(new LostFocusListener());
 			value.setEditable(editable);
 			table_components.put(value, "coord Y");
@@ -176,9 +199,9 @@ public class GTab extends JScrollPane{
 			panel.add(entry);
 
 			entry = new JPanel(layout);
-			label = new JLabel("coord Z  ",JLabel.RIGHT);
+			label = new JLabel("coordonnée Z  ",JLabel.RIGHT);
 			value = new JFormattedTextField(format);
-			value.setText(node.getCoordonnateZ()+"");
+			value.setText((node.getCoordonnateZ()+"").replace(",", "."));
 			value.addFocusListener(new LostFocusListener());
 			value.setEditable(editable);
 			table_components.put(value, "coord Z");
@@ -202,9 +225,8 @@ public class GTab extends JScrollPane{
 			);
 			GridLayout layout = new GridLayout(1,2);
 			JPanel entry = new JPanel(layout);
-			JLabel label = new JLabel("name  ",JLabel.RIGHT);
+			JLabel label = new JLabel("nom  ",JLabel.RIGHT);
 			JTextField value = new JTextField(link.getName());
-			title = link.getName();
 			value.addFocusListener(new LostFocusListener());
 			value.setEditable(editable);
 			table_components.put(value, "name");
@@ -216,7 +238,7 @@ public class GTab extends JScrollPane{
 			label = new JLabel("type  ",JLabel.RIGHT);
 			String type = table_types.get(link.getClass());
 			type = type==null ? "unknown" : type;
-			String val = link.isType() ? type+" (arrow)" : type+" (bridge)"; 
+			String val = link.isType() ? type+" (arc)" : type+" (arête)"; 
 			value = new JTextField(val);
 			value.setEditable(false);
 			entry.add(label);
@@ -235,17 +257,7 @@ public class GTab extends JScrollPane{
 		}else{
 			System.err.println(new BadElementTypeException("graph element").getMessage());
 		}//if
-		if(_comp instanceof GAttributesList){
-			GAttributesList attr_list = (GAttributesList) _comp;
-			this.tabbedpane = attr_list;
-			panel.add(new ExitCross(title,attr_list,this),0);
-		}else if(_comp instanceof GEditor){
-			GEditor editor = (GEditor) _comp;
-			this.tabbedpane = editor.tabArea.tabbedpane;
-			panel.add(new ExitCross(title,editor,this),0);
-		}else
-			throw new GException("_comp cannot of type \""+_comp.getClass()+"\" !");
-		
+
 		/*
 		 * if there are too few attributes
 		 * the layout is updated to improve graphics
@@ -279,18 +291,30 @@ public class GTab extends JScrollPane{
 			entry.add(value);
 		}else if(type.equals("float")){
 			DecimalFormat format = new DecimalFormat();
+			DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+			dfs.setDecimalSeparator('.');
+			dfs.setGroupingSeparator(' ');
+			format.setDecimalFormatSymbols(dfs);
 			format.setDecimalSeparatorAlwaysShown(true);
+			format.setMinimumFractionDigits(1);
+			format.setMaximumFractionDigits(10);
 			JFormattedTextField value = new JFormattedTextField(format);
-			value.setText(attribute[2]);
+			value.setText(attribute[2].replace(",", "."));
 			table_components.put(value, attribute[0]);
 			value.addFocusListener(new LostFocusListener());
 			value.setEditable(editable);
 			entry.add(value);
 		}else if(type.equals("double")){
 			DecimalFormat format = new DecimalFormat();
+			DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+			dfs.setDecimalSeparator('.');
+			dfs.setGroupingSeparator(' ');
+			format.setDecimalFormatSymbols(dfs);
 			format.setDecimalSeparatorAlwaysShown(true);
+			format.setMinimumFractionDigits(1);
+			format.setMaximumFractionDigits(10);
 			JFormattedTextField value = new JFormattedTextField(format);
-			value.setText(attribute[2]);
+			value.setText(attribute[2].replace(",", "."));
 			table_components.put(value, attribute[0]);
 			value.addFocusListener(new LostFocusListener());
 			value.setEditable(editable);
@@ -384,9 +408,9 @@ public class GTab extends JScrollPane{
 					if(!text.getText().equals(old_value)){
 						GLink lk = universe.getGraph().getLink(text.getText());
 						if(lk == null){ // not already busy
-							universe.getGraph().removeLink(old_value);
+							universe.deleteGLink(old_value);
 							link.setName(text.getText());
-							universe.getGraph().addLink(link);
+							universe.addGLink(link);
 							int index = tabbedpane.indexOfComponent(GTab.this);
 							tabbedpane.setTitleAt(index, link.getName());
 						}else{
@@ -409,9 +433,9 @@ public class GTab extends JScrollPane{
 						System.out.println("\""+text.getText()+"\"");
 						GNode nd = universe.getGraph().getNode(text.getText());
 						if(nd == null){ // not already busy
-							universe.getGraph().removeNode(old_value);
+							universe.deleteGNode(old_value);
 							node.setName(text.getText());
-							universe.getGraph().addNode(node);
+							universe.addGNode(node);
 							int index = tabbedpane.indexOfComponent(GTab.this);
 							tabbedpane.setTitleAt(index, node.getName());
 						}else{
@@ -421,43 +445,93 @@ public class GTab extends JScrollPane{
 					}
 				}else if(attr_name.equals("coord X")){
 					JTextField text = (JTextField) comp;
-					node.setCoordonnateX(Float.parseFloat(text.getText().replace(',', '.')));
-					if(universe.getGraph().haveCollision(node)){
-						(new CollisionException()).showError();
-						node.setCoordonnateX(Float.parseFloat(old_value.replace(',', '.')));
+					/*
+					 * we check if the type of the entered value matches float type
+					 */
+					try{
+						text.setText(text.getText().replace(',', '.'));
+						Float.parseFloat(text.getText());
+					}catch(Exception e){
 						text.setText(old_value);
-					}else{
-						universe.update(node);
-						universe.getCanvas().repaint();
+					}
+					if(!text.getText().equals(old_value)){
+						node.setCoordonnateX(Float.parseFloat(text.getText()));
+						if(universe.getGraph().haveCollision(node)){
+							(new CollisionException()).showError();
+							node.setCoordonnateX(Float.parseFloat(old_value));
+							text.setText(old_value);
+						}else{
+							universe.updateGNode(node.getName());
+							universe.getCanvas().repaint();
+						}
 					}
 				}else if(attr_name.equals("coord Y")){
 					JTextField text = (JTextField) comp;
-					node.setCoordonnateY(Float.parseFloat(text.getText().replace(',', '.')));
-					if(universe.getGraph().haveCollision(node)){
-						(new CollisionException()).showError();
-						node.setCoordonnateY(Float.parseFloat(old_value.replace(',', '.')));
+					/*
+					 * we check if the type of the entered value matches float type
+					 */
+					try{
+						text.setText(text.getText().replace(',', '.'));
+						Float.parseFloat(text.getText());
+					}catch(Exception e){
 						text.setText(old_value);
-					}else{
-						universe.update(node);
-						universe.getCanvas().repaint();
+					}
+					if(!text.getText().equals(old_value)){
+						node.setCoordonnateY(Float.parseFloat(text.getText()));
+						if(universe.getGraph().haveCollision(node)){
+							(new CollisionException()).showError();
+							node.setCoordonnateY(Float.parseFloat(old_value));
+							text.setText(old_value);
+						}else{
+							universe.updateGNode(node.getName());
+							universe.getCanvas().repaint();
+						}
 					}
 				}else if(attr_name.equals("coord Z")){
 					JTextField text = (JTextField) comp;
-					node.setCoordonnateZ(Float.parseFloat(text.getText().replace(',', '.')));
-					if(universe.getGraph().haveCollision(node)){
-						(new CollisionException()).showError();
-						node.setCoordonnateZ(Float.parseFloat(old_value.replace(',', '.')));
+					/*
+					 * we check if the type of the entered value matches float type
+					 */
+					try{
+						text.setText(text.getText().replace(',', '.'));
+						Float.parseFloat(text.getText());
+					}catch(Exception e){
 						text.setText(old_value);
-					}else{
-						universe.update(node);
-						universe.getCanvas().repaint();
+					}
+					if(!text.getText().equals(old_value)){
+						node.setCoordonnateZ(Float.parseFloat(text.getText()));
+						if(universe.getGraph().haveCollision(node)){
+							(new CollisionException()).showError();
+							node.setCoordonnateZ(Float.parseFloat(old_value));
+							text.setText(old_value);
+						}else{
+							universe.updateGNode(node.getName());
+							universe.getCanvas().repaint();
+						}
 					}
 				}else{ 
 					/*
 					 * others attributes
 					 */
 					JTextField text = (JTextField) comp;
-					node.setAttributeByName(attr_name,node.getAttributeByName(attr_name)[1] , text.getText());
+					String type = node.getAttributeByName(attr_name)[1];
+					/*
+					 * we check if the type of the entered value matches the type of teh attribute
+					 */
+					try{
+						text.setText(text.getText().replace(',', '.'));
+						if(type.equals("float"))
+							Float.parseFloat(text.getText());
+						else if(type.equals("double"))
+							Double.parseDouble(text.getText());
+						else if(type.equals("int"))
+							Integer.parseInt(text.getText());
+					}catch (Exception e) {
+						text.setText(old_value);
+					}
+					if(!text.getText().equals(old_value)){
+						node.setAttributeByName(attr_name,node.getAttributeByName(attr_name)[1] , text.getText());
+					}
 				}//if
 			}//if element instanceof GLink
 

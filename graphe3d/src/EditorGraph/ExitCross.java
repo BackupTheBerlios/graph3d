@@ -36,30 +36,59 @@ import javax.swing.plaf.basic.BasicButtonUI;
  * @since JDK 1.5
  */ 
 class ExitCross extends JPanel {
-    private final GAttributesList attr_list;
-    private final GEditor editor;
-    private final GTab tab;
+   
+	/*
+	 * associated GAttributeList
+	 * can be null if the tab is inserted into an editor
+	 * (in this case, the "editor" attribute cannot be null)
+	 */
+	private final GAttributesList attr_list;
+    
+	/*
+	 * associated GEditor
+	 * can be null if the tab is inserted into a GAttributesList
+	 * (in this case, the "attr_list" attribute cannot be null)
+	 */
+	private final GEditor editor;
+    
+	/*
+	 * the tab where the exit cross is inserted
+	 */
+	private final GTab tab;
 
     /**
-     * 
+     * constructs an ExitCross to inserted ether in a GEditor or in a GAttributesList.
+     * It is impossible to create an Exit cross with a null GattributesList and a null GEditor.
      * @param _title
-     * @param _pane
+     * 		
+     * @param _attrList
+     * 		the GAttributesList where the tab will be inserted.
+     * 		(can be null, in this case _editor is not null)
      * @param _editor
+     * 		the GEditorwhere the tab will be inserted.
+     * 		(can be null, in this case _attrList is not null)
      * @param _tab
+     * 		the GTab element wher the exit cross will be set
      */
     private ExitCross(String _title, final GAttributesList _attrList, final GEditor _editor, GTab _tab) {
-    	//unset default FlowLayout' gaps
-        super(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        super(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         this.attr_list = _attrList;
         this.editor = _editor;
         this.tab = _tab;
         setOpaque(false);
         
-        //tab button
+        /*
+         * we create a label for the exit cross
+         */
+        JLabel label = new JLabel(_title);
+        add(label);
+        /*
+         *  we create the exit button and add it in the panel
+         */
         JButton button = new ExitButton();
         add(button);
-        //add more space to the top of the component
-        setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
+        
+        setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
     }
 
     /**
