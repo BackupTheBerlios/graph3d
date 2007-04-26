@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
  * @author Erwan Daubert
  * @version 2
  */
-public class GException extends RuntimeException {
+public class GException extends Exception {
 
 	/**
 	 * ERROR define an Exception which must stop the execution of the application because it's a critical error for the coherence of the program.
