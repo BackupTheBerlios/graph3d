@@ -2,9 +2,9 @@ package graph3d.elements;
 
 import graph3d.exception.GException;
 import graph3d.exception.GLinkAlreadyExistException;
+import graph3d.exception.InvalidAttributeTypeException;
 import graph3d.exception.MissingAttributeForClassException;
 import graph3d.exception.TooMuchAttributesForClassException;
-import graph3d.exception.InvalidAttributeTypeException;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -44,7 +44,7 @@ public class GNode {
 	 * 
 	 * See tutorial for the exemple.
 	 */
-	protected Hashtable<String, String[]> attributes;
+	private Hashtable<String, String[]> attributes;
 
 	/**
 	 * This Hashtable contains links which is connected to a node.
@@ -116,8 +116,9 @@ public class GNode {
 	/**
 	 * This function allow you to modify all node 's attributes. 
 	 * @param _attributes the Hashtable which contains all attributes.
+	 * @throws MissingAttributeForClassException 
 	 */
-	public void setAttributes(Hashtable<String, String[]> _attributes) {
+	public void setAttributes(Hashtable<String, String[]> _attributes) throws MissingAttributeForClassException {
 		Enumeration<String> keyAttributes = this.attributes.keys();
 		Enumeration<String> key_Attributes = _attributes.keys();
 		
@@ -196,7 +197,7 @@ public class GNode {
 	 */
 	public void setAttributeByName(String _name, String _type, String _value)
 			throws InvalidAttributeTypeException,
-			TooMuchAttributesForClassException, GException {
+			TooMuchAttributesForClassException {
 		if (this.attributes.containsKey(_name)) {
 			if (_type.equals("short")) {
 				try {
@@ -280,12 +281,26 @@ public class GNode {
 	/**
 	 * This function add a link into the Hashtable which contains all links which are connected with this node.
 	 * @param link the link which you want add.
+	 * @throws GLinkAlreadyExistException 
 	 */
-	public void addLink(GLink link) {
+	public void addLink(GLink link) throws GLinkAlreadyExistException {
 		if (!this.links.contains(link)) {
 			this.links.add(link);
 		} else {
 			throw new GLinkAlreadyExistException(this, link); 
+		}
+	}
+	
+	/**
+	 * This function remoave a link into the Hashtable which contains all links which are connected with this node
+	 * @param link the link which you want remove
+	 * @throws GException
+	 */
+	public void removeLink(GLink link) throws GException {
+		if (this.links.contains(link)) {
+			this.links.remove(link);
+		} else {
+			throw new GException("Link not found", "The link (\"" + link.getName() + "\") is not connected with the node (\"" + this.getName() +"\")", GException.WARNING);
 		}
 	}
 

@@ -80,14 +80,12 @@ public class GGraph {
 	 *         false else.
 	 */
 	public boolean addNode(GNode node) {
-		System.out.println(node);
 		GNode exist = this.nodes.get(node.getName());
 		if (exist == null) {
 			this.collision(node);
 			this.nodes.put(node.getName(), node);
 			return true;
 		} else {
-			//throw new SameNameException(node.getName());
 			return false;
 		}
 	}

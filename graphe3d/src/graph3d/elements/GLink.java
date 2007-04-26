@@ -1,6 +1,7 @@
 package graph3d.elements;
 
 import graph3d.exception.GException;
+import graph3d.exception.GLinkAlreadyExistException;
 import graph3d.exception.MissingAttributeForClassException;
 import graph3d.exception.TooMuchAttributesForClassException;
 import graph3d.exception.InvalidAttributeTypeException;
@@ -55,7 +56,7 @@ public class GLink {
 	 * 
 	 * See tutorial for the exemple.
 	 */
-	protected Hashtable<String, String[]> attributes;
+	private Hashtable<String, String[]> attributes;
 
 	/**
 	 * This constructor define the identifier of this link and his extremities.
@@ -67,6 +68,7 @@ public class GLink {
 	 *            a node which is an extrenity of this link
 	 * @param _second
 	 *            a node which is another extremity.
+	 * @throws GLinkAlreadyExistException 
 	 */
 	public GLink(String _name, GNode _first, GNode _second) {
 		this(false, _name, "white", _first, _second);
@@ -84,6 +86,7 @@ public class GLink {
 	 *            a node which is an extrenity of this link.
 	 * @param _second
 	 *            a node which is another extremity.
+	 * @throws GLinkAlreadyExistException 
 	 */
 	public GLink(String _name, String _color, GNode _first, GNode _second) {
 		this(false, _name, _color, _first, _second);
@@ -92,10 +95,11 @@ public class GLink {
 	/**
 	 * This constructor define the identifier of the link, his type (arrow or bridge)and his
 	 * extremities. By default, a link have the white color.
-	 * @param _type
-	 * @param _name
-	 * @param _first
-	 * @param _second
+	 * @param _type true if this link is an arrow, false else
+	 * @param _name  the identifier of this link 
+	 * @param _first a node which is an extrenity of this link. It's the start of the link if this link is an arrow.
+	 * @param _second a node which is another extremity. It's the end of the link if this link is an arrow.
+	 * @throws GLinkAlreadyExistException 
 	 */
 	public GLink(boolean _type, String _name, GNode _first, GNode _second) {
 		this(_type, _name, "white", _first, _second);
@@ -117,6 +121,7 @@ public class GLink {
 	 * @param _second
 	 *            a node which is another extremity. If type is true, this node
 	 *            is the end of the link.
+	 * @throws GLinkAlreadyExistException 
 	 */
 	public GLink(boolean _type, String _name, String _color, GNode _first,
 			GNode _second) {
@@ -127,9 +132,19 @@ public class GLink {
 		this.type = _type;
 
 		this.attributes = new Hashtable<String, String[]>();
-		this.firstNode.addLink(this);
+		try {
+			this.firstNode.addLink(this);
+		} catch (GLinkAlreadyExistException e) {
+			e.printStackTrace();
+			e.showError();
+		}
 		if (!this.firstNode.getName().equals(this.secondNode.getName())) {
-			this.secondNode.addLink(this);
+			try {
+				this.secondNode.addLink(this);
+			} catch (GLinkAlreadyExistException e) {
+				e.printStackTrace();
+				e.showError();
+			}
 		}
 	}
 
@@ -145,8 +160,9 @@ public class GLink {
 	/**
 	 * This function allow you to modify all link 's attributes. 
 	 * @param _attributes the Hashtable which contains all attributes.
+	 * @throws MissingAttributeForClassException 
 	 */
-	public void setAttributes(Hashtable<String, String[]> _attributes) {
+	public void setAttributes(Hashtable<String, String[]> _attributes) throws MissingAttributeForClassException {
 		Enumeration<String> keyAttributes = this.attributes.keys();
 		Enumeration<String> key_Attributes = _attributes.keys();
 		
