@@ -14,9 +14,15 @@ import graph3d.elements.GNode;
 import graph3d.exception.BadElementTypeException;
 
 /**
+ * this class is used to implement the list area of a graph editor,
+ * wich contains all the elements which are associated to the current selection.<br>
+ * When you click on an item of this list, this one will be added in the selections.<br>
+ * <br>
+ * this class is a package class
  * 
  * @author lino christophe
- *
+ * @since JDK 1.5
+ * @version 1.0
  */
 class GListArea extends JScrollPane{
 
@@ -26,7 +32,7 @@ class GListArea extends JScrollPane{
 	GEditor editor;
 
 	/*
-	 * area of selection list with current tab associated elements
+	 * area of selection list with elements which are associated to current tab 
 	 */
 	private JList list;
 
@@ -36,16 +42,19 @@ class GListArea extends JScrollPane{
 	private Hashtable<String, Object> table;
 
 	/**
-	 * 
+	 * constructs a list area linked to a GEditor object.
+	 * @param owner
+	 * 	 	the editor owner 
 	 */
-	public GListArea(JList list, GEditor owner) {
+	public GListArea(GEditor owner) {
 		/*
 		 * creation from an empty list
 		 */
-		super(list);
-		this.list= list;
+		super();
+		this.list= new JList();
 		this.editor = owner;
-		list.addMouseListener(new ListListener());
+		this.list.addMouseListener(new ListListener());
+		setViewportView(this.list);
 		table = new Hashtable<String, Object>();
 		/*
 		 * nommage de la zone
@@ -54,9 +63,13 @@ class GListArea extends JScrollPane{
 	}//construct
 
 	/**
-	 * place des éléments de même type dans la liste (doivent être soit des GNode, soit des GLink).
+	 * show an array of elements into the list (removes old elements from the list).<br>
+	 * be careful : all the elements must have the same type, so the array must be
+	 * of type GNode[] or GLink[].
 	 * @param components
+	 * 		the array of components to show in the list
 	 * @throws BadElementTypeException
+	 * 		if the array is not of type GNode[] or GLink[]
 	 */
 	public void show(Object[] components) throws BadElementTypeException{
 		table = new Hashtable<String, Object>();
@@ -87,10 +100,16 @@ class GListArea extends JScrollPane{
 		list.setListData(names);
 	}//show
 
+	/**
+	 * this class is used to perform actions when double clicking on one or several item(s)
+	 * in the list.<br>
+	 * They will be added into the GTabArea object contained in the GEditor owner.
+	 * 
+	 * @author lino christophe
+	 *
+	 */
 	class ListListener extends MouseAdapter{
-
 		public void mouseClicked(MouseEvent m){
-
 			if( m.getClickCount() == 2){
 				Object[] values = list.getSelectedValues();
 				boolean focus = ! (values.length > 1);
@@ -106,10 +125,7 @@ class GListArea extends JScrollPane{
 					}//if
 				}//if
 			}//for
-
-
 		}//mouseClicked
-
 	}//inner class ListListener
 
 }//inner class GListArea

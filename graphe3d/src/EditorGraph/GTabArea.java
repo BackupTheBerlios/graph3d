@@ -19,9 +19,16 @@ import graph3d.elements.GLink;
 import graph3d.elements.GNode;
 
 /**
+ * this class is used to implement the tabs area in the graph editor.<br>
+ * there is here :<br>
+ * - unselect and remove buttons,<br>
+ * - the tabbed pane containing all the selections<br>
+ * 
+ * this class is a package class
  * 
  * @author lino christophe
- *
+ * @since JDK 1.5
+ * @version 1.0
  */
 class GTabArea extends JPanel{
 
@@ -46,8 +53,8 @@ class GTabArea extends JPanel{
 	int nb_nodes;
 
 	/*
-	 * two button for unselecting all or only the current element from the tabbedpane
-	 * two button for removing all or only the current element from y=the graph
+	 * two buttons for unselecting all or only the current element from the tabbedpane
+	 * two buttons for removing all or only the current element from y=the graph
 	 */
 	JButton unselect, unselect_all, remove, remove_all;
 
@@ -74,30 +81,30 @@ class GTabArea extends JPanel{
 	= new GridBagConstraints(0,2,2,1,100,100-2*button_weighty,GridBagConstraints.CENTER, GridBagConstraints.BOTH,COMPONANT_INSETS,1,1);
 
 	/**
-	 * 
+	 * construct a new area to put into an editor. 
 	 */
 	public GTabArea(GEditor owner) {
 		this.editor = owner;
 		/*
-		 * nommage de la zone.
+		 * area naming
 		 */
 		setBorder(new TitledBorder(new EtchedBorder(),"Elements sélectionnés"));
 		/*
-		 * initialisation
+		 * initialization
 		 */
 		elements = new LinkedList<Object>();
 		nb_nodes = 0;
 		/*
-		 * création des boutons
+		 * buttons creation
 		 */
 		unselect = new JButton("déselectionner");
 		unselect_all = new JButton("déselectionner tout");
 		remove = new JButton("supprimer");
 		remove_all = new JButton("supprimer tout");
 		/*
-		 * modification des marges des boutons.
-		 * ajout d'un curseur main.
-		 * état initial : désactivés.
+		 * button margins change.
+		 * hand cursor addition.
+		 * initial state : disabled.
 		 */
 		unselect.setMargin(GEditor.BUTTON_INSETS);
 		unselect_all.setMargin(GEditor.BUTTON_INSETS);
@@ -114,16 +121,16 @@ class GTabArea extends JPanel{
 		unselect.setEnabled(false);
 		unselect_all.setEnabled(false);
 		/*
-		 * création des onglets. 
+		 * tabs creation
 		 */
-		tabbedpane = new JTabbedPane();
+		tabbedpane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
 		/*
 		 * placement.
 		 */
 		GridBagLayout gbl = new GridBagLayout();
 		setLayout(gbl);
 		/*
-		 * placement des composants.
+		 * components placement
 		 */
 		gbl.addLayoutComponent(unselect,UNSELECT_CONSTRAINTS);
 		gbl.addLayoutComponent(unselect_all,UNSELECT_ALL_CONSTRAINTS);
@@ -136,7 +143,7 @@ class GTabArea extends JPanel{
 		add(remove_all);
 		add(tabbedpane);
 		/*
-		 * ajout des actions
+		 * actions adding
 		 */
 		tabbedpane.addMouseListener(new TabbedPaneListener());
 
@@ -148,7 +155,7 @@ class GTabArea extends JPanel{
 	}//construct
 
 	/**
-	 * 
+	 * this methods return the whole list of selected nodes as an array.
 	 */
 	public GNode[] getNodes(){
 		if(elements.size()==0)return null;
@@ -157,8 +164,7 @@ class GTabArea extends JPanel{
 
 	/**
 	 * this method is used to update the list of associated elements
-	 * of the current editor.
-	 * it is only usable inside of this package
+	 * of the current editor.<br>
 	 */
 	void refreshList(){
 		GTab tab = (GTab) tabbedpane.getSelectedComponent();
@@ -179,7 +185,28 @@ class GTabArea extends JPanel{
 			editor.listArea.show(new Object[0]);
 		}
 	}//refreshList
+	
+	/**
+	 * this method is used to remove a list of links from the selection.
+	 * @param list_links
+	 * LinkedList : the list of links to remove
+	 */
+	void unselectlinks(LinkedList<GLink> list_links){
+		for(int i=0;i<list_links.size();i++){
+			int idx = elements.indexOf(list_links.get(i));
+			if(idx!=-1){
+				tabbedpane.remove(idx);
+				elements.remove(idx);
+			}
+		}//for
+	}//unselectLinks
 
+	/**
+	 * this internal class is used to refresh the list of associated elements when a
+	 * click is performed on a tab.
+	 *  
+	 * @author lino christophe
+	 */
 	class TabbedPaneListener extends MouseAdapter{
 
 		public void mouseClicked(MouseEvent m){
