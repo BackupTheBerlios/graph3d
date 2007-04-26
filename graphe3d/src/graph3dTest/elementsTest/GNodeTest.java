@@ -3,6 +3,10 @@ package graph3dTest.elementsTest;
 import java.util.Hashtable;
 import graph3d.elements.GLink;
 import graph3d.elements.GNode;
+import graph3d.exception.GException;
+import graph3d.exception.GLinkAlreadyExistException;
+import graph3d.exception.MissingAttributeForClassException;
+import graph3d.exception.TooMuchAttributesForClassException;
 import junit.framework.TestCase;
 
 /**
@@ -96,7 +100,12 @@ public class GNodeTest extends TestCase {
 		String[] data = new String[] { "ip", "int", "192.168.1.1" };
 		Hashtable<String, String[]> attributes = new Hashtable<String, String[]>();
 		attributes.put("ip", data);
-		node.setAttributes(attributes);
+		
+		try {
+			node.setAttributes(attributes);
+		} catch (MissingAttributeForClassException e) {
+			System.err.println(e.getMessage());
+		}
 
 		//Verification que l'attribut est bien présent.
 		assertEquals(node.getAttributeByName("ip"), data);
@@ -144,11 +153,22 @@ public class GNodeTest extends TestCase {
 		String[] data = new String[] { "wifi", "boolean", "false" };
 		Hashtable<String, String[]> attributes = new Hashtable<String, String[]>();
 		attributes.put("wifi", data);
-		node.setAttributes(attributes);
-
-		// Modification d'un attribut du noeud
-		node.setAttributeByName("wifi", "boolean", "true");
-
+		
+		try {
+			node.setAttributes(attributes);
+		} catch (MissingAttributeForClassException e) {
+			System.err.println(e.getMessage());
+		}
+		
+		try {
+			// Modification d'un attribut du noeud
+			node.setAttributeByName("wifi", "boolean", "true");
+		} catch (TooMuchAttributesForClassException e) {
+			System.err.println(e.getMessage());
+		} catch (GException e) {
+			System.err.println(e.getMessage());
+		}
+		
 		//Verification que l'attribut est bien présent.
 		assertEquals(node.getAttributeByName("wifi")[0], "wifi");
 		assertEquals(node.getAttributeByName("wifi")[1], "boolean");
@@ -164,9 +184,13 @@ public class GNodeTest extends TestCase {
 		GNode node2 = new GNode("node2");
 		GLink link = new GLink("link", node2, node2);
 
-		//Ajout du lien au noeud
-		node1.addLink(link);
-
+		try {
+			//Ajout du lien au noeud
+			node1.addLink(link);
+		} catch (GLinkAlreadyExistException e) {
+			System.err.println(e.getMessage());
+		}
+		
 		//Vérification que l'ajout d'un lien s'est bien passé.
 		assertEquals(node1.getLinks().getFirst(), link);
 	}
@@ -238,7 +262,12 @@ public class GNodeTest extends TestCase {
 		String[] data = new String[] { "wifi", "boolean", "false" };
 		Hashtable<String, String[]> attributes = new Hashtable<String, String[]>();
 		attributes.put("wifi", data);
-		node.setAttributes(attributes);
+		
+		try {
+			node.setAttributes(attributes);
+		} catch (MissingAttributeForClassException e) {
+			System.err.println(e.getMessage());
+		}
 
 		//Récuperation des attributs et vérification
 		assertEquals(node.getAttributes(), attributes);
@@ -279,7 +308,12 @@ public class GNodeTest extends TestCase {
 		String[] data = new String[] { "wifi", "boolean", "false" };
 		Hashtable<String, String[]> attributes = new Hashtable<String, String[]>();
 		attributes.put("wifi", data);
-		node.setAttributes(attributes);
+		
+		try {
+			node.setAttributes(attributes);
+		} catch (MissingAttributeForClassException e) {
+			System.err.println(e.getMessage());
+		}
 
 		// Récuperation des données sur un attribut d'un noeud et vérification des valeurs.
 		assertEquals(node.getAttributeByName("wifi"), data);

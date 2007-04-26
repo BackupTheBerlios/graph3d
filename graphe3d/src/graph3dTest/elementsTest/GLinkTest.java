@@ -3,6 +3,9 @@ package graph3dTest.elementsTest;
 import java.util.Hashtable;
 import graph3d.elements.GLink;
 import graph3d.elements.GNode;
+import graph3d.exception.GException;
+import graph3d.exception.MissingAttributeForClassException;
+import graph3d.exception.TooMuchAttributesForClassException;
 import junit.framework.TestCase;
 
 /**
@@ -90,8 +93,13 @@ public class GLinkTest extends TestCase {
 		String[] data = new String[] { "ip", "int", "192.168.1.1" };
 		Hashtable<String, String[]> attributes = new Hashtable<String, String[]>();
 		attributes.put("ip", data);
-		lien.setAttributes(attributes);
-
+		
+		try {
+			lien.setAttributes(attributes);
+		}catch(MissingAttributeForClassException e){
+			System.err.println(e.getMessage());
+		}
+		
 		// Vérification de la modification des attributs d'un lien.
 		assertEquals(lien.getAttributes(), attributes);
 	}
@@ -176,10 +184,21 @@ public class GLinkTest extends TestCase {
 		String[] data = new String[] { "wifi", "boolean", "false" };
 		Hashtable<String, String[]> attributes = new Hashtable<String, String[]>();
 		attributes.put("wifi", data);
-		lien.setAttributes(attributes);
 
-		// Modification d'un attribut du lien
-		lien.setAttributeByName("wifi", "boolean", "true");
+		try {
+			lien.setAttributes(attributes);
+		} catch (MissingAttributeForClassException e) {
+			System.err.println(e.getMessage());
+		}
+
+		try {
+			// Modification d'un attribut du lien
+			lien.setAttributeByName("wifi", "boolean", "true");
+		} catch (TooMuchAttributesForClassException e) {
+			System.err.println(e.getMessage());
+		} catch (GException e) {
+			System.err.println(e.getMessage());
+		}
 
 		// Verification des nouvelles valeurs de l'attribut.
 		assertEquals(lien.getAttributeByName("wifi")[0], "wifi");
@@ -216,7 +235,12 @@ public class GLinkTest extends TestCase {
 		String[] data = new String[] { "ip", "int", "192.168.1.1" };
 		Hashtable<String, String[]> attributes = new Hashtable<String, String[]>();
 		attributes.put("ip", data);
-		lien.setAttributes(attributes);
+		
+		try {
+			lien.setAttributes(attributes);
+		} catch (MissingAttributeForClassException e) {
+			System.err.println(e.getMessage());
+		}
 
 		// Verifie que la récuperation des attributs du lien est ok
 		assertEquals(lien.getAttributes(), attributes);
@@ -270,7 +294,12 @@ public class GLinkTest extends TestCase {
 		String[] data = new String[] { "wifi", "boolean", "false" };
 		Hashtable<String, String[]> attributes = new Hashtable<String, String[]>();
 		attributes.put("wifi", data);
-		lien.setAttributes(attributes);
+		
+		try {
+			lien.setAttributes(attributes);
+		} catch (MissingAttributeForClassException e) {
+			System.err.println(e.getMessage());
+		}
 
 		// Récuperation des données sur un attribut d'un lien et vérification
 		// des valeurs.
