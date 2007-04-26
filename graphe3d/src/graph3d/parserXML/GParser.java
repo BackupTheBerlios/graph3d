@@ -54,8 +54,9 @@ public class GParser {
 	/**
 	 * This constructor is used to create a parser to read a XML File.
 	 * @param _XMLFileName the path of the XML File.
+	 * @throws GException 
 	 */
-	public GParser(String _XMLFileName) {
+	public GParser(String _XMLFileName) throws GException {
 		this(new GGraph(), _XMLFileName);
 	}
 
@@ -63,8 +64,9 @@ public class GParser {
 	 * This constructor is used to create a parser to write a XML file.
 	 * @param _graph the graph to write.
 	 * @param _XMLFileName the path of the XML file
+	 * @throws GException 
 	 */
-	public GParser(GGraph _graph, String _XMLFileName) {
+	public GParser(GGraph _graph, String _XMLFileName) throws GException {
 		this.graph = _graph;
 		this.XMLFileName = _XMLFileName;
 		this.createDocumentBuilder();
@@ -73,9 +75,10 @@ public class GParser {
 	/**
 	 * This function allow you to get a GGraph define in a XML file.
 	 * @return a GGraph component which represents the graph define in the XML file
-	 * @throws GException
+	 * @throws SameNameException 
+	 * @throws GException 
 	 */
-	public GGraph getGraph() throws GException {
+	public GGraph getGraph() throws SameNameException, GException {
 		this.readFile();
 	
 		Element root = this.document.getDocumentElement();
@@ -105,17 +108,18 @@ public class GParser {
 		if (next != null) {
 			// Exception permettant de signaler à l'utilisateur que la suite
 			// n'est pas pris en compte
-			throw new GException(
-					"The first graph is define but you don't define many graphs with one XML file.\nThe others graphs are not created.");
+			throw new GException("Too much graph",
+					"The first graph is define but you don't define many graphs with one XML file.\nThe others graphs are not created.", GException.WARNING);
 		}
 		return this.graph;
 	}
 
 	/**
 	 * This functions is used to save the graph in a XML file.
+	 * @throws GException 
 	 *
 	 */
-	public void saveGraph() {
+	public void saveGraph() throws GException {
 	
 		this.createDocument(this.graph);
 	
@@ -132,9 +136,9 @@ public class GParser {
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 			transformer.transform(source, resultat);
 		} catch (TransformerConfigurationException e) {
-			throw new GException("Error to created a \"transformer\".\nWe cannot save the graph.\nTo correct this error, please verify the version of your JDK or try again to save.");
+			throw new GException("Parser error", "Error to created a \"transformer\".\nWe cannot save the graph.\nTo correct this error, please verify the version of your JDK or try again to save.", GException.ERROR);
 		} catch (TransformerException e) {
-			throw new GException("Unknown error during the save.");
+			throw new GException("Unknown error", "Unknown error during the save.", GException.ERROR);
 		}
 	
 	}
@@ -155,7 +159,7 @@ public class GParser {
 		this.XMLFileName = fileName;
 	}
 
-	private void createDocumentBuilder() {
+	private void createDocumentBuilder() throws GException {
 		try {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			dbf.setIgnoringComments(true);
@@ -173,12 +177,12 @@ public class GParser {
 			this.db.setErrorHandler(handler);
 			this.document = this.db.newDocument();
 		} catch (ParserConfigurationException e) {
-			throw new GException("Sorry, but we didn't created the XML parser.\nThe version of your JDK must be 1.5 or later");
+			throw new GException("Parser cannot created", "Sorry, but we didn't created the XML parser.\nThe version of your JDK must be 1.5 or later", GException.ERROR);
 		}
 
 	}
 
-	private void readFile() {
+	private void readFile() throws InvalidXMLFileException, GException {
 		try {
 			this.document = this.db.parse(this.XMLFileName);
 		} catch (SAXException e) {
@@ -188,7 +192,7 @@ public class GParser {
 		}
 	}
 
-	private GNode createNode(Element element) {
+	private GNode createNode(Element element) throws InexistantClassException, GException {
 		GNode node = null;
 		String name = element.getAttribute("name");
 		try {
@@ -253,7 +257,7 @@ public class GParser {
 		return node;
 	}
 
-	private GLink createLink(Element element) {
+	private GLink createLink(Element element) throws InexistantClassException, GException {
 		GLink link = null;
 		boolean type;
 		if (element.getAttribute("type").equals("arrow")) {
@@ -294,7 +298,8 @@ public class GParser {
 						link.setAttributeByName(attrName, attrType, attrValue);
 					} else {
 						// normalement géré par le XSD
-						System.out.println(child.getNodeName());
+						//System.out.println(child.getNodeName());
+						throw new GException("Unknown Exception", "This exception mustn't appears.", 1);
 					}
 				}
 			}
@@ -407,15 +412,15 @@ public class GParser {
 	class GErrorHandler implements ErrorHandler {
 
 		public void error(SAXParseException exception) {
-			throw new XMLDefinitionException(exception.getMessage());
+			(new XMLDefinitionException(exception.getMessage())).showError();
 		}
 
-		public void fatalError(SAXParseException exception) {
-			throw new InvalidXMLFileException(exception.getMessage());
+		public void fatalError(SAXParseException exception)  {
+			(new InvalidXMLFileException(exception.getMessage())).showError();
 		}
 
-		public void warning(SAXParseException exception) throws SAXException {
-			System.err.println("warning :");
+		public void warning(SAXParseException exception)  {
+			(new XMLDefinitionException(exception.getMessage())).showError();
 		}
 
 	}
