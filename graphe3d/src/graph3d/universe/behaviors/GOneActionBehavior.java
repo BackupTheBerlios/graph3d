@@ -1,87 +1,17 @@
 package graph3d.universe.behaviors;
 
-
-import java.awt.AWTEvent;
-import java.awt.event.MouseEvent;
-import java.util.Enumeration;
-
+import javax.media.j3d.Behavior;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
-import javax.media.j3d.WakeupCriterion;
-import javax.media.j3d.WakeupOnAWTEvent;
 import javax.vecmath.Vector3f;
 
-import com.sun.j3d.utils.behaviors.mouse.MouseBehavior;
+public abstract class GOneActionBehavior extends Behavior implements GBehavior {
 
-/**
- * NE FONCTIONNE PAS
- * @author Erwan Daubert
- *
- */
-public class GMouseBehavior extends MouseBehavior implements GBehavior {
-
-private WakeupOnAWTEvent mouseEvent=new WakeupOnAWTEvent(MouseEvent.MOUSE_DRAGGED );
-private Vector3f camera;
-private TransformGroup transformGroup;
-private double angleX,angleY;
-private float xFactor;
-private float yFactor;
+	private Vector3f camera;
+	private TransformGroup transformGroup;
+	private double angleX,angleY;
 	
-	public GMouseBehavior(TransformGroup TG, Vector3f _camera) {
-		super(TG);
-		this.xFactor = 0.0002f;
-		this.yFactor = 0.0002f;
-		this.setTransformGroup(TG);
-		this.setCamera(_camera);
-	}
 	
-	public void initialize() {
-		this.wakeupOn(this.mouseEvent);
-	}
-		
-	 public void processStimulus (Enumeration criteria) {
-			WakeupCriterion wakeup;
-			AWTEvent[] events;
-		 	MouseEvent evt;
-		 	//ne fonctionne pas
-		 	wakeup = (WakeupCriterion) criteria.nextElement();
-		 	events = ((WakeupOnAWTEvent)wakeup).getAWTEvent();
-		 	evt = (MouseEvent) events[0];
-		 	float id;
-			processMouseEvent(evt);
-			id = evt.getID();
-			if ((id == MouseEvent.MOUSE_DRAGGED)) {
-				Transform3D transformX = new Transform3D();
-				Transform3D transformY = new Transform3D();
-				
-				while (evt.isConsumed());
-				this.x = evt.getX();
-				this.y = evt.getY();
-				int dx = this.x - this.x_last;
-				int dy = this.y - this.y_last;
-					if (dx != 0) {
-						float factor =  dy * this.yFactor;
-						if (this.x < this.x_last) {
-							transformX = this.rotateX(-factor);
-						} else {
-							transformX = this.rotateX(factor);
-						}
-					}
-					if (dy != 0) {
-						float factor = dx * this.xFactor;
-						if (this.y < this.y_last) {
-							transformX = this.rotateY(-factor);
-						} else {
-							transformX = this.rotateY(factor);
-						}
-					}
-					
-					transformX.mul(transformY);
-					this.getTransformGroup().setTransform(transformX);
-			}
-			wakeupOn(this.mouseEvent);
-	 }
-
 	/**
 	 * This fonction is used to move the camera's view to do a zoom
 	 * @param distance type of float
@@ -107,12 +37,27 @@ private float yFactor;
 		return zoom;	
 	}
 	
+	/*public Transform3D rotateXX(float angle) {
+		Transform3D move = new Transform3D();
+		Transform3D rotateTheView = new Transform3D();
+		Transform3D moveToPoint = new Transform3D();
+		
+		float cosZ = (float)Math.cos(angle);
+		float sinX = (float)Math.sin(angle);
+		
+		move.setTranslation(new Vector3f(-this.camera.x, 0, -this.camera.z));
+		
+		rotateTheView.rotX(angle);
+		this.camera.x = this.camera.x * sinX;
+		this.camera.z = this.camera.z * cosZ;
+		moveToPoint.setTranslation(new Vector3f(this.camera.x, 0, this.camera.z));
+		
+		move.mul(rotateTheView);
+		move.mul(moveToPoint);
+		
+		return move;
+	}*/
 	
-	
-	/**
-	 * 
-	 * @param factor
-	 */
 	public Transform3D rotateX(float factor){
 		
 		Transform3D translate=new Transform3D();
@@ -159,8 +104,8 @@ private float yFactor;
 			this.camera.x -= factor;
 			this.camera.z += factor;
 
-			angleXRot.rotY(angleX);
-			angleYRot.rotX(angleY);
+			angleXRot.rotY(this.angleX);
+			angleYRot.rotX(this.angleY);
 			
 		}
 		if(this.camera.x+(Math.abs(factor)) <= 0 && this.camera.z+(Math.abs(factor)) >= 0){
@@ -180,15 +125,11 @@ private float yFactor;
 		}
 
 		translate.mul(angleXRot);
-		translate.mul(angleYRot);		
-
+		translate.mul(angleYRot);
+		
 		return translate;	
 	}
 	
-	/**
-	 * 
-	 * @param factor
-	 */
 	public Transform3D rotateY(float factor){
 		
 		Transform3D translate=new Transform3D();
@@ -202,167 +143,111 @@ private float yFactor;
 				this.angleY = -(-(Math.toRadians(270)+Math.atan(this.camera.z/this.camera.y)));
 			}
 			
-			translate.setTranslation(new Vector3f(camera.x, camera.y+factor , camera.z-factor ));
+			translate.setTranslation(new Vector3f(this.camera.x, this.camera.y+factor , this.camera.z-factor ));
 			this.camera.y += factor;
 			this.camera.z -= factor;
 			
-			angleXRot.rotY(angleX);
-			angleYRot.rotX(angleY);
+			angleXRot.rotY(this.angleX);
+			angleYRot.rotX(this.angleY);
 		
 		}
 			
-		if(camera.y-(Math.abs(factor)) >= 0 && camera.z-(Math.abs(factor)) <= 0){
+		if(this.camera.y-(Math.abs(factor)) >= 0 && this.camera.z-(Math.abs(factor)) <= 0){
 			if(factor<0){
-				angleY = -(Math.toRadians(90)+Math.atan(Math.abs(camera.z)/camera.y));
+				this.angleY = -(Math.toRadians(90)+Math.atan(Math.abs(this.camera.z)/this.camera.y));
 			}else{
-				angleY = -(-(Math.toRadians(180)+Math.atan(camera.y/Math.abs(camera.z))));
+				this.angleY = -(-(Math.toRadians(180)+Math.atan(this.camera.y/Math.abs(this.camera.z))));
 			}
 				
-			translate.setTranslation(new Vector3f(camera.x, camera.y-factor , camera.z-factor ));
+			translate.setTranslation(new Vector3f(this.camera.x, this.camera.y-factor , this.camera.z-factor ));
 			this.camera.y -= factor;
 			this.camera.z -= factor;
 				
-			angleXRot.rotY(angleX);
-			angleYRot.rotX(angleY);
+			angleXRot.rotY(this.angleX);
+			angleYRot.rotX(this.angleY);
 		
 		}
 			
-			if(camera.y-(Math.abs(factor)) <= 0 && camera.z+(Math.abs(factor)) <= 0){
+			if(this.camera.y-(Math.abs(factor)) <= 0 && this.camera.z+(Math.abs(factor)) <= 0){
 				if(factor<0){
-					angleY = -(Math.toRadians(180)+Math.atan(Math.abs(camera.y)/Math.abs(camera.z)));
+					this.angleY = -(Math.toRadians(180)+Math.atan(Math.abs(this.camera.y)/Math.abs(this.camera.z)));
 				}else{
-					angleY = -(-(Math.toRadians(90)+Math.atan(Math.abs(camera.z)/Math.abs(camera.y))));
+					this.angleY = -(-(Math.toRadians(90)+Math.atan(Math.abs(this.camera.z)/Math.abs(this.camera.y))));
 				}
 					
-				translate.setTranslation(new Vector3f(camera.x, camera.y-factor , camera.z+factor ));
+				translate.setTranslation(new Vector3f(this.camera.x, this.camera.y-factor , this.camera.z+factor ));
 				this.camera.y -= factor;
 				this.camera.z += factor;
 				
-				angleXRot.rotY(angleX);
-				angleYRot.rotX(angleY);
+				angleXRot.rotY(this.angleX);
+				angleYRot.rotX(this.angleY);
 					
 			}
 					
-				if(camera.y+(Math.abs(factor)) <= 0 && camera.z+(Math.abs(factor)) >= 0){
+				if(this.camera.y+(Math.abs(factor)) <= 0 && this.camera.z+(Math.abs(factor)) >= 0){
 					if(factor<0){
-						angleY = -(Math.toRadians(270)+Math.atan(camera.z/Math.abs(camera.y)));
+						this.angleY = -(Math.toRadians(270)+Math.atan(this.camera.z/Math.abs(this.camera.y)));
 					}else{
-						angleY = -(-(Math.atan(Math.abs(camera.y)/camera.z)));
+						this.angleY = -(-(Math.atan(Math.abs(this.camera.y)/this.camera.z)));
 					}
 					
-					translate.setTranslation(new Vector3f(camera.x, camera.y+factor , camera.z+factor ));
+					translate.setTranslation(new Vector3f(this.camera.x, this.camera.y+factor , this.camera.z+factor ));
 					this.camera.y += factor;
 					this.camera.z += factor;
 					
-					angleXRot.rotY(angleX);
-					angleYRot.rotX(angleY);
+					angleXRot.rotY(this.angleX);
+					angleYRot.rotX(this.angleY);
 						
 				}
 
-		translate.mul(angleXRot);
+		//translate.mul(angleXRot);
 		translate.mul(angleYRot);
 		
 		return translate;
 	}
 	
-	public void setAngles(double _angleX, double _angleY){
-		this.angleX = _angleX;
-		this.angleY = _angleY;
+	public void setAngles(double angleX,double angleY){
+		this.angleX=angleX;
+		this.angleY=angleY;
 	}
 	
-	/**
-	 * 
-	 * @return
-	 */
 	public Vector3f getCamera() {
-		return camera;
+		return this.camera;
 	}
 
-	/**
-	 * 
-	 * @param camera
-	 */
 	public void setCamera(Vector3f camera) {
 		this.camera = camera;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
 	public TransformGroup getTransformGroup() {
 		return transformGroup;
 	}
 
-	/**
-	 * 
-	 * @param transformGroup
-	 */
 	public void setTransformGroup(TransformGroup transformGroup) {
 		this.transformGroup = transformGroup;
 	}
 	
-	/**
-	 * 
-	 * @return
-	 */
 	public float getXCamera() {
 		return this.camera.x;
 	}
 	
-	/**
-	 * 
-	 * @return
-	 */
 	public float getYCamera() {
 		return this.camera.y;
 	}
-
-	/**
-	 * 
-	 * @return
-	 */
+	
 	public float getZCamera() {
 		return this.camera.z;
 	}
 	
-	/**
-	 * 
-	 * @param _x
-	 */
 	public void setXCamera(float _x) {
 				this.camera.x = _x;
 	}
 	
-	/**
-	 * 
-	 * @param _y
-	 */
 	public void setYCamera(float _y) {
 		this.camera.y = _y;
 	}
 
-	/**
-	 * s
-	 * @param _z
-	 */
 	public void setZCamera(float _z) {
 		this.camera.z = _z;
-	}
-
-	public float getXFactor() {
-		return xFactor;
-	}
-
-	public void setXFactor(float factor) {
-		xFactor = factor;
-	}
-
-	public float getYFactor() {
-		return yFactor;
-	}
-
-	public void setYFactor(float factor) {
-		yFactor = factor;
 	}
 }

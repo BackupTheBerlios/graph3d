@@ -4,8 +4,7 @@ import graph3d.elements.GGraph;
 import graph3d.elements.GLink;
 import graph3d.elements.GNode;
 import graph3d.lists.GAttributesList;
-import graph3d.lists.GConnectionsList;
-import graph3d.universe.behaviors.SelectionBehavior;
+import graph3d.universe.behaviors.PickSelectionBehavior;
 
 import java.awt.Color;
 import java.util.Enumeration;
@@ -14,6 +13,7 @@ import java.util.Iterator;
 
 import javax.media.j3d.Background;
 import javax.media.j3d.BoundingBox;
+import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.Group;
@@ -40,8 +40,10 @@ public class GGrapheUniverse extends VirtualUniverse{
 		this.locale = new Locale(this);
 		this.graph = _graph;
 		this.ComponentsView = new Hashtable<String, BranchGroup>();
-		this.createScene();
 		this.createView();
+		this.createScene();
+		
+		
 	}
 	
 	/**
@@ -49,7 +51,7 @@ public class GGrapheUniverse extends VirtualUniverse{
 	 */
 	private void createScene() {
 		this.scene = new BranchGroup();
-		
+
 		this.scene.setCapability(Group.ALLOW_CHILDREN_EXTEND);
 		this.scene.setCapability(Group.ALLOW_CHILDREN_WRITE);
 		this.scene.setCapability(Group.ALLOW_CHILDREN_READ);
@@ -75,6 +77,7 @@ public class GGrapheUniverse extends VirtualUniverse{
 		this.createBestView();
 		this.view.addMouseListener();
 		this.view.addKeyListener();
+		this.view.addButtonListener();
 	}
 	
 	private void createBestView() {		
@@ -195,7 +198,6 @@ public class GGrapheUniverse extends VirtualUniverse{
 		
 		this.locale.addBranchGraph(this.view);
 		this.locale.addBranchGraph(this.scene);
-		
 		return this.view.getCanvas();
 	}
 	
@@ -205,6 +207,7 @@ public class GGrapheUniverse extends VirtualUniverse{
 	 */
 	public void addGNode(GNode node){
 		GNodeView nodeView = new GNodeView(node);
+		this.graph.addNode(node);
 		this.scene.addChild(nodeView);
 		this.ComponentsView.put(node.getName(), nodeView);
 	}
@@ -277,45 +280,47 @@ public class GGrapheUniverse extends VirtualUniverse{
 		this.graph = graph;
 	}
 	
-	public void addSelectionBehavior(GAttributesList _attributesList, GConnectionsList _connectionsList) {
-		Enumeration<String> keys = this.ComponentsView.keys();
-		while (keys.hasMoreElements()) {
-			String key = keys.nextElement();
-			BranchGroup componentView = this.ComponentsView.get(key);
-			if (componentView instanceof GNodeView) {
-				((GNodeView)componentView).addSelectionBehavior(_attributesList, _connectionsList);
-			} else {
-				((GLinkView)componentView).addSelectionBehavior(_attributesList, _connectionsList);
-			}
-		}
+	public void addSelectionBehavior(GAttributesList _attributesList) {
+		PickSelectionBehavior selectionBehavior = new PickSelectionBehavior(this.scene, this.view.getCanvas(), new BoundingSphere(), _attributesList);
+		this.scene.addChild(selectionBehavior);
+	}
+	
+	
+	public void zoomMore(){
+		this.view.zoomMore();
+	}
+	
+	
+	public void zoomLess(){
+		this.view.zoomLess();
+	}
+	
+	
+	public void rotateTop(){
+		this.view.rotateTop();
+	}
+	
+	
+	public void rotateBottom(){
+		this.view.rotateBottom();
+	}
+	
+	
+	public void rotateLeft(){
+		this.view.rotateLeft();
+	}
+	
+	
+	public void rotateRight(){
+		this.view.rotateRight();
 	}
 	
 	/**
-	 * 
+	 * center the view
 	 */
-	/*public void rotateTop(){
-		this.view.rotateY(-0.1f);
+	public void centerView(){
+		
+		this.view.putOnBestPointToSee();
 	}
-	
-	/**
-	 * 
-	 */
-	/*public void rotateBottom(){
-		this.view.rotateY(0.1f);
-	}
-	
-	/**
-	 * 
-	 */
-	/*public void rotateLeft(){
-		this.view.rotateX(0.1f);
-	}
-	
-	/**
-	 * 
-	 */
-	/*public void rotateRight(){
-		this.view.rotateX(-0.1f);
-	}*/	
 	
 }
