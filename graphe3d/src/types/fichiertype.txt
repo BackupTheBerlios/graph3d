@@ -1,0 +1,4 @@
+link:graph3d.elements.GLink
+node:graph3d.elements.GNode
+computer:graph3d.elements.Computer
+ethernet link:graph3d.elements.EthernetLink
