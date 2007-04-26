@@ -130,10 +130,10 @@ public class GConnectionsList extends JScrollPane{
 					Object element = tab.getElement();
 					if(element instanceof GNode){
 						GLink link = (GLink) table.get( (String) values[i] );
-						attributesList.add(link);
+						attributesList.add(link, true);
 					}else{
 						GNode node = (GNode) table.get( (String) values[i] );
-						attributesList.add(node);
+						attributesList.add(node, true);
 					}//if
 				}//if
 			}//for

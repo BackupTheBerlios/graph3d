@@ -1,5 +1,6 @@
 package graph3d.lists;
 
+import editorGraph.GEditor;
 import editorGraph.GTab;
 import graph3d.elements.GLink;
 import graph3d.elements.GNode;
@@ -26,6 +27,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JTabbedPane;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+
+import sun.security.krb5.internal.crypto.t;
 
 
 /**
@@ -59,9 +62,14 @@ public class GAttributesList extends JTabbedPane{
 	private int nb_nodes;
 
 	/*
-	 * flag to check if the attributes are editable
+	 * flags to check if the attributes are editable and if exit cross have to be shown
 	 */
 	boolean editable;
+	
+	/*
+	 * 
+	 */
+	GEditor editor;
 
 	/*
 	 * the connections list which is attached
@@ -97,18 +105,52 @@ public class GAttributesList extends JTabbedPane{
 	 */
 	public GAttributesList(GGrapheUniverse _Universe, String _ascii_file, boolean _editable)
 	throws GException{
-		super(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
+		this(_Universe,getTypes(_ascii_file), _editable);
 		if(_editable && _Universe==null)
 			throw new GException("_Universe argument cannot be null because the tab is set editable !");
-		this.universe = _Universe;
-		this.elements = new LinkedList<Object>();
-		this.nb_nodes = 0;
-		setBorder(new TitledBorder(new EtchedBorder(),"Elements sélectionnés"));
-		_ascii_file = (_ascii_file == null) ? "" : _ascii_file;
-		GTab.setTableTypes(getTypes(_ascii_file));
-		this.editable = _editable;
 	}
 
+	/**
+	 * constructs a non-editable GAttributesList linked to a GGraphUniverse
+	 * The known types of graph elements will be loaded from the ascii file.
+	 * @param _Universe
+	 * 		the graph universe wivh is associated to the list (can be null)
+	 * @param _table_types
+	 * 		the table of the already known graph elements types
+	 */
+	public GAttributesList(GGrapheUniverse _Universe, Hashtable<Class, String> _table_types){
+		this(_Universe, _table_types, false);
+	}
+	
+	/**
+	 * constructs a non-editable GAttributesList linked to a GGraphUniverse
+	 * The known types of graph elements will be loaded from the ascii file.
+	 * @param _Universe
+	 * 		the graph universe wivh is associated to the list (can be null)
+	 * @param _table_types
+	 * 		the table of the already known graph elements types
+	 * @param _editable
+	 * 		if the tabs have to be set editable or not
+	 */
+	public GAttributesList(GGrapheUniverse _Universe, Hashtable<Class, String> _table_types, boolean _editable){
+		super(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
+
+		this.universe = _Universe;
+		this.elements = new LinkedList<Object>();
+		this.editable = _editable;
+		this.nb_nodes = 0;
+		setBorder(new TitledBorder(new EtchedBorder(),"Elements sélectionnés"));
+	}
+
+	/**
+	 * this method provides the addition of a graph element in the selection.<br>
+	 * the element will become the current element in the list
+	 * @param component
+	 */
+	public void add(Object component){
+		this.add(component, true);
+	}
+	
 	/**
 	 * this method provides the addition of a graph element in the selection.<br>
 	 * If the element is present in the selection it will be unselected,
@@ -118,37 +160,40 @@ public class GAttributesList extends JTabbedPane{
 	 * @see GLink
 	 * @param component
 	 * 		the graph element which have to be added
+	 * @param focus
+	 * 		if the element have to become the current element in the list
 	 * @throws BadElementTypeException
 	 * 		if the component cannot be cast into a graph element
 	 * @see GNode
 	 * @see GLink
 	 */
-	public void add(Object component) throws BadElementTypeException {
+	public void add(Object component, boolean focus) throws BadElementTypeException {
 		if(!elements.contains(component))
 			try{
-				GTab tab = new GTab(component, this, this.universe,editable);
-				Icon exit;
-				try{
-					exit = new ImageIcon("/icons/network.png");
-				}catch(Exception e){
-					exit = new ImageIcon("icons/network.wmf");
-				}//try
+				GTab tab = new GTab(component, this, this.universe, editable);
 				if( component instanceof GNode ){
 					GNode node = (GNode) component;
 					elements.add(nb_nodes,node);
-					insertTab(node.getName(), exit, tab, "noeud", nb_nodes);
+					insertTab(node.getName(), null, tab, "noeud", nb_nodes);
 					nb_nodes++;
+					if(this.universe!=null) universe.addGNode(node);
 				}else if( component instanceof GLink ){
 					GLink link = (GLink) component;
 					elements.add(link);
 					add(tab,link.getName());
-					setIconAt(indexOfComponent(tab), exit);
+					setIconAt(indexOfComponent(tab), null);
 					setToolTipTextAt(indexOfComponent(tab), "lien");
+					if(this.universe!=null) universe.addGLink(link);
 				}else
 					System.err.println(new GException("you are trying to add an object which is not a graph element"));
-
-				setSelectedComponent(tab);
+				
+				if(focus || getTabCount()==1){
+					setSelectedComponent(tab);
+					refreshList();
+				}
+				
 				if(connectionsList!=null) refreshList();
+				if(editor!=null) editor.doCheck();
 			}catch (GException e) {
 				/*
 				 * we must not go here
@@ -169,12 +214,18 @@ public class GAttributesList extends JTabbedPane{
 	public void remove(Object component){
 		int index = elements.indexOf(component);
 		if(index != -1){
-			remove(index);
+			super.remove(index);
 			elements.remove(index);
-			if(component instanceof GNode)
+			if(component instanceof GNode){
 				nb_nodes--;
+				if(universe!=null) universe.deleteGNode(((GNode)component).getName());
+			}else{
+				if(universe!=null) universe.deleteGLink(((GLink)component).getName());
+			}
+			
 		}
-		refreshList();
+		if(connectionsList!=null) refreshList();
+		if(editor!=null) editor.doCheck();
 	}//removeTab
 
 	/**
@@ -182,10 +233,17 @@ public class GAttributesList extends JTabbedPane{
 	 * in the list.
 	 */
 	public void removeAll(){
+		if(universe!=null)
+			for(int i=0; i<elements.size();i++)
+				if(elements.get(i) instanceof GNode)
+					universe.deleteGNode(((GNode)elements.get(i)).getName());
+				else
+					universe.deleteGLink(((GLink)elements.get(i)).getName());
 		elements = new LinkedList<Object>();
-		removeAll();
+		super.removeAll();
 		nb_nodes = 0;
-		refreshList();
+		if(connectionsList!=null)refreshList();
+		if(editor!=null) editor.doCheck();
 	}
 
 	/**
@@ -203,6 +261,13 @@ public class GAttributesList extends JTabbedPane{
 			refreshList();
 		}
 	}
+	
+	/**
+	 * 
+	 */
+	public void attachEditor(GEditor _editor){
+		this.editor = _editor;
+	}
 
 	/**
 	 * sets the tabs editable/not editable
@@ -216,7 +281,7 @@ public class GAttributesList extends JTabbedPane{
 		for(int i=0;i<getTabCount();i++)
 			((GTab)getComponentAt(i)).setEditable(_editable);
 	}
-	
+
 	/**
 	 * sets the tabs editable/not editable
 	 * @param _editable
@@ -226,7 +291,7 @@ public class GAttributesList extends JTabbedPane{
 		for(int i=0;i<nb_nodes;i++)
 			((GTab)getComponentAt(i)).setEditable(_editable);
 	}
-	
+
 	/**
 	 * sets the tabs editable/not editable
 	 * @param _editable
@@ -236,7 +301,7 @@ public class GAttributesList extends JTabbedPane{
 		for(int i=nb_nodes;i<getTabCount();i++)
 			((GTab)getComponentAt(i)).setEditable(_editable);	
 	}
-	
+
 	/**
 	 * sets the tabs editable/not editable
 	 * @param _editable
@@ -248,12 +313,32 @@ public class GAttributesList extends JTabbedPane{
 		tab.setEditable(_editable);
 	}
 
+	/**
+	 * 
+	 * @param _Universe
+	 */
 	public void setUniverse(GGrapheUniverse _Universe){
 		this.universe = _Universe;
 		for(int i=0;i<getTabCount();i++)
 			((GTab)getComponentAt(i)).setUniverse(_Universe);
 	}
-
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public LinkedList<Object> getElements(){
+		return elements;
+	}
+	
+	/**
+	 * 
+	 */
+	public int getNodeCount(){
+		return nb_nodes;
+	}
+	
+	
 	/**
 	 * this internal class is used to refresh the list of associated elements when a
 	 * click is performed on a tab.
@@ -295,7 +380,8 @@ public class GAttributesList extends JTabbedPane{
 	 * @param filename
 	 * 		String : the name of the file containing all the known classes which implements graph elements
 	 */
-	private Hashtable<Class, String> getTypes(String filename){
+	private static Hashtable<Class, String> getTypes(String filename){
+		filename = (filename == null) ? "" : filename;
 		Hashtable<Class, String> table_types = new Hashtable<Class, String>();
 		File file = new File(filename);
 		try{

@@ -55,10 +55,10 @@ class Launcher {
 		
 		f.setVisible(true);
 
-		attr_list.add(node_1);
-		attr_list.add(link_1);
-		attr_list.add(node_2);
-		attr_list.add(comput);
+		attr_list.add(node_1, true);
+		attr_list.add(link_1, true);
+		attr_list.add(node_2, true);
+		attr_list.add(comput, true);
 		
 		attr_list.attachConnectionsList(connec_list);
 		attr_list.setComponentEditable(node_1,true);
