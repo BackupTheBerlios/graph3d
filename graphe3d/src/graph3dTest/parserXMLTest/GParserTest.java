@@ -4,6 +4,8 @@ import java.io.File;
 import graph3d.elements.GGraph;
 import graph3d.elements.GLink;
 import graph3d.elements.GNode;
+import graph3d.exception.GException;
+import graph3d.exception.SameNameException;
 import graph3d.parserXML.GParser;
 import junit.framework.TestCase;
 
@@ -41,13 +43,19 @@ public class GParserTest extends TestCase {
 		graph.addLink(link2);
 		graph.addLink(link3);
 
-		GParser p = new GParser(graph, "test3.xml");
-		
-		// Sauvegarde du graphe dans un fichier XML
-		p.saveGraph();
+		try {
 
-		// Vérification que la sauvegarde a bien été effectuer.
-		assertTrue((new File(p.getXMLFileName())).exists());
+			GParser p = new GParser(graph, "test3.xml");
+
+			// Sauvegarde du graphe dans un fichier XML
+			p.saveGraph();
+
+			// Vérification que la sauvegarde a bien été effectuer.
+			assertTrue((new File(p.getXMLFileName())).exists());
+
+		} catch (GException e) {
+			System.err.println(e.getMessage());
+		}
 
 	}
 
@@ -55,63 +63,100 @@ public class GParserTest extends TestCase {
 	 * Test method for {@link graph3d.parserXML.GParser#GParser(java.lang.String)}.
 	 */
 	public void testGParserString() {
-		//Création des éléments à tester.
-		GParser p = new GParser("test3.xml");
-		
-		//Vérification des attributs du parseur.
-		assertEquals(p.getXMLFileName(), "test3.xml");
-		assertNotNull(p.getGraph());
+		try {
+
+			// Création des éléments à tester.
+			GParser p = new GParser("test3.xml");
+
+			// Vérification des attributs du parseur.
+			assertEquals(p.getXMLFileName(), "test3.xml");
+			assertNotNull(p.getGraph());
+
+		} catch (SameNameException e) {
+			System.err.println(e.getMessage());
+		} catch (GException e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
 	/**
-	 * Test method for {@link graph3d.parserXML.GParser#GParser(graph3d.elements.GGraph, java.lang.String)}.
+	 * Test method for
+	 * {@link graph3d.parserXML.GParser#GParser(graph3d.elements.GGraph, java.lang.String)}.
 	 */
 	public void testGParserGGraphString() {
-		// Création des éléments à tester.
-		GGraph g = new GGraph("graph");
-		GNode node = new GNode("node1");
-		g.addNode(node);
-		GParser p = new GParser(g, "test3.xml");
-		
-		//Vérification des attributs du parseur.		
-		assertEquals(p.getXMLFileName(), "test3.xml");
-		assertNotNull(p.getGraph());
+		try {
+
+			// Création des éléments à tester.
+			GGraph g = new GGraph("graph");
+			GNode node = new GNode("node1");
+			g.addNode(node);
+			GParser p = new GParser(g, "test3.xml");
+
+			// Vérification des attributs du parseur.
+			assertEquals(p.getXMLFileName(), "test3.xml");
+			assertNotNull(p.getGraph());
+
+		} catch (SameNameException e) {
+			System.err.println(e.getMessage());
+		} catch (GException e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
 	/**
 	 * Test method for {@link graph3d.parserXML.GParser#getGraph()}.
 	 */
 	public void testGetGraph() {
-		// Création des éléments à tester.
-		GParser p = new GParser("test3.xml");
-		
-		//Vérification de la récuperation du graph
-		assertNotNull(p.getGraph());
+		try {
+
+			// Création des éléments à tester.
+			GParser p = new GParser("test3.xml");
+
+			// Vérification de la récuperation du graph
+			assertNotNull(p.getGraph());
+
+		} catch (SameNameException e) {
+			System.err.println(e.getMessage());
+		} catch (GException e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
 	/**
 	 * Test method for {@link graph3d.parserXML.GParser#getXMLFileName()}.
 	 */
 	public void testGetXMLFileName() {
-		//Création des éléments nécéssaire pour les tests.
-		GParser p = new GParser("test3.xml");
-		
-		//Vérification du nom du fichier XML
-		assertEquals(p.getXMLFileName(), "test3.xml");
+		try {
+			
+			// Création des éléments nécéssaire pour les tests.
+			GParser p = new GParser("test3.xml");
+
+			// Vérification du nom du fichier XML
+			assertEquals(p.getXMLFileName(), "test3.xml");
+
+		} catch (GException e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
 	/**
 	 * Test method for {@link graph3d.parserXML.GParser#setXMLFileName(java.lang.String)}.
 	 */
 	public void testSetXMLFileName() {
-		// Création des éléments nécéssaire pour les tests.
-		GParser p = new GParser("test3.xml");
-		
-		//Modification du nom du fichier XML
-		p.setXMLFileName("test4.xml");
-		
-		//Verification que la modification a été effectuée.
-		assertEquals(p.getXMLFileName(), "test4.xml");
+		try {
+
+			// Création des éléments nécéssaire pour les tests.
+			GParser p = new GParser("test3.xml");
+
+			// Modification du nom du fichier XML
+			p.setXMLFileName("test4.xml");
+
+			// Verification que la modification a été effectuée.
+			assertEquals(p.getXMLFileName(), "test4.xml");
+
+		} catch (GException e) {
+			System.err.println(e.getMessage());
+		}
 
 	}
 
