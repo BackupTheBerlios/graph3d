@@ -1,72 +1,31 @@
 package graph3d.universe.behaviors;
 
+import graph3d.universe.GView;
+
 import java.util.Enumeration;
 
-import javax.media.j3d.TransformGroup;
-import javax.vecmath.Vector3f;
-
+/**
+ * This class is use to call all function define into GOneActionBehavior to rotate or zoom into the view
+ * @author Erwan Daubert
+ * @version 1.0
+ *
+ */
 public class GButtonBehavior extends GOneActionBehavior {
 
-	
-	public GButtonBehavior (TransformGroup TG, Vector3f _camera, double angleX, double angleY) {
-		this.setTransformGroup(TG);
-		this.setCamera(_camera);
-		this.setAngles(angleX,angleY);
-	}
-	
 	/**
-	 * appel de la methode zoom de la classe view
-	 * zoom plus de 1
-	 *//*
-	public void zoomMore(){
-		this.zoom(0.95f);
-	}
-	
-	*//**
-	 * appel de la methode zoom de la classe view
-	 * zoom moins de 1
-	 *//*
-	public void zoomLess(){
-		this.zoom(1.05f);
-	}
-	
-	*//**
+	 * The constructor of this class
+	 * @param _view the view which you want rotate or zoom
 	 * 
-	 *//*
-	public void rotateTop(){
-		this.getTransformGroup().setTransform(this.rotateY(0.1f));
-	}
-	
-	*//**
-	 * 
-	 *//*
-	public void rotateBottom(){
-		this.getTransformGroup().setTransform(this.rotateY(-0.1f));
-	}
-	
-	*//**
-	 * 
-	 *//*
-	public void rotateLeft(){
-		this.getTransformGroup().setTransform(this.rotateX(0.1f));
-	}
-	
-	*//**
-	 * 
-	 *//*
-	public void rotateRight(){
-		this.getTransformGroup().setTransform(this.rotateX(-0.1f));
-	}*/
-
-	@Override
-	public void initialize() {
-		
+	 */
+	public GButtonBehavior (GView _view) {
+		this.setGview(_view);
 	}
 
 	@Override
-	public void processStimulus(Enumeration arg0) {
-		
-	}
+	public void initialize() {}
+
+	@Override
+	public void processStimulus(Enumeration arg0) {}
 }
 
 

@@ -14,9 +14,15 @@ import javax.vecmath.Vector3f;
 import com.sun.j3d.utils.behaviors.mouse.MouseBehavior;
 
 /**
- * NE FONCTIONNE PAS
+ * This class define the behavior of the interaction with the mouse and the view.
+ * THIS CLASS is NOT USEFUL!!!!!!! 
  * @author Erwan Daubert
+ * @version 1.0
  *
+ */
+/*
+ * it's necessary to rewrite this class because the rotation don't work like we want
+ * and it will be better if we write this class like GOneBehavior and this subclasses with a GView in parameter.
  */
 public class GMouseBehavior extends MouseBehavior implements GBehavior {
 
@@ -27,6 +33,11 @@ private double angleX,angleY;
 private float xFactor;
 private float yFactor;
 	
+/**
+ * The constructor of this class
+ * @param TG
+ * @param _camera
+ */
 	public GMouseBehavior(TransformGroup TG, Vector3f _camera) {
 		super(TG);
 		this.xFactor = 0.0002f;
@@ -43,7 +54,7 @@ private float yFactor;
 			WakeupCriterion wakeup;
 			AWTEvent[] events;
 		 	MouseEvent evt;
-		 	//ne fonctionne pas
+		 	//don't work like we want
 		 	wakeup = (WakeupCriterion) criteria.nextElement();
 		 	events = ((WakeupOnAWTEvent)wakeup).getAWTEvent();
 		 	evt = (MouseEvent) events[0];
@@ -343,7 +354,7 @@ private float yFactor;
 	}
 
 	/**
-	 * s
+	 * 
 	 * @param _z
 	 */
 	public void setZCamera(float _z) {

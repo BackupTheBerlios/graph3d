@@ -4,6 +4,7 @@ import graph3d.universe.GView;
 
 import javax.media.j3d.Behavior;
 import javax.media.j3d.Transform3D;
+import javax.media.j3d.TransformGroup;
 import javax.vecmath.Vector3f;
 
 /**
@@ -12,9 +13,11 @@ import javax.vecmath.Vector3f;
  * @version 1.0
  *
  */
-public abstract class GOneActionBehavior extends Behavior implements GBehavior {
+public abstract class GOneActionBehavior2 extends Behavior implements GBehavior {
 
 	private GView gview;
+	private TransformGroup transformGroup;
+	private static double angleX,angleY;
 	
 	
 	/**
@@ -27,9 +30,10 @@ public abstract class GOneActionBehavior extends Behavior implements GBehavior {
 		Transform3D angleXRot = new Transform3D();
 		Transform3D angleYRot = new Transform3D();
 		
-		angleXRot.rotY(this.gview.getAngleX());
-		angleYRot.rotX(this.gview.getAngleY());
 		Vector3f camera = this.gview.getPositionToTheView();
+		
+		angleXRot.rotY(angleX);
+		angleYRot.rotX(angleY);
 		zoom.setTranslation(new Vector3f(camera.x*distance, camera.y*distance , camera.z*distance ));
 		
 		camera.x=camera.x*distance;
@@ -52,60 +56,60 @@ public abstract class GOneActionBehavior extends Behavior implements GBehavior {
 		
 		if(camera.x+(Math.abs(factor)) >= 0 && camera.z-(Math.abs(factor)) >= 0){
 			if(factor<0){
-				this.gview.setAngleX(Math.atan(camera.x/camera.z));
+				angleX = Math.atan(camera.x/camera.z);
 			}else{
-				this.gview.setAngleX(-(Math.toRadians(270)+Math.atan(camera.z/camera.x)));
+				angleX = -(Math.toRadians(270)+Math.atan(camera.z/camera.x));
 			}
 			
 			translate.setTranslation(new Vector3f(camera.x+factor, camera.y , camera.z-factor ));
 			camera.x += factor;
 			camera.z -= factor;
 
-			angleXRot.rotY(this.gview.getAngleX());
-			angleYRot.rotX(this.gview.getAngleY());
+			angleXRot.rotY(angleX);
+			angleYRot.rotX(angleY);
 		}
 		if(camera.x-(Math.abs(factor)) >= 0 && camera.z-(Math.abs(factor)) <= 0){
 			if(factor<0){
-				this.gview.setAngleX(Math.toRadians(90)+Math.atan(Math.abs(camera.z)/camera.x));
+				angleX = Math.toRadians(90)+Math.atan(Math.abs(camera.z)/camera.x);
 			}else{
-				this.gview.setAngleX(-(Math.toRadians(180)+Math.atan(camera.x/Math.abs(camera.z))));;
+				angleX = -(Math.toRadians(180)+Math.atan(camera.x/Math.abs(camera.z)));
 			}
 			
 			translate.setTranslation(new Vector3f(camera.x-factor, camera.y , camera.z-factor ));
 			camera.x -= factor;
 			camera.z -= factor;
 
-			angleXRot.rotY(this.gview.getAngleX());
-			angleYRot.rotX(this.gview.getAngleY());
+			angleXRot.rotY(angleX);
+			angleYRot.rotX(angleY);
 		}
 		if(camera.x-(Math.abs(factor)) <= 0 && camera.z+(Math.abs(factor)) <= 0){
 			if(factor<0){
-				this.gview.setAngleX(Math.toRadians(180)+Math.atan(Math.abs(camera.x)/Math.abs(camera.z)));
+				angleX = Math.toRadians(180)+Math.atan(Math.abs(camera.x)/Math.abs(camera.z));
 			}else{
-				this.gview.setAngleX(-(Math.toRadians(90)+Math.atan(Math.abs(camera.z)/Math.abs(camera.x))));
+				angleX = -(Math.toRadians(90)+Math.atan(Math.abs(camera.z)/Math.abs(camera.x)));
 			}
 			
 			translate.setTranslation(new Vector3f(camera.x-factor, camera.y , camera.z+factor ));
 			camera.x -= factor;
 			camera.z += factor;
 
-			angleXRot.rotY(this.gview.getAngleX());
-			angleYRot.rotX(this.gview.getAngleY());
+			angleXRot.rotY(angleX);
+			angleYRot.rotX(angleY);
 			
 		}
 		if(camera.x+(Math.abs(factor)) <= 0 && camera.z+(Math.abs(factor)) >= 0){
 			if(factor<0){
-				this.gview.setAngleX(Math.toRadians(270)+Math.atan(camera.z/Math.abs(camera.x)));
+				angleX = Math.toRadians(270)+Math.atan(camera.z/Math.abs(camera.x));
 			}else{
-				this.gview.setAngleX(-(Math.atan(Math.abs(camera.x)/camera.z)));
+				angleX = -(Math.atan(Math.abs(camera.x)/camera.z));
 			}
 			
 			translate.setTranslation(new Vector3f(camera.x+factor, camera.y , camera.z+factor ));
 			camera.x += factor;
 			camera.z += factor;
 
-			angleXRot.rotY(this.gview.getAngleX());
-			angleYRot.rotX(this.gview.getAngleY());
+			angleXRot.rotY(angleX);
+			angleYRot.rotX(angleY);
 			
 		}
 
@@ -125,65 +129,65 @@ public abstract class GOneActionBehavior extends Behavior implements GBehavior {
 		
 		if(camera.y+(Math.abs(factor)) >= 0 && camera.z-(Math.abs(factor)) >= 0){
 			if(factor<0){
-				this.gview.setAngleY(-(Math.atan(camera.y/camera.z)));
+				angleY = -(Math.atan(camera.y/camera.z));
 			}else{
-				this.gview.setAngleY(-(-(Math.toRadians(270)+Math.atan(camera.z/camera.y))));
+				angleY = -(-(Math.toRadians(270)+Math.atan(camera.z/camera.y)));
 			}
 			
 			translate.setTranslation(new Vector3f(camera.x, camera.y+factor , camera.z-factor ));
 			camera.y += factor;
 			camera.z -= factor;
 			
-			angleXRot.rotY(this.gview.getAngleX());
-			angleYRot.rotX(this.gview.getAngleY());
+			angleXRot.rotY(angleX);
+			angleYRot.rotX(angleY);
 		
 		}
 			
 		if(camera.y-(Math.abs(factor)) >= 0 && camera.z-(Math.abs(factor)) <= 0){
 			if(factor<0){
-				this.gview.setAngleY(-(Math.toRadians(90)+Math.atan(Math.abs(camera.z)/camera.y)));
+				angleY = -(Math.toRadians(90)+Math.atan(Math.abs(camera.z)/camera.y));
 			}else{
-				this.gview.setAngleY(-(-(Math.toRadians(180)+Math.atan(camera.y/Math.abs(camera.z)))));
+				angleY = -(-(Math.toRadians(180)+Math.atan(camera.y/Math.abs(camera.z))));
 			}
 				
 			translate.setTranslation(new Vector3f(camera.x, camera.y-factor , camera.z-factor ));
 			camera.y -= factor;
 			camera.z -= factor;
 				
-			angleXRot.rotY(this.gview.getAngleX());
-			angleYRot.rotX(this.gview.getAngleY());
+			angleXRot.rotY(angleX);
+			angleYRot.rotX(angleY);
 		
 		}
 			
 			if(camera.y-(Math.abs(factor)) <= 0 && camera.z+(Math.abs(factor)) <= 0){
 				if(factor<0){
-					this.gview.setAngleY(-(Math.toRadians(180)+Math.atan(Math.abs(camera.y)/Math.abs(camera.z))));
+					angleY = -(Math.toRadians(180)+Math.atan(Math.abs(camera.y)/Math.abs(camera.z)));
 				}else{
-					this.gview.setAngleY(-(-(Math.toRadians(90)+Math.atan(Math.abs(camera.z)/Math.abs(camera.y)))));
+					angleY = -(-(Math.toRadians(90)+Math.atan(Math.abs(camera.z)/Math.abs(camera.y))));
 				}
 					
 				translate.setTranslation(new Vector3f(camera.x, camera.y-factor , camera.z+factor ));
 				camera.y -= factor;
 				camera.z += factor;
 				
-				angleXRot.rotY(this.gview.getAngleX());
-				angleYRot.rotX(this.gview.getAngleY());
+				angleXRot.rotY(angleX);
+				angleYRot.rotX(angleY);
 					
 			}
 					
 				if(camera.y+(Math.abs(factor)) <= 0 && camera.z+(Math.abs(factor)) >= 0){
 					if(factor<0){
-						this.gview.setAngleY(-(Math.toRadians(270)+Math.atan(camera.z/Math.abs(camera.y))));
+						angleY = -(Math.toRadians(270)+Math.atan(camera.z/Math.abs(camera.y)));
 					}else{
-						this.gview.setAngleY(-(-(Math.atan(Math.abs(camera.y)/camera.z))));
+						angleY = -(-(Math.atan(Math.abs(camera.y)/camera.z)));
 					}
 					
 					translate.setTranslation(new Vector3f(camera.x, camera.y+factor , camera.z+factor ));
 					camera.y += factor;
 					camera.z += factor;
 					
-					angleXRot.rotY(this.gview.getAngleX());
-					angleYRot.rotX(this.gview.getAngleY());
+					angleXRot.rotY(angleX);
+					angleYRot.rotX(angleY);
 						
 				}
 
@@ -197,27 +201,27 @@ public abstract class GOneActionBehavior extends Behavior implements GBehavior {
 	 * This function is used to set the angle X and Y which is use to create the rotation of the view
 	 * @param _angleX
 	 * @param _angleY
-	 *//*
+	 */
 	public void setAngles(double _angleX,double _angleY){
 		angleX=_angleX;
 		angleY=_angleY;
-	}*/
+	}
 
 	/**
 	 * The getter of transformGroup which is the transformGroup of the view.
 	 * @return the transformGroup of the view on which you use the rotation or the zoom.
-	 *//*
+	 */
 	protected TransformGroup getTransformGroup() {
 		return this.transformGroup;
-	}*/
+	}
 
 	/**
 	 * The setter of the transformGroup. This transformGroup must be the transformGroup of the view if you want rotate the view.
 	 * @param transformGroup
-	 *//*
+	 */
 	protected void setTransformGroup(TransformGroup transformGroup) {
 		this.transformGroup = transformGroup;
-	}*/
+	}
 
 	/**
 	 * The getter of the gview which define the view 

@@ -8,11 +8,12 @@ import com.sun.j3d.utils.picking.*;
 import com.sun.j3d.utils.behaviors.mouse.*;
 
 /**
- * A mouse behavior that allows user to pick and translate scene graph objects.
- * Common usage: 1. Create your scene graph. 2. Create this behavior with
- * the root and canvas. See PickRotateBehavior for more details.
+ * This class define the behavior when you select an element into the 3D view.
+ * This class allow you to select a specific element into the view
+ * @author Erwan Daubert
+ * @version 1.0
+ *
  */
-
 public class PickSelectionBehavior extends PickMouseBehavior implements MouseBehaviorCallback {
   private SelectionBehavior selection;
   private PickingCallback callback = null;
@@ -20,40 +21,28 @@ public class PickSelectionBehavior extends PickMouseBehavior implements MouseBeh
   private TransformGroup currentTg;
 
   /**
-   * Creates a pick/translate behavior that waits for user mouse events for
-   * the scene graph.
-   * @param root   Root of your scene graph.
-   * @param canvas Java 3D drawing canvas.
-   * @param bounds Bounds of your scene.
- * @param _attributesList 
-   **/
-
+   * The constructor of this class
+   * @param root the BranchGroup which define all the scene
+   * @param canvas the Canvas3D on which you click to select an element
+   * @param bounds the Bounds where this behavior is useful
+   * @param _attributesList the GAttributesList that you can be update when you select an element
+   */
   public PickSelectionBehavior(BranchGroup root, Canvas3D canvas, Bounds bounds, GAttributesList _attributesList){
     super(canvas, root, bounds);
     this.selection = new SelectionBehavior(_attributesList);
     this.selection.setTransformGroup(this.currGrp);
-    this.selection.setFactor(0.008);
     this.currGrp.addChild(this.selection);
     this.selection.setSchedulingBounds(bounds);
     this.setSchedulingBounds(bounds);
   }
 
-
-  /**
-   * Update the scene to manipulate any nodes. This is not meant to be
-   * called by users. Behavior automatically calls this. You can call
-   * this only if you know what you are doing.
-   *
-   * @param xpos Current mouse X pos.
-   * @param ypos Current mouse Y pos.
-   **/
   public void updateScene(int xpos, int ypos){
     BranchGroup bg;
     TransformGroup tg;
 
-    if (!mevent.isAltDown() && !mevent.isMetaDown()){
-      pickCanvas.setShapeLocation(xpos, ypos);
-      PickResult pr = pickCanvas.pickClosest();
+    if (!this.mevent.isAltDown() && !this.mevent.isMetaDown()){
+      this.pickCanvas.setShapeLocation(xpos, ypos);
+      PickResult pr = this.pickCanvas.pickClosest();
       if ((pr != null)) {
     	  if (pr.getNode(PickResult.SHAPE3D).getParent().getParent() instanceof TransformGroup) {
     		  bg = (BranchGroup)pr.getNode(PickResult.SHAPE3D).getParent().getParent().getParent();
@@ -82,19 +71,14 @@ public class PickSelectionBehavior extends PickMouseBehavior implements MouseBeh
     }
 }
 
-  /**
-    * Callback method from MouseTranslate
-    * This is used when the Picking callback is enabled
-    */
   public void transformChanged( int type, Transform3D transform ) {
 	  this.callback.transformChanged( PickingCallback.TRANSLATE, this.currentTg );
   }
 
   /**
-    * Register the class @param callback to be called each
-    * time the picked object moves
-    */
-  public void setupCallback( PickingCallback callback ) {
+ * @param callback
+ */
+public void setupCallback( PickingCallback callback ) {
       this.callback = callback;
       if (callback==null)
     	  this.selection.setupCallback( null );
