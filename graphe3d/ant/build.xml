@@ -185,6 +185,10 @@
 		<!-- the API Graphe 3D -->
 		<jar destfile="${build.jar.dir}/graphe3d.jar" basedir="${build.class.dir}" 
 				excludes="**/**/*Test.class,EditorGraph/*.class">
+			<fileset dir="${basedir}">
+				<include name="xml/*" />
+				<include name="textures/*" />
+			</fileset>
 			<manifest>
 				<attribute name="Manifest-Version" value="1.0"/>
 				<attribute name="Created-By" value="Catric - Daubert - Lino - Magnin - Popa."/>
