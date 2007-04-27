@@ -42,8 +42,6 @@ public class GView extends BranchGroup {
 
 	private Vector3f bestPointToSee;
 
-	private Vector3f camera;
-
 	private double angleX;
 
 	private double angleY;
@@ -54,9 +52,6 @@ public class GView extends BranchGroup {
 
 	/**
 	 * This constructor is used to create a GView.
-	 * 
-	 * @param _bestViewToSee
-	 *            of type float [].
 	 */
 	public GView() {
 
@@ -87,29 +82,15 @@ public class GView extends BranchGroup {
 		this.transformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 		this.transformGroup.addChild(this.viewPlatform);
 
-		// Creation de l'objet parent qui est pere de tous les nodes de la
-		// classe
-		// Vue
-		// this.setCapability(BranchGroup.ALLOW_DETACH); sans doute pas
-		// nécessaire
 		this.addChild(this.transformGroup);
 	}
 
 	public void putOnBestPointToSee() {
 		Transform3D transform = new Transform3D();
 		 transform.setTranslation(this.bestPointToSee);
-		 this.camera=new Vector3f(this.bestPointToSee);
 		 this.angleX=0;
 		 this.angleY=0;
 		 this.transformGroup.setTransform(transform);
-			if (this.keyBehavior != null) {
-				this.keyBehavior.setCamera(this.camera);
-				this.keyBehavior.setAngles(this.angleX, this.angleY);
-			}
-			if (this.buttonBehavior != null) {
-				this.buttonBehavior.setCamera(this.camera);
-				this.buttonBehavior.setAngles(this.angleX, this.angleY);
-			}
 	}
 
 	void putOnBestPointToSee(float[] _bestPointToSee) {
@@ -180,15 +161,6 @@ public class GView extends BranchGroup {
 		zoomBehavior.setSchedulingBounds(new BoundingSphere(new Point3d(0, 0, 0), 10));
 		this.addChild(zoomBehavior);
 		
-		Enumeration enume = this.getAllChildren();
-		while (enume.hasMoreElements()) {
-			Object child = enume.nextElement();
-			if (child instanceof TransformGroup) {//récupération de la position de la caméra
-				Transform3D t = new Transform3D();
-				((TransformGroup)child).getTransform(t);
-				t.get(this.camera);
-			}
-		}
 	}
 
 	/**
@@ -196,13 +168,13 @@ public class GView extends BranchGroup {
 	 * KeyNavigatorBehavior.
 	 */
 	public void addKeyListener() {
-			this.keyBehavior = new GKeyBehavior(this.transformGroup, this.camera,this.angleX,this.angleY);
+			this.keyBehavior = new GKeyBehavior(this);
 			this.keyBehavior.setSchedulingBounds(new BoundingSphere(new Point3d(0,0,0), 1000));
 			this.addChild(this.keyBehavior);
 	}
 	
 	public void addButtonListener(){
-		this.buttonBehavior=new GButtonBehavior(this.transformGroup, this.camera,this.angleX,this.angleY);
+		this.buttonBehavior=new GButtonBehavior(this);
 		this.buttonBehavior.setSchedulingBounds(new BoundingSphere(new Point3d(0,0,0), 1000));
 		this.addChild(this.buttonBehavior);
 	}
@@ -234,12 +206,52 @@ public class GView extends BranchGroup {
 	}
 	
 	public void rotateLeft(){
-		this.transformGroup.setTransform(this.mouseBehavior.rotateX(0.1f));
+		this.transformGroup.setTransform(this.buttonBehavior.rotateX(0.1f));
 		//this.transformGroup.setTransform(this.mouseBehavior.rotateX(-0.1f));
 	}
 	
 	public void rotateRight(){
-		this.transformGroup.setTransform(this.mouseBehavior.rotateX(-0.1f));
+		this.transformGroup.setTransform(this.buttonBehavior.rotateX(-0.1f));
 		//this.transformGroup.setTransform(this.mouseBehavior.rotateX(0.1f));
+	}
+	
+	
+	public Vector3f getPositionToTheView() {
+		Enumeration enume = this.getAllChildren();
+		while (enume.hasMoreElements()) {
+			Object child = enume.nextElement();
+			if (child instanceof TransformGroup) {//récupération de la position de la caméra
+				Transform3D t = new Transform3D();
+				((TransformGroup)child).getTransform(t);
+				Vector3f v = new Vector3f();
+				t.get(v);
+				return v;
+			}
+		}
+		return new Vector3f();
+	}
+
+	public double getAngleX() {
+		return angleX;
+	}
+
+	public void setAngleX(double angleX) {
+		this.angleX = angleX;
+	}
+
+	public double getAngleY() {
+		return angleY;
+	}
+
+	public void setAngleY(double angleY) {
+		this.angleY = angleY;
+	}
+
+	public TransformGroup getTransformGroup() {
+		return transformGroup;
+	}
+
+	public void setTransformGroup(TransformGroup transformGroup) {
+		this.transformGroup = transformGroup;
 	}
 }

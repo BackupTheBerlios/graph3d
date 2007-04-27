@@ -44,18 +44,24 @@ public class GGrapheUniverse extends VirtualUniverse{
 		this.createScene();
 		
 		
+	} 
+	
+	public void loadGraph(GGraph _graph) {
+		this.graph = _graph;
+		this.removeAll();
+		this.loadAll();
+		this.createBestView();
 	}
 	
-	/**
-	 * This function is used to create the scene.
-	 */
-	private void createScene() {
-		this.scene = new BranchGroup();
-
-		this.scene.setCapability(Group.ALLOW_CHILDREN_EXTEND);
-		this.scene.setCapability(Group.ALLOW_CHILDREN_WRITE);
-		this.scene.setCapability(Group.ALLOW_CHILDREN_READ);
-		
+	public void removeAll() {
+		Enumeration<String> keys = this.ComponentsView.keys();
+		while (keys.hasMoreElements()) {
+			this.ComponentsView.remove(keys.nextElement());
+			this.scene.removeAllChildren();
+		}
+	}
+	
+	public void loadAll() {
 		Hashtable<String, GNode> nodes = this.graph.getNodes();
 		Enumeration<String> keys = nodes.keys();
 		while (keys.hasMoreElements()) {
@@ -69,6 +75,19 @@ public class GGrapheUniverse extends VirtualUniverse{
 			this.addGLink(links.get(key));
 		}
 	}
+	
+	/**
+	 * This function is used to create the scene.
+	 */
+	private void createScene() {
+		this.scene = new BranchGroup();
+
+		this.scene.setCapability(Group.ALLOW_CHILDREN_EXTEND);
+		this.scene.setCapability(Group.ALLOW_CHILDREN_WRITE);
+		this.scene.setCapability(Group.ALLOW_CHILDREN_READ);
+		
+		this.loadAll();
+	}
 	/**
 	 * This function is used to create the view.
 	 */
@@ -80,7 +99,7 @@ public class GGrapheUniverse extends VirtualUniverse{
 		this.view.addButtonListener();
 	}
 	
-	private void createBestView() {		
+	private void createBestView() {
 		float[] bestPointToSee = new float[3];
 		float fieldOfView = this.view.getFieldOfView();
 		
