@@ -24,11 +24,15 @@ import graph3d.elements.GNode;
  */
 
 /**
- * this class providxe a pop-up window which show you all the link creation possibilities from a selection.<br>
- * when have to check all the links you want to create, and then to click on "ok" to start the links creation.<br>
- * <br>  
+ * this class provides a pop-up window which shows you all the link creation possibilities given a selection.<br>
+ * when you have to check all the links you want to create, you have to click on "ok" to start the links' creation.<br>
+ * they will be added in the graph, and in the GEditor as well.<br>
+ * <br>
  * this class is a package class
+ * 
  * @author  lino christophe
+ * @since JDK 1.5
+ * @version 1.0
  */
 class GPopup extends JDialog {
 
@@ -44,14 +48,30 @@ class GPopup extends JDialog {
 	CHECKBOX_LISTENER = new CheckboxListener(),
 	BUTTON_LISTENER = new ButtonListener();
 
-	// Variables declaration - do not modify//GEN-BEGIN:variables
+	/*
+	 * the "cancel" button
+	 */
 	private JButton cancel_button;
+	
+	/*
+	 * the "ok" button, to validate the creation
+	 */
 	private JButton ok_button;
+	
+	/*
+	 * the title of the tabbedpane which invite you to select the links you want
+	 */
 	private JLabel label;
+	
+	/*
+	 * the tabbed paned which contains all the possibilities of links that could be created.
+	 */
 	private JTabbedPane tabbedPane;
-	// End of variables declaration//GEN-END:variables
 
-	/** Creates new form GPopup */
+	/**
+	 * create a new GPopup window
+	 *
+	 */
 	private GPopup() {
 		super();
 		cancel_button = new JButton("Annuler");
@@ -84,6 +104,11 @@ class GPopup extends JDialog {
 		setModal(true);
 	}
 
+	/**
+	 * put in the pop-up window all the possibilities of arrow between two selected nodes.
+	 * @param nodes
+	 * 		the nodes of the selection.
+	 */
 	private void setArrows(GNode[] nodes){
 		setTitle("Fenêtre de création d'arcs");
 		tabbedPane.removeAll();
@@ -103,13 +128,18 @@ class GPopup extends JDialog {
 		add(tabbedPane);
 	}//
 
+	/**
+	 * put in the pop-up window all the possibilities of bridge between two selected nodes.
+	 * @param nodes
+	 * 		the nodes of the selection.
+	 */
 	private void setBridges(GNode[] nodes){
 		setTitle("Fenêtre de création d'arêtes");
 		tabbedPane.removeAll();
 		label.setText("veuillez sélectionner les arêtes à créer :");
-		for(int i=0;i<nodes.length-1;i++){
+		for(int i=0;i<nodes.length;i++){
 			JScrollPane scrollPane = new JScrollPane();
-			JPanel panel = new JPanel(null);
+			JPanel panel = new JPanel(new GridLayout(nodes.length,1));
 			for(int j=i;j<nodes.length;j++){
 				GCheckbox checkbox = new GCheckbox(nodes[i],nodes[j],GCheckbox.BRIDGE);
 				checkbox.setBounds(10, 10+20*(j-i), 123, 20);
@@ -125,7 +155,20 @@ class GPopup extends JDialog {
 		add(tabbedPane);
 	}//
 
-	public static void showPopup(GEditor editor, GNode[]nodes,boolean type,Class link_class, String link_type) throws Exception{
+	/**
+	 * show the pop-up window which is associated to a link creation request.
+	 * @param editor
+	 * 		the editor which resquests that creation
+	 * @param nodes
+	 * 		the list of nodes which are selected
+	 * @param type
+	 * 		flag to check if the created links must be arrows or bridges
+	 * @param link_class
+	 * 		the class object that represents the future type of the created links
+	 * @param link_type
+	 * 		the name which represents the link type
+	 */
+	public static void showPopup(GEditor editor, GNode[]nodes,boolean type,Class link_class, String link_type){
 		if(POPUP==null)POPUP = new GPopup();
 		list = new LinkedList<Association>();
 		if(type) // ARROW
@@ -139,6 +182,10 @@ class GPopup extends JDialog {
 	}//showPopup
 
 	/**
+	 * this inner class is used to implement the actions which are associated
+	 * to a click on a checkbox :<br>
+	 * - if the link is selected, it will be added in the list of links to create,
+	 * - and if it is unselected, it will be remove from the list.
 	 * 
 	 * @author lino christophe
 	 *
@@ -153,6 +200,10 @@ class GPopup extends JDialog {
 	}//listener
 
 	/**
+	 * this class is used to implement the actions which are associated to a click on
+	 * the "Ok" button and the "Annuler" button.<br>
+	 * If you click on "Ok", the links which have been selected will be created, and then added
+	 * to the graph and to the editor as well.
 	 * 
 	 * @author lino christophe
 	 *
@@ -215,6 +266,7 @@ class GPopup extends JDialog {
 	}//listener
 
 	/**
+	 * this class is used to represent an association between 2 nodes.
 	 * 
 	 * @author lino christophe
 	 *
@@ -229,6 +281,8 @@ class GPopup extends JDialog {
 	}
 
 	/**
+	 * this inner class is used to implement a checkbox which contains the association between the
+	 * 2 nodes of the represented link. 
 	 * 
 	 * @author lino christophe
 	 *

@@ -5,6 +5,8 @@ import graph3d.elements.GLink;
 import graph3d.elements.GNode;
 import graph3d.exception.BadElementTypeException;
 import graph3d.exception.DeleteNodeWithLinksException;
+import graph3d.exception.GException;
+import graph3d.lists.GConnectionsList;
 import graph3d.universe.GGrapheUniverse;
 
 import java.awt.Dimension;
@@ -17,9 +19,7 @@ import java.util.LinkedList;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
@@ -32,30 +32,31 @@ import javax.swing.border.TitledBorder;
  * 
  * @author lino christophe
  * @since JDK 1.5
+ * @version 1.0
  */
 public class GEditor extends JPanel{
 
 	/*
-	 * la vue associée
+	 * associated universe
 	 */
 	GGrapheUniverse universe = new GGrapheUniverse(new GGraph());
 
 	/*
-	 * les zones de l'éditeur
+	 * editor areas
 	 */
 	GTabArea tabArea;
-	GListArea listArea;
+	GConnectionsList listArea;
 	GCreationArea creationArea;
 
 	/*
-	 * marges
+	 * margins
 	 */
 	static final Insets
 	BUTTON_INSETS = new Insets(2,2,2,2),
 	EDITOR_INSETS = new Insets(1,1,1,1);
 
 	/*
-	 * les contraintes de positionnement des parties.
+	 * areas placement constraints
 	 */
 	GridBagConstraints
 	TAB_AREA_CONSTRAINTS
@@ -68,14 +69,13 @@ public class GEditor extends JPanel{
 	/**
 	 * constructs a new graph editor.
 	 * @param _ascii_file
-	 * 		String : the name of the file containing all the known classes which implements graph elements
+	 * 		the name of the file containing all the known classes which implements graph elements
 	 * @param _Universe
-	 * 		GGrapheUniverse : the graph universe which contains the graph
+	 * 		the graph universe which contains the graph
 	 */
 	public GEditor(String _ascii_file, GGrapheUniverse _Universe) {
-		this.universe = _Universe;
 		/*
-		 * nommage de l'éditeur
+		 * editor naming
 		 */
 		setBorder(new TitledBorder(new EtchedBorder(),"Editeur"));
 		setMinimumSize(new Dimension(260,600));
@@ -85,19 +85,26 @@ public class GEditor extends JPanel{
 		GridBagLayout gbl = new GridBagLayout();
 		setLayout(gbl);
 		/*
-		 * création des zones
+		 *area creation
 		 */
-		tabArea = new GTabArea(this);
-		listArea = new GListArea(new JList(), this);
 		creationArea = new GCreationArea(_ascii_file,this);
+		tabArea = new GTabArea(this, _ascii_file);
+		listArea = new GConnectionsList();
+		listArea.attachAttributeList(tabArea.attributes_list);
 		/*
-		 * placement des zones
+		 * we associate the editor to an universe
+		 * and we set the selection behaviour between the universe and the attributes list
+		 */
+		this.universe = _Universe;
+		this.universe.addSelectionBehavior(tabArea.attributes_list);
+		/*
+		 * areas placement
 		 */
 		gbl.addLayoutComponent(tabArea, TAB_AREA_CONSTRAINTS);
 		gbl.addLayoutComponent(listArea, LIST_AREA_CONSTRAINTS);
 		gbl.addLayoutComponent(creationArea, CREATE_AREA_CONSTRAINTS);
 		/*
-		 * ajout des zones à l'éditeur
+		 *	areas addition
 		 */
 		add(tabArea);
 		add(listArea);
@@ -110,50 +117,35 @@ public class GEditor extends JPanel{
 	 * If focus is set, it will become the current element in the selection.
 	 * And if this element is already selected, it will be not added.
 	 * @param component
-	 * 		Object : the graph element to add
+	 * 		the graph element to add
 	 * @param focus
-	 * 		boolean : if the added element have to become the current selection
+	 * 		if the added element have to become the current selection
 	 */
 	public void addComponent(Object component, boolean focus) {
-		if( tabArea.elements.indexOf(component) == -1 ){ // component is not already selected 
+		if( tabArea.attributes_list.getElements().indexOf(component) == -1 ){ // component is not already selected 
 
-			GTab tab = new GTab(component, this);
-			if( component instanceof GNode ){
-				GNode node = (GNode) component;
-				tabArea.elements.add(tabArea.nb_nodes,node);
-				tabArea.tabbedpane.add(tab,tabArea.nb_nodes);
-				tabArea.tabbedpane.setTitleAt(tabArea.nb_nodes, node.getName());			
-				tabArea.nb_nodes++;
-			}else if( component instanceof GLink ){
-				GLink link = (GLink) component;
-				tabArea.elements.add(link);
-				tabArea.tabbedpane.add(tab,link.getName());
-			}else
-				System.err.println(new BadElementTypeException("graph element").getMessage());
+				if( component instanceof GNode ){
+					GNode node = (GNode) component;
+					tabArea.attributes_list.add(node, focus);
+				}else if( component instanceof GLink ){
+					GLink link = (GLink) component;
+					tabArea.attributes_list.add(link, focus);
+				}else {
+					BadElementTypeException e = new BadElementTypeException(component.toString());
+				e.printStackTrace();
+				e.showError();
+			}
 
-			if(focus) tabArea.tabbedpane.setSelectedComponent(tab);
-			tabArea.remove.setEnabled(true);
-			tabArea.remove_all.setEnabled(true);
-			tabArea.unselect.setEnabled(true);
-			tabArea.unselect_all.setEnabled(true);
+				tabArea.remove.setEnabled(true);
+				tabArea.remove_all.setEnabled(true);
+				tabArea.unselect.setEnabled(true);
+				tabArea.unselect_all.setEnabled(true);
 
 		}//if tabArea.elements.indexOf(component) == -1
 	}//addComponent
 
-//	/**
-//	* ajoute ou remplace la vue associée à cet éditeur
-//	*
-//	*/
-//	public void setView(GView view) {
-//	this.universe = view;
-//	}//addView
-
-//	public GView getView(){
-//	return universe;
-//	}
-
 	/**
-	 * this class is used to implements actions associated to a performed click on a button.<br>
+	 * this inner class is used to implements actions associated to a performed click on a button.<br>
 	 * it provides actions for :<br>
 	 * - unselection & whole unselection buttons [from tab area],<br> 
 	 * - removal & whole removal buttons [from tab area],<br>
@@ -165,76 +157,45 @@ public class GEditor extends JPanel{
 		public void mouseClicked(MouseEvent m){
 			JButton button = (JButton) m.getSource();
 			if(button == tabArea.remove){
-				/*
-				 * removal
-				 */
-				GTab tab = (GTab) tabArea.tabbedpane.getSelectedComponent();
-				if(tab.getElement() instanceof GNode){
-					remove((GNode) tab.getElement());
-				}else{
-					GLink link = (GLink) tab.getElement();
-					link.getFirstNode().removeLink(link);
-					link.getSecondNode().removeLink(link);
-					universe.deleteGLink(link.getName());
-				}//if
-				universe.getCanvas().repaint();
-				/*
-				 * unselection
-				 */
-				unselect();
+				GTab tab = (GTab) tabArea.attributes_list.getSelectedComponent();
+				tabArea.attributes_list.remove(tab.getElement());
+				doCheck();
 			}else if(button == tabArea.remove_all){
-				JTabbedPane tabbedpane = tabArea.tabbedpane;
+				tabArea.attributes_list.removeAll();
 				/*
-				 * removal
+				 * we check if there is at least one element in the list
+				 * of course no
 				 */
-				for(int i=0; i<tabbedpane.getComponentCount(); i++){
-					GTab tab = (GTab) tabbedpane.getComponentAt(i);
-					if(tab.getElement() instanceof GNode){
-						GNode node = (GNode) tab.getElement();
-						remove(node);
-					}else{
-						GLink link = (GLink) tab.getElement();
-						universe.deleteGLink(link.getName());
-					}//if
-				}//for
-				universe.getCanvas().repaint();
-				/*
-				 * whole unselection
-				 */
-				unselectAll();
+				doCheck();
 			}else if(button == tabArea.unselect){
 				unselect();
+				/*
+				 * we check if there is at least one element in the list
+				 */
+				doCheck();
 			}else if(button == tabArea.unselect_all){
 				unselectAll();
+				/*
+				 * we check if there is at least one element in the list
+				 * of course no
+				 */
+				doCheck();
 			}else if(button == creationArea.button_arrow){
 				JComboBox combo = creationArea.combo_arrow;
 				String type_of_links  = (String) combo.getSelectedItem();
 				Class link_class = creationArea.table_link.get(type_of_links);
-				GNode[]nodes = new GNode[tabArea.nb_nodes];
+				GNode[]nodes = new GNode[tabArea.attributes_list.getNodeCount()];
 				for(int i=0; i<nodes.length;i++)
-					nodes[i] = (GNode) tabArea.elements.get(i);
-				try{
-					GPopup.showPopup(GEditor.this,nodes, GPopup.ARROW, link_class,type_of_links);
-				}catch (Exception e) {
-					/*
-					 * we mustn't go here
-					 */
-				}//try
+					nodes[i] = (GNode) tabArea.attributes_list.getElements().get(i);
+				GPopup.showPopup(GEditor.this, nodes, GPopup.ARROW, link_class,type_of_links);
 			}else if(button == creationArea.button_bridge){
 				JComboBox combo = creationArea.combo_bridge;
 				String type_of_links = (String) combo.getSelectedItem();
 				Class link_class = creationArea.table_link.get(type_of_links);
-				GNode[]nodes = new GNode[tabArea.nb_nodes];
+				GNode[]nodes = new GNode[tabArea.attributes_list.getNodeCount()];
 				for(int i=0; i<nodes.length;i++)
-					nodes[i] = (GNode) tabArea.elements.get(i);
-				try{
-					System.out.println(type_of_links);
-					GPopup.showPopup(GEditor.this,nodes, GPopup.BRIDGE, link_class, type_of_links);
-				}catch (Exception e) {
-					/*
-					 * we mustn't go here
-					 */
-				}//try
+					nodes[i] = (GNode) tabArea.attributes_list.getElements().get(i);
+				GPopup.showPopup(GEditor.this, nodes, GPopup.BRIDGE, link_class, type_of_links);
 			}else if(button == creationArea.button_node){
 				/*
 				 * node addition
@@ -263,6 +224,7 @@ public class GEditor extends JPanel{
 					int j=1;
 					node.setName(name+j);
 					boolean good = universe.getGraph().addNode(node);
+					System.out.println(good);
 					while( ! good ){
 						j++;
 						node.setName(name+j);
@@ -272,73 +234,93 @@ public class GEditor extends JPanel{
 					universe.addGNode(node);
 					tabArea.refreshList();
 					universe.getCanvas().repaint();
+					creationArea.button_arrow.setEnabled(true);
+					creationArea.button_bridge.setEnabled(true);
 				}catch (Exception e) {
-					System.out.println(e+" button listener : button_node");
+					/*
+					 * we mustn't go here
+					 */
 				}//try
 			}//if
-			if(tabArea.tabbedpane.getComponentCount()==0){
-				tabArea.remove.setEnabled(false);
-				tabArea.remove_all.setEnabled(false);
-				tabArea.unselect.setEnabled(false);
-				tabArea.unselect_all.setEnabled(false);
-			}//if
-			for(int i=0; i<universe.getGraph().getNodes().size();i++)
-				System.out.println(universe.getGraph().getNodes().keySet().toArray()[i]);
-
-			for(int i=0; i<universe.getGraph().getLinks().size();i++)
-				System.out.println(universe.getGraph().getLinks().keySet().toArray()[i]);			
 		}//mouseClicked
 
-		/**
-		 * this method performs unselection of the current selection
-		 */
-		private void unselect(){
-			int index = tabArea.tabbedpane.getSelectedIndex();
-			tabArea.elements.remove(index);
-			if(index < tabArea.nb_nodes){
-				tabArea.nb_nodes--;
-			}//if
-			tabArea.tabbedpane.remove(index);
-			tabArea.refreshList();
-		}//unselect
-
-		/**
-		 * this method preform unselection of the whole selection.
-		 */
-		private void unselectAll(){
-			tabArea.tabbedpane.removeAll();
-			tabArea.elements = new LinkedList<Object>();
-			tabArea.nb_nodes = 0;
-			tabArea.refreshList();
-		}//unselectAll
-
-		/**
-		 * this method is used to remove a GNode.<br>
-		 * if this one is associated to links, it will warn you and ask
-		 * if you really want to remove it.
-		 * If yes it will remove the node, and the associated links as well as.
-		 * And if no it will do nothing.
-		 */
-		private void remove(GNode node){
-			LinkedList<GLink> list_links = node.getLinks();
-			if(list_links.size()>0){
-				if(new DeleteNodeWithLinksException(node).showError()){
-					for(int i=0; i<list_links.size();i++){
-						GLink link = list_links.get(i);
-						universe.deleteGLink(link.getName());
-						if(link.getFirstNode()==node)
-							link.getSecondNode().removeLink(link);
-						else
-							link.getFirstNode().removeLink(link);
-					}//for
-					universe.deleteGNode(node.getName());
-					tabArea.unselectlinks(list_links);
-				}//if
-			}else{
-				universe.deleteGNode(node.getName());
-			}//if
-		}// remove
-
 	}//inner class GButtonListener
+
+	/**
+	 * this method performs unselection of the current tab
+	 */
+	void unselect(){
+		GTab tab = (GTab) tabArea.attributes_list.getSelectedComponent();
+		tabArea.attributes_list.remove(tab.getElement());
+	}//unselect
+
+	/**
+	 * this method performs unselection of the whole selection.
+	 */
+	void unselectAll(){
+		tabArea.attributes_list.removeAll();
+	}//unselectAll
+
+	/**
+	 * this method performs removal of a GNode.<br>
+	 * if this one is associated to one link at least, it will warn you and ask you
+	 * if you really want to remove it :
+	 * 	- if you agree the node will be removed, and the associated links as well as.
+	 * 	- and if you disagree nothing will be done.
+	 * if the node is associated to no link, it will be remove without warning.
+	 */
+	void remove(GNode node){
+		LinkedList<GLink> list_links = node.getLinks();
+		if(list_links.size()>0){
+			if(new DeleteNodeWithLinksException(node).showError()){
+				/*
+				 * user is ok for removal
+				 */
+				for(int i=0; i<list_links.size();i++){
+					GLink link = list_links.get(i);
+					universe.deleteGLink(link.getName());
+					if(link.getFirstNode()==node)
+						try {
+							link.getSecondNode().removeLink(link);
+						} catch (GException e) {
+							e.printStackTrace();
+							e.showError();
+						}
+					else
+						try {
+							link.getFirstNode().removeLink(link);
+						} catch (GException e) {
+							e.printStackTrace();
+							e.showError();
+						}
+				}//for
+				universe.deleteGNode(node.getName());
+				tabArea.unselectlinks(list_links);
+				tabArea.attributes_list.getNodeCount();
+			}//if
+		}else{
+			universe.deleteGNode(node.getName());
+			tabArea.attributes_list.getNodeCount();
+		}//if
+	}// remove
+	
+	public void doCheck(){
+		boolean isOneAtLeast = true;
+		if(tabArea.attributes_list.getTabCount()==0){
+			isOneAtLeast = false;
+		}
+		tabArea.remove.setEnabled(isOneAtLeast);
+		tabArea.remove_all.setEnabled(isOneAtLeast);
+		tabArea.unselect.setEnabled(isOneAtLeast);
+		tabArea.unselect_all.setEnabled(isOneAtLeast);
+		
+		boolean isOneNodeAtLeast = true;
+		if(tabArea.attributes_list.getNodeCount()==0){
+			isOneNodeAtLeast = false;
+		}
+		creationArea.button_arrow.setEnabled(isOneNodeAtLeast);
+		creationArea.button_bridge.setEnabled(isOneNodeAtLeast);
+		
+	}
 
 }//class GEditor

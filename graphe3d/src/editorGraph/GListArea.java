@@ -21,7 +21,8 @@ import graph3d.exception.BadElementTypeException;
  * this class is a package class
  * 
  * @author lino christophe
- *
+ * @since JDK 1.5
+ * @version 1.0
  */
 class GListArea extends JScrollPane{
 
@@ -31,7 +32,7 @@ class GListArea extends JScrollPane{
 	GEditor editor;
 
 	/*
-	 * area of selection list with current tab associated elements
+	 * area of selection list with elements which are associated to current tab 
 	 */
 	private JList list;
 
@@ -41,20 +42,19 @@ class GListArea extends JScrollPane{
 	private Hashtable<String, Object> table;
 
 	/**
-	 * constructs a list area with an initialized JList.
-	 * @param list
-	 * 		JList : the list to show in the area
+	 * constructs a list area linked to a GEditor object.
 	 * @param owner
-	 * 	 	GEditor : the editor owner 
+	 * 	 	the editor owner 
 	 */
-	public GListArea(JList list, GEditor owner) {
+	public GListArea(GEditor owner) {
 		/*
 		 * creation from an empty list
 		 */
-		super(list);
-		this.list= list;
+		super();
+		this.list= new JList();
 		this.editor = owner;
-		list.addMouseListener(new ListListener());
+		this.list.addMouseListener(new ListListener());
+		setViewportView(this.list);
 		table = new Hashtable<String, Object>();
 		/*
 		 * nommage de la zone
@@ -101,7 +101,10 @@ class GListArea extends JScrollPane{
 	}//show
 
 	/**
-	 * this class is used to perform actions when double clicking on one or several item(s).
+	 * this class is used to perform actions when double clicking on one or several item(s)
+	 * in the list.<br>
+	 * They will be added into the GTabArea object contained in the GEditor owner.
+	 * 
 	 * @author lino christophe
 	 *
 	 */
@@ -111,7 +114,7 @@ class GListArea extends JScrollPane{
 				Object[] values = list.getSelectedValues();
 				boolean focus = ! (values.length > 1);
 				for(int i=0;i<values.length;i++){
-					GTab tab = (GTab) editor.tabArea.tabbedpane.getSelectedComponent();
+					GTab tab = (GTab) editor.tabArea.attributes_list.getSelectedComponent();
 					Object element = tab.getElement();
 					if(element instanceof GNode){
 						GLink link = (GLink) table.get( (String) values[i] );
