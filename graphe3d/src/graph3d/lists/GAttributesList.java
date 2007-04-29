@@ -8,7 +8,6 @@ import graph3d.exception.ASCIIFileNotFoundException;
 import graph3d.exception.BadElementTypeException;
 import graph3d.exception.GException;
 import graph3d.exception.InexistantClassException;
-import graph3d.lists.GConnectionsList;
 import graph3d.universe.GGrapheUniverse;
 
 import java.awt.event.MouseAdapter;
@@ -22,13 +21,9 @@ import java.io.InputStreamReader;
 import java.util.Hashtable;
 import java.util.LinkedList;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JTabbedPane;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-
-import sun.security.krb5.internal.crypto.t;
 
 
 /**
@@ -85,8 +80,9 @@ public class GAttributesList extends JTabbedPane{
 	 * @param _ascii_file
 	 * 		the name of the file which contains all the known types of graph elements
 	 * 		(can be null, in this case only basic types "node" and "link" will be known)
+	 * @throws GException 
 	 */
-	public GAttributesList(GGrapheUniverse _Universe, String _ascii_file){
+	public GAttributesList(GGrapheUniverse _Universe, String _ascii_file) throws GException{
 		this(_Universe, _ascii_file, false);
 	}
 
@@ -167,7 +163,7 @@ public class GAttributesList extends JTabbedPane{
 	 * @see GNode
 	 * @see GLink
 	 */
-	public void add(Object component, boolean focus) throws BadElementTypeException {
+	public void add(Object component, boolean focus) {
 		if(!elements.contains(component))
 			try{
 				GTab tab = new GTab(component, this, this.universe, editable);
@@ -184,9 +180,11 @@ public class GAttributesList extends JTabbedPane{
 					setIconAt(indexOfComponent(tab), null);
 					setToolTipTextAt(indexOfComponent(tab), "lien");
 					if(this.universe!=null) universe.addGLink(link);
-				}else
-					System.err.println(new GException("you are trying to add an object which is not a graph element"));
-				
+				}else {
+					BadElementTypeException e = new BadElementTypeException(component.toString());
+					e.printStackTrace();
+					e.showError();
+			}
 				if(focus || getTabCount()==1){
 					setSelectedComponent(tab);
 					refreshList();
@@ -195,6 +193,8 @@ public class GAttributesList extends JTabbedPane{
 				if(connectionsList!=null) refreshList();
 				if(editor!=null) editor.doCheck();
 			}catch (GException e) {
+				e.printStackTrace();
+				e.showError();
 				/*
 				 * we must not go here
 				 */
@@ -274,7 +274,7 @@ public class GAttributesList extends JTabbedPane{
 	 * @param _editable
 	 * 		if the tabs have to become editable or not editable
 	 */
-	public void setEditable(boolean _editable){
+	public void setEditable(boolean _editable) throws GException {
 		if(_editable && this.universe==null)
 			throw new GException("You cannot set the tab editable because there is no universe !");
 		this.editable = _editable;
@@ -286,8 +286,9 @@ public class GAttributesList extends JTabbedPane{
 	 * sets the tabs editable/not editable
 	 * @param _editable
 	 * 		if the tabs have to become editable or not editable
+	 * @throws GException 
 	 */
-	public void setNodesEditable(boolean _editable){
+	public void setNodesEditable(boolean _editable) throws GException{
 		for(int i=0;i<nb_nodes;i++)
 			((GTab)getComponentAt(i)).setEditable(_editable);
 	}
@@ -296,8 +297,9 @@ public class GAttributesList extends JTabbedPane{
 	 * sets the tabs editable/not editable
 	 * @param _editable
 	 * 		if the tabs have to become editable or not editable
+	 * @throws GException 
 	 */
-	public void setLinksEditable(boolean _editable){
+	public void setLinksEditable(boolean _editable) throws GException{
 		for(int i=nb_nodes;i<getTabCount();i++)
 			((GTab)getComponentAt(i)).setEditable(_editable);	
 	}
@@ -306,8 +308,9 @@ public class GAttributesList extends JTabbedPane{
 	 * sets the tabs editable/not editable
 	 * @param _editable
 	 * 		if the tabs have to become editable or not editable
+	 * @throws GException 
 	 */
-	public void setComponentEditable(Object component, boolean _editable){
+	public void setComponentEditable(Object component, boolean _editable) throws GException{
 		int index = elements.indexOf(component);
 		GTab tab = (GTab)getComponentAt(index);
 		tab.setEditable(_editable);
@@ -364,14 +367,29 @@ public class GAttributesList extends JTabbedPane{
 				GLink[]links = node.getLinks().toArray(new GLink[0]);
 				String[]names = new String[links.length];
 				for(int i=0; i<names.length; i++) names[i] = links[i].getName();
-				connectionsList.show(links);
+				try {
+					connectionsList.show(links);
+				} catch (BadElementTypeException e) {
+					e.printStackTrace();
+					e.showError();
+				}
 			}else{
 				GLink link  = (GLink) element;
 				GNode[] nodes = new GNode[]{link.getFirstNode(),link.getSecondNode()};
-				connectionsList.show(nodes);
+				try {
+					connectionsList.show(nodes);
+				} catch (BadElementTypeException e) {
+					e.printStackTrace();
+					e.showError();
+				}
 			}//if
 		}else{
-			connectionsList.show(new Object[0]);
+			try {
+				connectionsList.show(new Object[0]);
+			} catch (BadElementTypeException e) {
+				e.printStackTrace();
+				e.showError();
+			}
 		}
 	}
 
@@ -424,7 +442,7 @@ public class GAttributesList extends JTabbedPane{
 				}catch (Exception e4){
 					String message = "line "+line_count+" : empty lines or incomplete lines are not allowed !"
 					+"\nthe end of the file will not be read.";
-					(new GException(message, GException.ERROR)).showError();
+					(new GException("Invalid ASCII file", message, GException.ERROR)).showError();
 				}//try
 			}//while
 		}catch (FileNotFoundException e) {
