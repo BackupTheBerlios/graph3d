@@ -1,7 +1,6 @@
 package graph3d.lists;
 
 import editorGraph.GEditor;
-import editorGraph.GTab;
 import graph3d.elements.GLink;
 import graph3d.elements.GNode;
 import graph3d.exception.ASCIIFileNotFoundException;
@@ -96,14 +95,12 @@ public class GAttributesList extends JTabbedPane{
 	 * 		if it is null or if it cannot be found, only basic "node" and "link" types will be loaded
 	 * @param _editable
 	 * 		if the attributes will be editable or not
+	 * @throws GException 
 	 * @throws GException
 	 * 		if the list is set editable and _Universe is null.
 	 */
-	public GAttributesList(GGrapheUniverse _Universe, String _ascii_file, boolean _editable)
-	throws GException{
+	public GAttributesList(GGrapheUniverse _Universe, String _ascii_file, boolean _editable) throws ASCIIFileNotFoundException, GException {
 		this(_Universe,getTypes(_ascii_file), _editable);
-		if(_editable && _Universe==null)
-			throw new GException("_Universe argument cannot be null because the tab is set editable !");
 	}
 
 	/**
@@ -113,8 +110,9 @@ public class GAttributesList extends JTabbedPane{
 	 * 		the graph universe wivh is associated to the list (can be null)
 	 * @param _table_types
 	 * 		the table of the already known graph elements types
+	 * @throws GException 
 	 */
-	public GAttributesList(GGrapheUniverse _Universe, Hashtable<Class, String> _table_types){
+	public GAttributesList(GGrapheUniverse _Universe, Hashtable<Class, String> _table_types) throws GException{
 		this(_Universe, _table_types, false);
 	}
 	
@@ -127,10 +125,12 @@ public class GAttributesList extends JTabbedPane{
 	 * 		the table of the already known graph elements types
 	 * @param _editable
 	 * 		if the tabs have to be set editable or not
+	 * @throws GException 
 	 */
-	public GAttributesList(GGrapheUniverse _Universe, Hashtable<Class, String> _table_types, boolean _editable){
+	public GAttributesList(GGrapheUniverse _Universe, Hashtable<Class, String> _table_types, boolean _editable) throws GException{
 		super(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
-
+		if(_Universe==null)
+			throw new GException("_Universe argument cannot be null!");
 		this.universe = _Universe;
 		this.elements = new LinkedList<Object>();
 		this.editable = _editable;
@@ -172,14 +172,12 @@ public class GAttributesList extends JTabbedPane{
 					elements.add(nb_nodes,node);
 					insertTab(node.getName(), null, tab, "noeud", nb_nodes);
 					nb_nodes++;
-					if(this.universe!=null) universe.addGNode(node);
 				}else if( component instanceof GLink ){
 					GLink link = (GLink) component;
 					elements.add(link);
 					add(tab,link.getName());
 					setIconAt(indexOfComponent(tab), null);
 					setToolTipTextAt(indexOfComponent(tab), "lien");
-					if(this.universe!=null) universe.addGLink(link);
 				}else {
 					BadElementTypeException e = new BadElementTypeException(component.toString());
 					e.printStackTrace();
@@ -214,15 +212,10 @@ public class GAttributesList extends JTabbedPane{
 	public void remove(Object component){
 		int index = elements.indexOf(component);
 		if(index != -1){
-			super.remove(index);
-			elements.remove(index);
-			if(component instanceof GNode){
+			if(elements.get(index) instanceof GNode)
 				nb_nodes--;
-				if(universe!=null) universe.deleteGNode(((GNode)component).getName());
-			}else{
-				if(universe!=null) universe.deleteGLink(((GLink)component).getName());
-			}
-			
+			super.remove(index);
+			elements.remove(index);			
 		}
 		if(connectionsList!=null) refreshList();
 		if(editor!=null) editor.doCheck();
@@ -232,13 +225,7 @@ public class GAttributesList extends JTabbedPane{
 	 * this method provides the removal of all graph components which was contained
 	 * in the list.
 	 */
-	public void removeAll(){
-		if(universe!=null)
-			for(int i=0; i<elements.size();i++)
-				if(elements.get(i) instanceof GNode)
-					universe.deleteGNode(((GNode)elements.get(i)).getName());
-				else
-					universe.deleteGLink(((GLink)elements.get(i)).getName());
+	public void removeAll(){			
 		elements = new LinkedList<Object>();
 		super.removeAll();
 		nb_nodes = 0;
@@ -324,6 +311,7 @@ public class GAttributesList extends JTabbedPane{
 		this.universe = _Universe;
 		for(int i=0;i<getTabCount();i++)
 			((GTab)getComponentAt(i)).setUniverse(_Universe);
+		this.universe.addSelectionBehavior(this);
 	}
 	
 	/**
@@ -397,8 +385,9 @@ public class GAttributesList extends JTabbedPane{
 	 * this method is used to load the known classes which implements graph elements from an ascii file
 	 * @param filename
 	 * 		String : the name of the file containing all the known classes which implements graph elements
+	 * @throws ASCIIFileNotFoundException 
 	 */
-	private static Hashtable<Class, String> getTypes(String filename){
+	private static Hashtable<Class, String> getTypes(String filename) {
 		filename = (filename == null) ? "" : filename;
 		Hashtable<Class, String> table_types = new Hashtable<Class, String>();
 		File file = new File(filename);
@@ -446,7 +435,9 @@ public class GAttributesList extends JTabbedPane{
 				}//try
 			}//while
 		}catch (FileNotFoundException e) {
-			new ASCIIFileNotFoundException(filename).showError();
+			if (!filename.equals("")) {
+				(new ASCIIFileNotFoundException(filename)).showError();
+			}
 		}catch (IOException e) {
 			System.err.println("an I/O error occurred while reading file : "+filename);	
 		}//try

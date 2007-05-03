@@ -1,6 +1,5 @@
 package graph3d.lists;
 
-import editorGraph.GTab;
 import graph3d.elements.GLink;
 import graph3d.elements.GNode;
 import graph3d.exception.BadElementTypeException;
