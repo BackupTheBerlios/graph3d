@@ -6,18 +6,12 @@ import javax.media.j3d.Appearance;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.ColoringAttributes;
 import javax.media.j3d.Group;
-import javax.media.j3d.ImageComponent2D;
-import javax.media.j3d.Texture;
-import javax.media.j3d.Texture2D;
-import javax.media.j3d.TextureAttributes;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.vecmath.Vector3f;
 
 import com.sun.j3d.utils.geometry.Primitive;
 import com.sun.j3d.utils.geometry.Sphere;
-import com.sun.j3d.utils.image.ImageException;
-import com.sun.j3d.utils.image.TextureLoader;
 
 /**
  * This class define the view of the GNode

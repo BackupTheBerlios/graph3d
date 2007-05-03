@@ -42,9 +42,9 @@ public class GView extends BranchGroup {
 
 	private Vector3f bestPointToSee;
 
-	private double angleX;
+	private float angleX;
 
-	private double angleY;
+	private float angleY;
 
 	private GKeyBehavior keyBehavior;
 	private GMouseBehavior mouseBehavior;
@@ -83,6 +83,9 @@ public class GView extends BranchGroup {
 		this.transformGroup.addChild(this.viewPlatform);
 
 		this.addChild(this.transformGroup);
+		
+		this.angleX = 0;
+		this.angleY = 0;
 	}
 
 	public void putOnBestPointToSee() {
@@ -196,22 +199,22 @@ public class GView extends BranchGroup {
 	}
 	
 	public void rotateTop(){
-		this.transformGroup.setTransform(this.buttonBehavior.rotateY(0.1f));
+		this.transformGroup.setTransform(this.buttonBehavior.rotateY((float)Math.PI/20));
 		//this.transformGroup.setTransform(this.buttonBehavior.rotateY(-0.1f));
 	}
 	
 	public void rotateBottom(){
-		this.transformGroup.setTransform(this.buttonBehavior.rotateY(-0.1f));
+		this.transformGroup.setTransform(this.buttonBehavior.rotateY(-(float)Math.PI/20));
 		//this.transformGroup.setTransform(this.buttonBehavior.rotateY(0.1f));
 	}
 	
 	public void rotateLeft(){
-		this.transformGroup.setTransform(this.buttonBehavior.rotateX(0.1f));
+		this.transformGroup.setTransform(this.buttonBehavior.rotateX((float)Math.PI/20));
 		//this.transformGroup.setTransform(this.mouseBehavior.rotateX(-0.1f));
 	}
 	
 	public void rotateRight(){
-		this.transformGroup.setTransform(this.buttonBehavior.rotateX(-0.1f));
+		this.transformGroup.setTransform(this.buttonBehavior.rotateX(-(float)Math.PI/20));
 		//this.transformGroup.setTransform(this.mouseBehavior.rotateX(0.1f));
 	}
 	
@@ -231,19 +234,19 @@ public class GView extends BranchGroup {
 		return new Vector3f();
 	}
 
-	public double getAngleX() {
+	public float getAngleX() {
 		return angleX;
 	}
 
-	public void setAngleX(double angleX) {
+	public void setAngleX(float angleX) {
 		this.angleX = angleX;
 	}
 
-	public double getAngleY() {
+	public float getAngleY() {
 		return angleY;
 	}
 
-	public void setAngleY(double angleY) {
+	public void setAngleY(float angleY) {
 		this.angleY = angleY;
 	}
 
@@ -253,5 +256,13 @@ public class GView extends BranchGroup {
 
 	public void setTransformGroup(TransformGroup transformGroup) {
 		this.transformGroup = transformGroup;
+	}
+
+	public ViewPlatform getViewPlatform() {
+		return viewPlatform;
+	}
+
+	public void setViewPlatform(ViewPlatform viewPlatform) {
+		this.viewPlatform = viewPlatform;
 	}
 }

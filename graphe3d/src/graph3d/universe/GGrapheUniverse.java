@@ -46,7 +46,11 @@ public class GGrapheUniverse extends VirtualUniverse{
 		
 	} 
 	
-	public void loadGraph(GGraph _graph) {
+	/**
+	 * This function is used to load a new graph into the 3D view
+	 * @param _graph the new graph
+	 */
+	private void loadGraph(GGraph _graph) {
 		this.graph = _graph;
 		this.removeAll();
 		this.loadAll();
@@ -57,8 +61,15 @@ public class GGrapheUniverse extends VirtualUniverse{
 		Enumeration<String> keys = this.ComponentsView.keys();
 		while (keys.hasMoreElements()) {
 			this.ComponentsView.remove(keys.nextElement());
-			this.scene.removeAllChildren();
 		}
+		Enumeration children = this.scene.getAllChildren();
+		while (children.hasMoreElements()) {
+			Object child = children.nextElement();
+			if (child instanceof BranchGroup) {
+				this.scene.removeChild((BranchGroup) child);
+			}
+		}
+
 	}
 	
 	public void loadAll() {
@@ -295,8 +306,8 @@ public class GGrapheUniverse extends VirtualUniverse{
 		return graph;
 	}
 
-	public void setGraph(GGraph graph) {
-		this.graph = graph;
+	public void setGraph(GGraph _graph) {
+		this.loadGraph(_graph);
 	}
 	
 	public void addSelectionBehavior(GAttributesList _attributesList) {

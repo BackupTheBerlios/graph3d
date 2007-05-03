@@ -1,14 +1,12 @@
 package graph3d.universe;
 
 import graph3d.elements.GLink;
-import graph3d.lists.GAttributesList;
-import graph3d.lists.GConnectionsList;
-import graph3d.universe.behaviors.SelectionBehavior;
 
 import java.awt.Color;
 
 import javax.media.j3d.Appearance;
 import javax.media.j3d.BranchGroup;
+import javax.media.j3d.Group;
 import javax.media.j3d.LineArray;
 import javax.media.j3d.Shape3D;
 import javax.media.j3d.Transform3D;
@@ -39,9 +37,9 @@ public abstract class GLinkView extends BranchGroup {
 	 */
 	public void add() {
 		this.setCapability(BranchGroup.ALLOW_DETACH);
-		this.setCapability(BranchGroup.ALLOW_CHILDREN_READ);
-		this.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
-		this.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
+		this.setCapability(Group.ALLOW_CHILDREN_READ);
+		this.setCapability(Group.ALLOW_CHILDREN_WRITE);
+		this.setCapability(Group.ALLOW_CHILDREN_EXTEND);
 		this.transformGroup = new TransformGroup();
 		this.transformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
 		this.transformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
