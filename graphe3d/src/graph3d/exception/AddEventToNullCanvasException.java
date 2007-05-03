@@ -1,6 +1,5 @@
 package graph3d.exception;
 
-import javax.swing.JOptionPane;
 
 /**
  * This class define an exception when you try to add Event to a Canvas3D whitout define this canvas.

@@ -1,7 +1,5 @@
 package graph3d.exception;
 
-import javax.swing.JOptionPane;
-
 import graph3d.elements.GLink;
 import graph3d.elements.GNode;
 

@@ -1,6 +1,5 @@
 package graph3d.exception;
 
-import javax.swing.JOptionPane;
 
 /**
  * This class define an exception which is generated when two elements of GNode(and his subclasses) or GLink(and his subclasses) are the same name

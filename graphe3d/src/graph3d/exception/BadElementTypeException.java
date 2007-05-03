@@ -1,6 +1,5 @@
 package graph3d.exception;
 
-import javax.swing.JOptionPane;
 
 /**
  * This class define an exception which is generated when you define an element on a type which is not valid

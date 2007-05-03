@@ -3,8 +3,6 @@ package graph3d.exception;
 import graph3d.elements.GLink;
 import graph3d.elements.GNode;
 
-import javax.swing.JOptionPane;
-
 /**
  * This class is used to generated an exception when an attribute to a Gnode or a GLink is not valid
  * @author Erwan Daubert
