@@ -45,6 +45,10 @@ public abstract class GLinkView extends BranchGroup {
 		this.transformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 		this.setShape(new Shape3D());
 		this.getShape().setGeometry(this.getLine());
+		this.line.setCapability(LineArray.ALLOW_COLOR_READ);
+		this.line.setCapability(LineArray.ALLOW_COLOR_WRITE);
+		this.line.setCapability(LineArray.ALLOW_COORDINATE_READ);
+		this.line.setCapability(LineArray.ALLOW_COORDINATE_WRITE);
 		this.transformGroup.addChild(this.getShape());
 		this.addChild(this.transformGroup);
 	}

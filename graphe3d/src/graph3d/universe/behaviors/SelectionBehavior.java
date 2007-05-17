@@ -66,20 +66,20 @@ public class SelectionBehavior extends MouseBehavior {
 	id = evt.getID();
 	if (id == MouseEvent.MOUSE_PRESSED) {
 		if (this.branchGroup != null && this.getTransformGroup() != null) {
-		if (!evt.isControlDown()) {
-			this.attributesList.removeAll();
-			if (this.branchGroup instanceof GNodeView) {
-				this.attributesList.add(((GNodeView)this.branchGroup).getNode());
-			} else if (this.branchGroup instanceof GLinkView) {
-				this.attributesList.add(((GLinkView)this.branchGroup).getLink());
+			if (!evt.isControlDown()) {
+				this.attributesList.removeAll();
+				if (this.branchGroup instanceof GNodeView) {
+					this.attributesList.add(((GNodeView)this.branchGroup).getNode());
+				} else if (this.branchGroup instanceof GLinkView) {
+					this.attributesList.add(((GLinkView)this.branchGroup).getLink());
+				}
+			} else {
+				if (this.branchGroup instanceof GNodeView) {
+					this.attributesList.add(((GNodeView)this.branchGroup).getNode());
+				} else if (this.branchGroup instanceof GLinkView) {
+					this.attributesList.add(((GLinkView)this.branchGroup).getLink());
+				}
 			}
-		} else {
-			if (this.branchGroup instanceof GNodeView) {
-				this.attributesList.add(((GNodeView)this.branchGroup).getNode());
-			} else if (this.branchGroup instanceof GLinkView) {
-				this.attributesList.add(((GLinkView)this.branchGroup).getLink());
-			}
-		}
 		}
 	}
 	  this.setBranchGroup(null);

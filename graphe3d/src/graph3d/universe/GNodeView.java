@@ -6,12 +6,18 @@ import javax.media.j3d.Appearance;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.ColoringAttributes;
 import javax.media.j3d.Group;
+import javax.media.j3d.ImageComponent2D;
+import javax.media.j3d.Texture;
+import javax.media.j3d.Texture2D;
+import javax.media.j3d.TextureAttributes;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.vecmath.Vector3f;
 
 import com.sun.j3d.utils.geometry.Primitive;
 import com.sun.j3d.utils.geometry.Sphere;
+import com.sun.j3d.utils.image.ImageException;
+import com.sun.j3d.utils.image.TextureLoader;
 
 /**
  * This class define the view of the GNode
@@ -58,6 +64,7 @@ public class GNodeView extends BranchGroup {
 		this.transform3D
 				.setTranslation(new Vector3f(this.node.getCoordonates()));
 		this.transformGroup.setTransform(this.transform3D);
+		this.sphere = new Sphere(this.node.getRadius());
 	}
 
 	/**
@@ -66,12 +73,11 @@ public class GNodeView extends BranchGroup {
 	private void createAppearence() {
 		this.appearence = new Appearance();
 
-		/*TextureLoader loader;
+		TextureLoader loader;
 		try {
 			loader = new TextureLoader("/textures/sphere.jpg", null);
 		} catch (ImageException e) {
 			loader = new TextureLoader("textures/sphere.jpg", null);
-			
 		}
 		ImageComponent2D image = loader.getImage();
 		Texture2D texture = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA,
@@ -82,7 +88,7 @@ public class GNodeView extends BranchGroup {
 		texture.setMinFilter(Texture.BASE_LEVEL_LINEAR);
 		this.appearence.setTexture(texture);
 		this.appearence.setTextureAttributes(new TextureAttributes());
-*/
+
 		ColoringAttributes bleu=new ColoringAttributes();
 		bleu.setColor(0.1f,0.1f,1.0f);
 		this.appearence.setColoringAttributes(bleu);
