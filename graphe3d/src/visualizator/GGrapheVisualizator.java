@@ -51,11 +51,11 @@ public class GGrapheVisualizator extends JFrame implements ActionListener, Windo
 		this.universe = new GGrapheUniverse(new GGraph());
 
 		this.menu = new JMenuBar();
-		this.file = new JMenu("File");
-		this.load = new JMenuItem("Load");
+		this.file = new JMenu("Fichier");
+		this.load = new JMenuItem("Charger");
 		this.load.addActionListener(this);
 		this.file.add(this.load);
-		this.quit = new JMenuItem("Quit");
+		this.quit = new JMenuItem("Quitter");
 		this.quit.addActionListener(this);
 		this.file.add(this.quit);
 				
