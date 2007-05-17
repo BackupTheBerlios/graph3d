@@ -4,15 +4,13 @@ import graph3d.universe.GGrapheUniverse;
 
 import java.awt.GridLayout;
 import java.awt.Label;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
-public class PanelButtonInteraction extends JPanel implements ActionListener {
+public class PanelButtonInteraction extends JPanel {
 
 	private JButton bZoomPlus, bZoomMoins, boutonHaut, boutonGauche,
 			boutonDroite, boutonBas, boutonCentrer;
@@ -33,10 +31,10 @@ public class PanelButtonInteraction extends JPanel implements ActionListener {
 		JPanel panelZoom = new JPanel();
 		panelZoom.setLayout(new GridLayout(1, 2));
 		bZoomPlus = new JButton("+");
-		bZoomPlus.addActionListener(this);
+		bZoomPlus.addActionListener(universe.getBehavior());
 		panelZoom.add(bZoomPlus);
 		bZoomMoins = new JButton("-");
-		bZoomMoins.addActionListener(this);
+		bZoomMoins.addActionListener(universe.getBehavior());
 		panelZoom.add(bZoomMoins);
 		this.add(panelZoom);
 
@@ -49,25 +47,25 @@ public class PanelButtonInteraction extends JPanel implements ActionListener {
 		
 		panInteracHaut.add(new Label(""));
 		boutonHaut = new JButton("^");
-		boutonHaut.addActionListener(this);
+		boutonHaut.addActionListener(universe.getBehavior());
 		panInteracHaut.add(boutonHaut);
 		panInteracHaut.add(new Label(""));
 		panelInteraction.add(panInteracHaut);
 		JPanel panInteracMilieu = new JPanel();
 		panInteracMilieu.setLayout(new GridLayout(1, 3));
 		boutonGauche = new JButton("<");
-		boutonGauche.addActionListener(this);
+		boutonGauche.addActionListener(universe.getBehavior());
 		panInteracMilieu.add(boutonGauche);
 		panInteracMilieu.add(new Label(""));
 		boutonDroite = new JButton(">");
-		boutonDroite.addActionListener(this);
+		boutonDroite.addActionListener(universe.getBehavior());
 		panInteracMilieu.add(boutonDroite);
 		panelInteraction.add(panInteracMilieu);
 		JPanel panInteracBas = new JPanel();
 		panInteracBas.setLayout(new GridLayout(1, 3));
 		panInteracBas.add(new Label(""));
 		boutonBas = new JButton("v");
-		boutonBas.addActionListener(this);
+		boutonBas.addActionListener(universe.getBehavior());
 		panInteracBas.add(boutonBas);
 		panInteracBas.add(new Label(""));
 		panelInteraction.add(panInteracBas);
@@ -76,31 +74,7 @@ public class PanelButtonInteraction extends JPanel implements ActionListener {
 
 		// bouton centrer la vue
 		boutonCentrer = new JButton("Centrer la vue");
-		boutonCentrer.addActionListener(this);
+		boutonCentrer.addActionListener(universe.getBehavior());
 		this.add(boutonCentrer);
-	}
-
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == bZoomPlus) {
-			universe.zoomMore();
-		}
-		if (e.getSource() == bZoomMoins) {
-			universe.zoomLess();
-		}
-		if (e.getSource() == boutonHaut) {
-			universe.rotateTop();
-		}
-		if (e.getSource() == boutonBas) {
-			universe.rotateBottom();
-		}
-		if (e.getSource() == boutonGauche) {
-			universe.rotateLeft();
-		}
-		if (e.getSource() == boutonDroite) {
-			universe.rotateRight();
-		}
-		if (e.getSource() == boutonCentrer) {
-			universe.centerView();
-		}
 	}
 }
