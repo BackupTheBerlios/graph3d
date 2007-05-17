@@ -1,6 +1,5 @@
 package graph3d.lists;
 
-import editorGraph.GEditor;
 import graph3d.elements.GLink;
 import graph3d.elements.GNode;
 import graph3d.exception.ASCIIFileNotFoundException;
@@ -17,9 +16,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 
+import javax.swing.JButton;
 import javax.swing.JTabbedPane;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
@@ -59,11 +60,12 @@ public class GAttributesList extends JTabbedPane{
 	 * flags to check if the attributes are editable and if exit cross have to be shown
 	 */
 	boolean editable;
-	
+
 	/*
-	 * 
+	 * lists of buttons which have to be be clickable or not
+	 * according if there is at least one node or link or not.
 	 */
-	GEditor editor;
+	Hashtable<JButton,Integer>	attached_to_nodes, attached_to_links, attached_to_both;
 
 	/*
 	 * the connections list which is attached
@@ -79,7 +81,8 @@ public class GAttributesList extends JTabbedPane{
 	 * @param _ascii_file
 	 * 		the name of the file which contains all the known types of graph elements
 	 * 		(can be null, in this case only basic types "node" and "link" will be known)
-	 * @throws GException 
+	 * @throws GException
+	 * 		if the list is set editable and _Universe is null. 
 	 */
 	public GAttributesList(GGrapheUniverse _Universe, String _ascii_file) throws GException{
 		this(_Universe, _ascii_file, false);
@@ -95,12 +98,14 @@ public class GAttributesList extends JTabbedPane{
 	 * 		if it is null or if it cannot be found, only basic "node" and "link" types will be loaded
 	 * @param _editable
 	 * 		if the attributes will be editable or not
-	 * @throws GException 
 	 * @throws GException
 	 * 		if the list is set editable and _Universe is null.
 	 */
-	public GAttributesList(GGrapheUniverse _Universe, String _ascii_file, boolean _editable) throws ASCIIFileNotFoundException, GException {
+	public GAttributesList(GGrapheUniverse _Universe, String _ascii_file, boolean _editable)
+	throws GException{
 		this(_Universe,getTypes(_ascii_file), _editable);
+		if(_editable && _Universe==null)
+			throw new GException("_Universe argument cannot be null because the tab is set editable !");
 	}
 
 	/**
@@ -110,12 +115,11 @@ public class GAttributesList extends JTabbedPane{
 	 * 		the graph universe wivh is associated to the list (can be null)
 	 * @param _table_types
 	 * 		the table of the already known graph elements types
-	 * @throws GException 
 	 */
-	public GAttributesList(GGrapheUniverse _Universe, Hashtable<Class, String> _table_types) throws GException{
+	public GAttributesList(GGrapheUniverse _Universe, Hashtable<Class, String> _table_types){
 		this(_Universe, _table_types, false);
 	}
-	
+
 	/**
 	 * constructs a non-editable GAttributesList linked to a GGraphUniverse
 	 * The known types of graph elements will be loaded from the ascii file.
@@ -125,16 +129,17 @@ public class GAttributesList extends JTabbedPane{
 	 * 		the table of the already known graph elements types
 	 * @param _editable
 	 * 		if the tabs have to be set editable or not
-	 * @throws GException 
 	 */
-	public GAttributesList(GGrapheUniverse _Universe, Hashtable<Class, String> _table_types, boolean _editable) throws GException{
+	public GAttributesList(GGrapheUniverse _Universe, Hashtable<Class, String> _table_types, boolean _editable){
 		super(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
-		if(_Universe==null)
-			throw new GException("_Universe argument cannot be null!");
+
 		this.universe = _Universe;
 		this.elements = new LinkedList<Object>();
 		this.editable = _editable;
 		this.nb_nodes = 0;
+		this.attached_to_links = new Hashtable<JButton, Integer>();
+		this.attached_to_nodes = new Hashtable<JButton, Integer>();
+		this.attached_to_both = new Hashtable<JButton, Integer>();
 		setBorder(new TitledBorder(new EtchedBorder(),"Elements sélectionnés"));
 	}
 
@@ -146,7 +151,7 @@ public class GAttributesList extends JTabbedPane{
 	public void add(Object component){
 		this.add(component, true);
 	}
-	
+
 	/**
 	 * this method provides the addition of a graph element in the selection.<br>
 	 * If the element is present in the selection it will be unselected,
@@ -160,8 +165,6 @@ public class GAttributesList extends JTabbedPane{
 	 * 		if the element have to become the current element in the list
 	 * @throws BadElementTypeException
 	 * 		if the component cannot be cast into a graph element
-	 * @see GNode
-	 * @see GLink
 	 */
 	public void add(Object component, boolean focus) {
 		if(!elements.contains(component))
@@ -182,14 +185,14 @@ public class GAttributesList extends JTabbedPane{
 					BadElementTypeException e = new BadElementTypeException(component.toString());
 					e.printStackTrace();
 					e.showError();
-			}
+				}
 				if(focus || getTabCount()==1){
 					setSelectedComponent(tab);
 					refreshList();
 				}
-				
+
 				if(connectionsList!=null) refreshList();
-				if(editor!=null) editor.doCheck();
+				checkAttachedButtons();
 			}catch (GException e) {
 				e.printStackTrace();
 				e.showError();
@@ -204,8 +207,6 @@ public class GAttributesList extends JTabbedPane{
 	 * If the element is present in the selection it will be unselected,
 	 * and if it is not it will be no performed action.
 	 * warning : the component must be a graph element.
-	 * @see GNode
-	 * @see GLink
 	 * @param component
 	 * 		the graph element which have to be removed
 	 */
@@ -218,7 +219,7 @@ public class GAttributesList extends JTabbedPane{
 			elements.remove(index);			
 		}
 		if(connectionsList!=null) refreshList();
-		if(editor!=null) editor.doCheck();
+		checkAttachedButtons();
 	}//removeTab
 
 	/**
@@ -230,7 +231,7 @@ public class GAttributesList extends JTabbedPane{
 		super.removeAll();
 		nb_nodes = 0;
 		if(connectionsList!=null)refreshList();
-		if(editor!=null) editor.doCheck();
+		checkAttachedButtons();
 	}
 
 	/**
@@ -248,12 +249,44 @@ public class GAttributesList extends JTabbedPane{
 			refreshList();
 		}
 	}
+
+	/**
+	 * enables to attach a button which have to be refreshed (to be enabled or disabled)
+	 * according if there is at least an inf limit of nodes.
+	 * @param button
+	 * 		the button which have to be refreshed
+	 * @param inf_limit
+	 * 		the inf limit of the nodes in the list
+	 */
+	public void attachToNodes(JButton button, int inf_limit){
+		if(this.attached_to_nodes.containsKey(button))this.attached_to_nodes.remove(button);
+		this.attached_to_nodes.put(button,inf_limit);
+	}
 	
 	/**
-	 * 
+	 * enables to attach a button which have to be refreshed (to be enabled or disabled)
+	 * according if there is at least an inf limit of links.
+	 * @param button
+	 * 		the button which have to be refreshed
+	 * @param inf_limit
+	 * 		the inf limit of the nodes in the list
 	 */
-	public void attachEditor(GEditor _editor){
-		this.editor = _editor;
+	public void attachToLinks(JButton button, int inf_limit){
+		if(this.attached_to_links.containsKey(button))this.attached_to_nodes.remove(button);
+		this.attached_to_links.put(button,inf_limit);
+	}
+	
+	/**
+	 * enables to attach a button which have to be refreshed (to be enabled or disabled)
+	 * according if there is at least an inf limit of both graph elements (nodes and links).
+	 * @param button
+	 * 		the button which have to be refreshed
+	 * @param inf_limit
+	 * 		the inf limit of the nodes in the list
+	 */
+	public void attachToBoth(JButton button, int inf_limit){
+		if(this.attached_to_both.containsKey(button))this.attached_to_nodes.remove(button);
+		this.attached_to_nodes.put(button,inf_limit);
 	}
 
 	/**
@@ -304,8 +337,9 @@ public class GAttributesList extends JTabbedPane{
 	}
 
 	/**
-	 * 
+	 * changes the GGrapheUniverse of the GAttributesList.
 	 * @param _Universe
+	 * 		the new GGrapheUniverse
 	 */
 	public void setUniverse(GGrapheUniverse _Universe){
 		this.universe = _Universe;
@@ -313,23 +347,26 @@ public class GAttributesList extends JTabbedPane{
 			((GTab)getComponentAt(i)).setUniverse(_Universe);
 		this.universe.addSelectionBehavior(this);
 	}
-	
+
 	/**
-	 * 
+	 * returns all the selected elements as a LinkedList<object>
 	 * @return
+	 * 		the graph elements which are contained in the GAttributesList
 	 */
 	public LinkedList<Object> getElements(){
 		return elements;
 	}
-	
+
 	/**
-	 * 
+	 * returns the number of nodes in the GAttributesList.
+	 * @return
+	 * 		the number of nodes in the GAttributesList
 	 */
 	public int getNodeCount(){
 		return nb_nodes;
 	}
-	
-	
+
+
 	/**
 	 * this internal class is used to refresh the list of associated elements when a
 	 * click is performed on a tab.
@@ -343,109 +380,159 @@ public class GAttributesList extends JTabbedPane{
 	}//inner class TabbedPaneListener
 
 	/**
-	 * this method is used to update the connections list with
-	 * elemnts wich are associated to the current tab
+	 * checks the number of elements to refresh state of the buttons which are attached to
+	 * nodes, links or both.
 	 */
-	private void refreshList(){
-		GTab tab = (GTab) getSelectedComponent();
-		if( tab != null ){
-			Object element = tab.getElement();
-			if( element instanceof GNode){
-				GNode node  = (GNode) element;
-				GLink[]links = node.getLinks().toArray(new GLink[0]);
-				String[]names = new String[links.length];
-				for(int i=0; i<names.length; i++) names[i] = links[i].getName();
-				try {
-					connectionsList.show(links);
-				} catch (BadElementTypeException e) {
-					e.printStackTrace();
-					e.showError();
-				}
-			}else{
-				GLink link  = (GLink) element;
-				GNode[] nodes = new GNode[]{link.getFirstNode(),link.getSecondNode()};
-				try {
-					connectionsList.show(nodes);
-				} catch (BadElementTypeException e) {
-					e.printStackTrace();
-					e.showError();
-				}
-			}//if
-		}else{
-			try {
-				connectionsList.show(new Object[0]);
-			} catch (BadElementTypeException e) {
-				e.printStackTrace();
-				e.showError();
-			}
+	public void checkAttachedButtons(){
+		boolean infLimitAtLeast;
+		Enumeration<JButton> enumer;
+		
+		enumer = attached_to_both.keys();
+		while(enumer.hasMoreElements()){
+			JButton but = enumer.nextElement();
+			Integer i = attached_to_both.get(but);
+			infLimitAtLeast = (getTabCount()>=i);
+			but.setEnabled(infLimitAtLeast);
+		}
+		
+		enumer = attached_to_nodes.keys();
+		while(enumer.hasMoreElements()){
+			JButton but = enumer.nextElement();
+			Integer i = attached_to_nodes.get(but);
+			infLimitAtLeast = (getNodeCount()>=i);
+			but.setEnabled(infLimitAtLeast);
+		}
+		
+		enumer = attached_to_links.keys();
+		while(enumer.hasMoreElements()){
+			JButton but = enumer.nextElement();
+			Integer i = attached_to_links.get(but);
+			int linkCount = getTabCount()-getNodeCount();
+			infLimitAtLeast = (linkCount>=i);
+			but.setEnabled(infLimitAtLeast);
 		}
 	}
 
 	/**
-	 * this method is used to load the known classes which implements graph elements from an ascii file
-	 * @param filename
-	 * 		String : the name of the file containing all the known classes which implements graph elements
-	 * @throws ASCIIFileNotFoundException 
+	 * this class is used to implement an attachment between a JButton and
+	 * an inf limit of graph elements number
+	 * 
+	 * @author lino christophe
+	 *
 	 */
-	private static Hashtable<Class, String> getTypes(String filename) {
-		filename = (filename == null) ? "" : filename;
-		Hashtable<Class, String> table_types = new Hashtable<Class, String>();
-		File file = new File(filename);
-		try{
-			BufferedReader buf = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-			String line;
-			int line_count=0;
-			/*
-			 * reading all the lines of the source file
-			 */
-			while((line = buf.readLine())!=null){
-				line_count++;
-				String data[] = line.split(":");
-				try{
-					/*
-					 * boolean to check if it is a graph element, that's to say if its type is a
-					 * GNode or GLink (sub)type
-					 */
-					boolean graphe_element = false;
-					Class cl = Class.forName(data[1]);
-					while(cl!=null && !graphe_element){
-						if(cl == GNode.class){
-							graphe_element = true;
-							/*
-							 * we add it as a known (node) type
-							 */
-							table_types.put(Class.forName(data[1]), data[0]);
-						}else if(cl == GLink.class){
-							graphe_element = true;
-							/*
-							 * we add it as a known (link) type
-							 */
-							table_types.put(Class.forName(data[1]), data[0]);
-						}else
-							cl = cl.getSuperclass();
-					}//while
-					if(!graphe_element)
-						(new BadElementTypeException(data[1], line_count)).showError();
-				}catch (ClassNotFoundException e3){
-					(new InexistantClassException(data[1], line_count)).showError();
-				}catch (Exception e4){
-					String message = "line "+line_count+" : empty lines or incomplete lines are not allowed !"
-					+"\nthe end of the file will not be read.";
-					(new GException("Invalid ASCII file", message, GException.ERROR)).showError();
-				}//try
-			}//while
-		}catch (FileNotFoundException e) {
-			if (!filename.equals("")) {
-				(new ASCIIFileNotFoundException(filename)).showError();
+	class Attach{
+		JButton button;
+		int inf_limit;
+		
+		public Attach(JButton button, int inf_limit){
+			this.button = button;
+			this.inf_limit = inf_limit;
+		}
+	}
+	
+/**
+ * this method is used to update the connections list with
+ * elemnts wich are associated to the current tab
+ */
+private void refreshList(){
+	GTab tab = (GTab) getSelectedComponent();
+	if( tab != null ){
+		Object element = tab.getElement();
+		if( element instanceof GNode){
+			GNode node  = (GNode) element;
+			GLink[]links = node.getLinks().toArray(new GLink[0]);
+			String[]names = new String[links.length];
+			for(int i=0; i<names.length; i++) names[i] = links[i].getName();
+			try {
+				connectionsList.show(links);
+			} catch (BadElementTypeException e) {
+				e.printStackTrace();
+				e.showError();
 			}
-		}catch (IOException e) {
-			System.err.println("an I/O error occurred while reading file : "+filename);	
-		}//try
-		if(!table_types.containsKey(GNode.class))
-			table_types.put(GNode.class, "node");
-		if(!table_types.containsKey(GLink.class))
-			table_types.put(GLink.class, "link");	
-		return table_types;
-	}//getTypes
+		}else{
+			GLink link  = (GLink) element;
+			GNode[] nodes = new GNode[]{link.getFirstNode(),link.getSecondNode()};
+			try {
+				connectionsList.show(nodes);
+			} catch (BadElementTypeException e) {
+				e.printStackTrace();
+				e.showError();
+			}
+		}//if
+	}else{
+		try {
+			connectionsList.show(new Object[0]);
+		} catch (BadElementTypeException e) {
+			e.printStackTrace();
+			e.showError();
+		}
+	}
+}
+
+/**
+ * this method is used to load the known classes which implements graph elements from an ascii file
+ * @param filename
+ * 		String : the name of the file containing all the known classes which implements graph elements
+ */
+private static Hashtable<Class, String> getTypes(String filename){
+	filename = (filename == null) ? "" : filename;
+	Hashtable<Class, String> table_types = new Hashtable<Class, String>();
+	File file = new File(filename);
+	try{
+		BufferedReader buf = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+		String line;
+		int line_count=0;
+		/*
+		 * reading all the lines of the source file
+		 */
+		while((line = buf.readLine())!=null){
+			line_count++;
+			String data[] = line.split(":");
+			try{
+				/*
+				 * boolean to check if it is a graph element, that's to say if its type is a
+				 * GNode or GLink (sub)type
+				 */
+				boolean graphe_element = false;
+				Class cl = Class.forName(data[1]);
+				while(cl!=null && !graphe_element){
+					if(cl == GNode.class){
+						graphe_element = true;
+						/*
+						 * we add it as a known (node) type
+						 */
+						table_types.put(Class.forName(data[1]), data[0]);
+					}else if(cl == GLink.class){
+						graphe_element = true;
+						/*
+						 * we add it as a known (link) type
+						 */
+						table_types.put(Class.forName(data[1]), data[0]);
+					}else
+						cl = cl.getSuperclass();
+				}//while
+				if(!graphe_element)
+					(new BadElementTypeException(data[1], line_count)).showError();
+			}catch (ClassNotFoundException e3){
+				(new InexistantClassException(data[1], line_count)).showError();
+			}catch (Exception e4){
+				String message = "line "+line_count+" : empty lines or incomplete lines are not allowed !"
+				+"\nthe end of the file will not be read.";
+				(new GException("Invalid ASCII file", message, GException.ERROR)).showError();
+			}//try
+		}//while
+	}catch (FileNotFoundException e) {
+		if (!filename.equals("")) {
+			new ASCIIFileNotFoundException(filename).showError();
+		}
+	}catch (IOException e) {
+		System.err.println("an I/O error occurred while reading file : "+filename);	
+	}//try
+	if(!table_types.containsKey(GNode.class))
+		table_types.put(GNode.class, "node");
+	if(!table_types.containsKey(GLink.class))
+		table_types.put(GLink.class, "link");	
+	return table_types;
+}//getTypes
 
 }//class GAttributesList

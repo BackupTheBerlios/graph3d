@@ -20,8 +20,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.plaf.basic.BasicButtonUI;
 
-import editorGraph.GEditor;
-
 
 
 /**
@@ -61,21 +59,21 @@ class ExitCross extends JPanel {
      * 		the GTab element wher the exit cross will be set
      */
     public ExitCross(String _title, final GAttributesList _attrList, GTab _tab) {
-        super(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        super(new FlowLayout(FlowLayout.LEFT, 0, 0));
         this.attr_list = _attrList;
         this.tab = _tab;
         setOpaque(false);
         
         /*
-         * we create a label for the exit cross
-         */
-        JLabel label = new JLabel(_title);
-        add(label);
-        /*
          *  we create the exit button and add it in the panel
          */
         JButton button = new ExitButton();
         add(button);
+        /*
+         * we create a label for the exit cross
+         */
+        JLabel label = new JLabel(_title);
+        add(label);
         
         setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
     }
@@ -107,7 +105,7 @@ class ExitCross extends JPanel {
         }
         
         /**
-         * 
+         * performs closing of the tab
          */
         public void actionPerformed(ActionEvent e) {
         	attr_list.remove(tab.getElement());
@@ -137,6 +135,10 @@ class ExitCross extends JPanel {
         }
     }
 
+    /**
+     * this class is used to change the button appearance
+     * when mouse is entered and mouse is exited
+     */
     private final static MouseListener buttonMouseListener = new MouseAdapter() {
         public void mouseEntered(MouseEvent e) {
             Component component = e.getComponent();

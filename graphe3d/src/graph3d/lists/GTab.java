@@ -1,6 +1,5 @@
 package graph3d.lists;
 
-import editorGraph.GEditor;
 import graph3d.elements.GLink;
 import graph3d.elements.GNode;
 import graph3d.exception.BadElementTypeException;
@@ -11,7 +10,6 @@ import graph3d.exception.SameNameException;
 import graph3d.exception.TooMuchAttributesForClassException;
 import graph3d.universe.GGrapheUniverse;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.FocusEvent;
@@ -33,7 +31,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneLayout;
 
@@ -56,12 +53,12 @@ public class GTab extends JScrollPane{
 	private static Hashtable<Class, String> table_types;
 
 	/*
-	 * the standard height of an entry in the attribute table
+	 * the standard height of an entry in the table of attributes
 	 */
 	private static final int ENTRY_HEIGHT = 23;
 	
 	/*
-	 * 
+	 * all the colors which are available for links
 	 */
 	private static final String 
 	COLORS[] = new String[]{"black","white","red","blue","cyan","gray","green","magenta","orange","pink","yellow"};
@@ -118,6 +115,7 @@ public class GTab extends JScrollPane{
 	public GTab(Object _element, GAttributesList _attrList, GGrapheUniverse _Universe, boolean _editable)
 	throws GException{
 		super();
+		
 		this.table_types = new Hashtable<Class, String>();
 		/*
 		 * we check if there is no problem in arguments
@@ -186,7 +184,7 @@ public class GTab extends JScrollPane{
 			entry = new JPanel(layout);
 			label = new JLabel("rayon  ",JLabel.RIGHT);
 			value = new JFormattedTextField(format);
-			value.setText((node.getCoordonnateX()+"").replace(",", "."));
+			value.setText((node.getRadius()+"").replace(",", "."));
 			value.addFocusListener(new LostFocusListener());
 			value.setEditable(editable);
 			table_components.put(value, "radius");
@@ -410,6 +408,11 @@ public class GTab extends JScrollPane{
 		}//while
 	}
 
+	/**
+	 * changes the GGrapheUniverse of this GEditor
+	 * @param _universe
+	 * 		the new GGrapheUniverse 
+	 */
 	public void setUniverse(GGrapheUniverse _universe){
 		this.universe = _universe;
 	}
@@ -442,6 +445,10 @@ public class GTab extends JScrollPane{
 
 		public void focusLost(FocusEvent f){
 			Component comp = (Component) f.getSource();
+			/*
+			 * we gets the attribute name corresponding to this component
+			 * from the table of components
+			 */
 			String attr_name = table_components.get(comp);
 			if(element instanceof GLink){
 				GLink link = (GLink) element;
@@ -465,8 +472,7 @@ public class GTab extends JScrollPane{
 					String text = (String) combo.getSelectedItem();
 					if(!text.equals(old_value)){
 						link.setColor((String) combo.getSelectedItem());
-						universe.deleteGLink(link.getName());
-						universe.addGLink(link);
+						universe.updateGLink(link.getName());
 					}
 				}else{
 					/*
@@ -491,7 +497,6 @@ public class GTab extends JScrollPane{
 				if(attr_name.equals("name")){
 					JTextField text = (JTextField) comp;
 					if(!text.getText().equals(old_value)){
-						System.out.println("\""+text.getText()+"\"");
 						GNode nd = universe.getGraph().getNode(text.getText());
 						if(nd == null){ // not already busy
 							universe.deleteGNode(old_value);
@@ -523,7 +528,6 @@ public class GTab extends JScrollPane{
 							text.setText(old_value);
 						}else{
 							universe.updateGNode(node.getName());
-							universe.getCanvas().repaint();
 						}
 					}
 				}else if(attr_name.equals("coord Y")){
@@ -545,7 +549,6 @@ public class GTab extends JScrollPane{
 							text.setText(old_value);
 						}else{
 							universe.updateGNode(node.getName());
-							universe.getCanvas().repaint();
 						}
 					}
 				}else if(attr_name.equals("coord Z")){
@@ -567,7 +570,6 @@ public class GTab extends JScrollPane{
 							text.setText(old_value);
 						}else{
 							universe.updateGNode(node.getName());
-							universe.getCanvas().repaint();
 						}
 					}
 				}else if(attr_name.equals("radius")){
@@ -588,8 +590,7 @@ public class GTab extends JScrollPane{
 							node.setRadius(Float.parseFloat(old_value));
 							text.setText(old_value);
 						}else{
-							universe.deleteGNode(node.getName());
-							universe.addGNode(node);
+							universe.updateGNode(node.getName());
 						}
 					}
 				}else{ 
@@ -599,7 +600,7 @@ public class GTab extends JScrollPane{
 					JTextField text = (JTextField) comp;
 					String type = node.getAttributeByName(attr_name)[1];
 					/*
-					 * we check if the type of the entered value matches the type of teh attribute
+					 * we check if the type of the entered value matches the attribute type
 					 */
 					try{
 						text.setText(text.getText().replace(',', '.'));

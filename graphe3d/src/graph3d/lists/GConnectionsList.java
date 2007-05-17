@@ -43,10 +43,6 @@ public class GConnectionsList extends JScrollPane{
 	
 	/**
 	 * constructs a list area with an initialized JList.
-	 * @param _list
-	 * 		JList : the list to show in the area
-	 * @param owner
-	 * 	 	GEditor : the editor owner 
 	 */
 	public GConnectionsList() {
 		/*
@@ -116,7 +112,8 @@ public class GConnectionsList extends JScrollPane{
 	}//show
 
 	/**
-	 * this class is used to perform actions when double clicking on one or several item(s).
+	 * this class is used to do actions when a double click is performed on one or several item(s).
+	 *
 	 * @author lino christophe
 	 *
 	 */
