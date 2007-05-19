@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<graph xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="essai de XSD" xsi:noNamespaceSchemaLocation="/home/royalvein/workspace/graphe3d/xml/schema.xsd">
+<node class="graph3d.elements.GNode" name="toto0" radius="0.2">
+<coordonates x="0" y="0" z="1"/>
+</node>
+
+<node class="graph3d.elements.GNode" name="toto1" radius="0.2">
+<coordonates x="4" y="4" z="4"/>
+</node>
+
+<node class="graph3d.elements.GNode" name="toto2" radius="0.2">
+<coordonates x="-3" y="-3" z="-3"/>
+</node>
+<node class="graph3d.elements.GNode" name="toto3" radius="0.2">
+<coordonates x="5" y="3" z="7"/>
+</node>
+
+<node class="graph3d.elements.GNode" name="toto4" radius="0.2">
+<coordonates x="0" y="1" z="10"/>
+</node>
+
+<node class="graph3d.elements.GNode" name="toto5" radius="0.2">
+<coordonates x="-15" y="-3" z="-3"/>
+</node>
+
+<node class="graph3d.elements.GNode" name="toto6" radius="0.2">
+<coordonates x="5" y="25" z="7"/>
+</node>
+
+<node class="graph3d.elements.GNode" name="toto7" radius="0.2">
+<coordonates x="0" y="1" z="5"/>
+</node>
+<link class="graph3d.elements.GLink" color="white" link_end="toto0" link_start="toto1" name="titi9" type="arrow"/>
+<link class="graph3d.elements.GLink" color="red" link_end="toto1" link_start="toto1" name="titi1" type="bridge"/>
+<link class="graph3d.elements.GLink" color="ma" link_end="toto6" link_start="toto2" name="titi3" type="bridge"/>
+<link class="graph3d.elements.GLink" color="yellow" link_end="toto3" link_start="toto4" name="titi6" type="bridge"/>
+<link class="graph3d.elements.GLink" color="green" link_end="toto2" link_start="toto7" name="titi4" type="bridge"/>
+</graph>
