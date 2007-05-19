@@ -38,6 +38,7 @@ import org.xml.sax.SAXParseException;
 
 /**
  * This class define a parser to save or get a graph.
+ * 
  * @author Erwan Daubert
  * @version 1.0
  */
@@ -51,10 +52,14 @@ public class GParser {
 
 	private GGraph graph;
 
+	private boolean validXMLFile;
+
 	/**
 	 * This constructor is used to create a parser to read a XML File.
-	 * @param _XMLFileName the path of the XML File.
-	 * @throws GException 
+	 * 
+	 * @param _XMLFileName
+	 *            the path of the XML File.
+	 * @throws GException
 	 */
 	public GParser(String _XMLFileName) throws GException {
 		this(new GGraph(), _XMLFileName);
@@ -62,28 +67,34 @@ public class GParser {
 
 	/**
 	 * This constructor is used to create a parser to write a XML file.
-	 * @param _graph the graph to write.
-	 * @param _XMLFileName the path of the XML file
-	 * @throws GException 
+	 * 
+	 * @param _graph
+	 *            the graph to write.
+	 * @param _XMLFileName
+	 *            the path of the XML file
+	 * @throws GException
 	 */
 	public GParser(GGraph _graph, String _XMLFileName) throws GException {
 		this.graph = _graph;
 		this.XMLFileName = _XMLFileName;
 		this.createDocumentBuilder();
+		this.validXMLFile = true;
 	}
 
 	/**
 	 * This function allow you to get a GGraph define in a XML file.
-	 * @return a GGraph component which represents the graph define in the XML file
-	 * @throws SameNameException 
-	 * @throws GException 
+	 * 
+	 * @return a GGraph component which represents the graph define in the XML
+	 *         file
+	 * @throws SameNameException
+	 * @throws GException
 	 */
 	public GGraph getGraph() throws SameNameException, GException {
 		this.readFile();
-	
+
 		Element root = this.document.getDocumentElement();
 		this.graph = new GGraph(root.getAttribute("name"));
-	
+
 		NodeList list = root.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
 			Node child = list.item(i);
@@ -108,43 +119,52 @@ public class GParser {
 		if (next != null) {
 			// Exception permettant de signaler à l'utilisateur que la suite
 			// n'est pas pris en compte
-			throw new GException("Too much graph",
-					"The first graph is define but you don't define many graphs with one XML file.\nThe others graphs are not created.", GException.WARNING);
+			throw new GException(
+					"Too much graph",
+					"The first graph is define but you don't define many graphs with one XML file.\nThe others graphs are not created.",
+					GException.WARNING);
 		}
 		return this.graph;
 	}
 
 	/**
 	 * This functions is used to save the graph in a XML file.
-	 * @throws GException 
-	 *
+	 * 
+	 * @throws GException
+	 * 
 	 */
 	public void saveGraph() throws GException {
-	
+
 		this.createDocument(this.graph);
-	
+
 		File XMLFile = new File(this.XMLFileName);
 		Source source = new DOMSource(this.document);
-	
+
 		Result resultat = new StreamResult(XMLFile);
 		try {
 			Transformer transformer = TransformerFactory.newInstance()
 					.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+			transformer
+					.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
 			transformer.setOutputProperty(OutputKeys.ENCODING, "utf-8");
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 			transformer.transform(source, resultat);
 		} catch (TransformerConfigurationException e) {
-			throw new GException("Parser error", "Error to created a \"transformer\".\nWe cannot save the graph.\nTo correct this error, please verify the version of your JDK or try again to save.", GException.ERROR);
+			throw new GException(
+					"Parser error",
+					"Error to created a \"transformer\".\nWe cannot save the graph.\nTo correct this error, please verify the version of your JDK or try again to save.",
+					GException.ERROR);
 		} catch (TransformerException e) {
-			throw new GException("Unknown error", "Unknown error during the save.", GException.ERROR);
+			throw new GException("Unknown error",
+					"Unknown error during the save.", GException.ERROR);
 		}
-	
+
 	}
 
 	/**
 	 * The getter of the XML file path
+	 * 
 	 * @return XMLFileName
 	 */
 	public String getXMLFileName() {
@@ -153,7 +173,9 @@ public class GParser {
 
 	/**
 	 * The setter of the XML file path
-	 * @param fileName the new path for the XML file
+	 * 
+	 * @param fileName
+	 *            the new path for the XML file
 	 */
 	public void setXMLFileName(String fileName) {
 		this.XMLFileName = fileName;
@@ -166,8 +188,22 @@ public class GParser {
 			dbf.setNamespaceAware(true);
 			dbf.setValidating(true);
 			dbf.setAttribute("http://xml.org/sax/features/validation", true);
-			dbf.setAttribute("http://apache.org/xml/features/validation/schema",
-					true);
+			dbf.setAttribute(
+					"http://apache.org/xml/features/validation/schema", true);
+
+			/*
+			 * URL url = getClass().getResource("/xml/schema.xsd"); //
+			 * chargement du schema xsd File fileSchema = new
+			 * File(url.toString()); // verif si le fichier existe if
+			 * (!fileSchema.canRead()) { System.out.println("Le fichier
+			 * schema.xsd est introuvable."); } // creation d'un SchemaFactory
+			 * capable de comprendre les schemas xsd SchemaFactory factory =
+			 * SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+			 * Source schemaFile = new StreamSource(fileSchema); Schema schema =
+			 * factory.newSchema(schemaFile);
+			 * 
+			 * dbf.setSchema(schema);
+			 */
 
 			dbf.setIgnoringElementContentWhitespace(true);
 			this.db = dbf.newDocumentBuilder();
@@ -177,8 +213,16 @@ public class GParser {
 			this.db.setErrorHandler(handler);
 			this.document = this.db.newDocument();
 		} catch (ParserConfigurationException e) {
-			throw new GException("Parser cannot created", "Sorry, but we didn't created the XML parser.\nThe version of your JDK must be 1.5 or later", GException.ERROR);
-		}
+			throw new GException(
+					"Parser cannot created",
+					"Sorry, but we didn't created the XML parser.\nThe version of your JDK must be 1.5 or later",
+					GException.ERROR);
+		}/*
+			 * catch (SAXException e) { throw new GException("Error with XSD
+			 * file", "Sorry, but we didn't use the XSD schema define in the Jar
+			 * of the Graphe3D API to validate the XML file.",
+			 * GException.ERROR); }
+			 */
 
 	}
 
@@ -186,13 +230,15 @@ public class GParser {
 		try {
 			this.document = this.db.parse(this.XMLFileName);
 		} catch (SAXException e) {
-			throw new GException("Parse Error", "Unknown Error during the parsing", 0);
+			throw new GException("Parse Error",
+					"Unknown Error during the parsing", 0);
 		} catch (IOException e) {
 			throw new InvalidXMLFileException("The XML file doesn't exist.");
 		}
 	}
 
-	private GNode createNode(Element element) throws InexistantClassException, GException {
+	private GNode createNode(Element element) throws InexistantClassException,
+			GException {
 		GNode node = null;
 		String name = element.getAttribute("name");
 		try {
@@ -229,35 +275,43 @@ public class GParser {
 							node.setCoordonates(new float[] { x, y, z });
 						} catch (NumberFormatException e) {
 							throw new GException(
-									"Invalid coordonates.\n les coordonées sont des floats.");
+									"Invalid coordonates.\nThe coordonates are not valid.");
 						}
 					} else {
 						// normalement géré par le XSD
-						//System.out.println(child.getNodeName());
-						throw new GException("Unknown Exception", "This exception mustn't appears.", 1);
+						// System.out.println(child.getNodeName());
+						throw new GException("Unknown Exception",
+								"This exception mustn't appears.", 1);
 					}
 				}
 			}
 
 		} catch (SecurityException e) {
-			e.printStackTrace();//Don't appears because, we are sure to the signature of the constructor which we called.
+			e.printStackTrace();// Don't appears because, we are sure to the
+								// signature of the constructor which we called.
 		} catch (NoSuchMethodException e) {
-			e.printStackTrace();//Don't appears because, we are sure to the signature of the constructor which we called.
+			e.printStackTrace();// Don't appears because, we are sure to the
+								// signature of the constructor which we called.
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();//Don't appears because, we are sure to the signature of the constructor which we called.
+			e.printStackTrace();// Don't appears because, we are sure to the
+								// signature of the constructor which we called.
 		} catch (InstantiationException e) {
-			e.printStackTrace();//Don't appears because, we are sure to the signature of the constructor which we called.
+			e.printStackTrace();// Don't appears because, we are sure to the
+								// signature of the constructor which we called.
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();//Don't appears because, we are sure to the signature of the constructor which we called.
+			e.printStackTrace();// Don't appears because, we are sure to the
+								// signature of the constructor which we called.
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();//Don't appears because, we are sure to the signature of the constructor which we called.
+			e.printStackTrace();// Don't appears because, we are sure to the
+								// signature of the constructor which we called.
 		} catch (ClassNotFoundException e) {
 			throw new InexistantClassException(e.getMessage());
 		}
 		return node;
 	}
 
-	private GLink createLink(Element element) throws InexistantClassException, GException {
+	private GLink createLink(Element element) throws InexistantClassException,
+			GException {
 		GLink link = null;
 		boolean type;
 		if (element.getAttribute("type").equals("arrow")) {
@@ -275,14 +329,14 @@ public class GParser {
 							java.lang.String.class,
 							graph3d.elements.GNode.class,
 							graph3d.elements.GNode.class });
-			link = (GLink) constructeur.newInstance(new Object[] { type, name, first, second });
-
+			link = (GLink) constructeur.newInstance(new Object[] { type, name,
+					first, second });
 
 			String color = element.getAttribute("color");
 			if (color != null) {
 				link.setColor(color);
 			}
-	
+
 			NodeList list = element.getChildNodes();
 			for (int i = 0; i < list.getLength(); i++) {
 				Node child = list.item(i);
@@ -298,25 +352,31 @@ public class GParser {
 						link.setAttributeByName(attrName, attrType, attrValue);
 					} else {
 						// normalement géré par le XSD
-						//System.out.println(child.getNodeName());
-						throw new GException("Unknown Exception", "This exception mustn't appears.", 1);
+						throw new GException("Unknown Exception",
+								"This exception mustn't appears.", 1);
 					}
 				}
 			}
 			return link;
 
 		} catch (SecurityException e) {
-			e.printStackTrace();//Don't appears because, we are sure to the signature of the constructor which we called.
+			e.printStackTrace();// Don't appears because, we are sure to the
+								// signature of the constructor which we called.
 		} catch (NoSuchMethodException e) {
-			e.printStackTrace();//Don't appears because, we are sure to the signature of the constructor which we called.
+			e.printStackTrace();// Don't appears because, we are sure to the
+								// signature of the constructor which we called.
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();//Don't appears because, we are sure to the signature of the constructor which we called.
+			e.printStackTrace();// Don't appears because, we are sure to the
+								// signature of the constructor which we called.
 		} catch (InstantiationException e) {
-			e.printStackTrace();//Don't appears because, we are sure to the signature of the constructor which we called.
+			e.printStackTrace();// Don't appears because, we are sure to the
+								// signature of the constructor which we called.
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();//Don't appears because, we are sure to the signature of the constructor which we called.
+			e.printStackTrace();// Don't appears because, we are sure to the
+								// signature of the constructor which we called.
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();//Don't appears because, we are sure to the signature of the constructor which we called.
+			e.printStackTrace();// Don't appears because, we are sure to the
+								// signature of the constructor which we called.
 		} catch (ClassNotFoundException e) {
 			throw new InexistantClassException(e.getMessage());
 		}
@@ -329,7 +389,7 @@ public class GParser {
 		Element racine = this.document.createElement("graph");
 		racine.setAttribute("name", graphe.getName());
 
-		String xsd;
+		String xsd = "/xml/schema.xsd";
 		URL url = getClass().getResource("/xml/schema.xsd");
 		if (url == null) {
 			xsd = new File("xml/schema.xsd").getAbsolutePath();
@@ -359,7 +419,7 @@ public class GParser {
 		element.setAttribute("name", node.getName());
 		element.setAttribute("class", node.getClass().getName());
 		element.setAttribute("radius", "" + node.getRadius());
-		
+
 		// gestion du coordonates
 		Element coordonates = this.document.createElement("coordonates");
 		coordonates.setAttribute("x", node.getCoordonnateX() + "");
@@ -413,15 +473,22 @@ public class GParser {
 
 		public void error(SAXParseException exception) {
 			(new XMLDefinitionException(exception.getMessage())).showError();
+			validXMLFile = false;
 		}
 
-		public void fatalError(SAXParseException exception)  {
+		public void fatalError(SAXParseException exception) {
 			(new InvalidXMLFileException(exception.getMessage())).showError();
+			validXMLFile = false;
 		}
 
-		public void warning(SAXParseException exception)  {
+		public void warning(SAXParseException exception) {
 			(new XMLDefinitionException(exception.getMessage())).showError();
+			validXMLFile = false;
 		}
 
+	}
+
+	public boolean isValidXMLFile() {
+		return validXMLFile;
 	}
 }
