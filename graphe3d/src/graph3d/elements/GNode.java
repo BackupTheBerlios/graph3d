@@ -28,8 +28,9 @@ public class GNode {
 	private String name;
 
 	private static float DISTANCE = 2f;
-	
+
 	private float radius;
+
 	/**
 	 * This float[] contains X, Y, Z value which define the coordonates into a
 	 * 3D view.
@@ -80,7 +81,7 @@ public class GNode {
 	public GNode(String _name, float _x, float _y, float _z) {
 		this(_name, _x, _y, _z, 1);
 	}
-	
+
 	/**
 	 * The complete constructor of GNode
 	 * 
@@ -92,7 +93,8 @@ public class GNode {
 	 *            coordonate Y on the 3D view
 	 * @param _z
 	 *            coordonate Z on the 3D view
-	 * @param _radius  the radiaus of the sphere which represents this node
+	 * @param _radius
+	 *            the radiaus of the sphere which represents this node
 	 */
 	public GNode(String _name, float _x, float _y, float _z, float _radius) {
 		this.name = _name;
@@ -114,14 +116,17 @@ public class GNode {
 	}
 
 	/**
-	 * This function allow you to modify all node 's attributes. 
-	 * @param _attributes the Hashtable which contains all attributes.
-	 * @throws MissingAttributeForClassException 
+	 * This function allow you to modify all node 's attributes.
+	 * 
+	 * @param _attributes
+	 *            the Hashtable which contains all attributes.
+	 * @throws MissingAttributeForClassException
 	 */
-	public void setAttributes(Hashtable<String, String[]> _attributes) throws MissingAttributeForClassException {
+	public void setAttributes(Hashtable<String, String[]> _attributes)
+			throws MissingAttributeForClassException {
 		Enumeration<String> keyAttributes = this.attributes.keys();
 		Enumeration<String> key_Attributes = _attributes.keys();
-		
+
 		while (keyAttributes.hasMoreElements()) {
 			String key = keyAttributes.nextElement();
 			boolean sameKey = false;
@@ -136,7 +141,7 @@ public class GNode {
 				throw new MissingAttributeForClassException(this);
 			}
 		}
-		
+
 		this.attributes = _attributes;
 	}
 
@@ -151,7 +156,9 @@ public class GNode {
 
 	/**
 	 * The setter of the coordonates for this node.
-	 * @param _coordonates the new coordonates
+	 * 
+	 * @param _coordonates
+	 *            the new coordonates
 	 */
 	public void setCoordonates(float[] _coordonates) {
 		this.coordonates = _coordonates;
@@ -203,52 +210,61 @@ public class GNode {
 				try {
 					Short.parseShort(_value);
 				} catch (NumberFormatException e) {
-					throw new InvalidAttributeTypeException(this, _name, _type, _value);
+					throw new InvalidAttributeTypeException(this, _name, _type,
+							_value);
 				}
 			} else if (_type.equals("byte")) {
 				try {
 					Byte.parseByte(_value);
 				} catch (NumberFormatException e) {
-					throw new InvalidAttributeTypeException(this, _name, _type, _value);
+					throw new InvalidAttributeTypeException(this, _name, _type,
+							_value);
 				}
 			} else if (_type.equals("int")) {
 				try {
 					Integer.parseInt(_value);
 				} catch (NumberFormatException e) {
-					throw new InvalidAttributeTypeException(this, _name, _type, _value);
+					throw new InvalidAttributeTypeException(this, _name, _type,
+							_value);
 				}
 			} else if (_type.equals("long")) {
 				try {
 					Long.parseLong(_value);
 				} catch (NumberFormatException e) {
-					throw new InvalidAttributeTypeException(this, _name, _type, _value);
+					throw new InvalidAttributeTypeException(this, _name, _type,
+							_value);
 				}
 			} else if (_type.equals("float")) {
 				try {
 					Float.parseFloat(_value);
 				} catch (NumberFormatException e) {
-					throw new InvalidAttributeTypeException(this, _name, _type, _value);
+					throw new InvalidAttributeTypeException(this, _name, _type,
+							_value);
 				}
 			} else if (_type.equals("double")) {
 				try {
 					Double.parseDouble(_value);
 				} catch (NumberFormatException e) {
-					throw new InvalidAttributeTypeException(this, _name, _type, _value);
+					throw new InvalidAttributeTypeException(this, _name, _type,
+							_value);
 				}
 			} else if (_type.equals("boolean")) {
 				try {
 					Boolean.parseBoolean(_value);
 				} catch (NumberFormatException e) {
-					throw new InvalidAttributeTypeException(this, _name, _type, _value);
+					throw new InvalidAttributeTypeException(this, _name, _type,
+							_value);
 				}
 			} else if (_type.equals("char")) {
 				if (_value.toCharArray().length != 1) {
-					throw new InvalidAttributeTypeException(this, _name, _type, _value);
+					throw new InvalidAttributeTypeException(this, _name, _type,
+							_value);
 				}
 
 			} else {
 				// type is undefine
-				throw new InvalidAttributeTypeException(this, _name, _type, _value);
+				throw new InvalidAttributeTypeException(this, _name, _type,
+						_value);
 			}
 		} else {
 			// attribute doesn't exist
@@ -279,28 +295,36 @@ public class GNode {
 	}
 
 	/**
-	 * This function add a link into the Hashtable which contains all links which are connected with this node.
-	 * @param link the link which you want add.
-	 * @throws GLinkAlreadyExistException 
+	 * This function add a link into the Hashtable which contains all links
+	 * which are connected with this node.
+	 * 
+	 * @param link
+	 *            the link which you want add.
+	 * @throws GLinkAlreadyExistException
 	 */
 	public void addLink(GLink link) throws GLinkAlreadyExistException {
 		if (!this.links.contains(link)) {
 			this.links.add(link);
 		} else {
-			throw new GLinkAlreadyExistException(this, link); 
+			throw new GLinkAlreadyExistException(this, link);
 		}
 	}
-	
+
 	/**
-	 * This function remoave a link into the Hashtable which contains all links which are connected with this node
-	 * @param link the link which you want remove
+	 * This function remoave a link into the Hashtable which contains all links
+	 * which are connected with this node
+	 * 
+	 * @param link
+	 *            the link which you want remove
 	 * @throws GException
 	 */
 	public void removeLink(GLink link) throws GException {
 		if (this.links.contains(link)) {
 			this.links.remove(link);
 		} else {
-			throw new GException("Link not found", "The link (\"" + link.getName() + "\") is not connected with the node (\"" + this.getName() +"\")", GException.WARNING);
+			throw new GException("Link not found", "The link (\""
+					+ link.getName() + "\") is not connected with the node (\""
+					+ this.getName() + "\")", GException.WARNING);
 		}
 	}
 
@@ -388,6 +412,7 @@ public class GNode {
 
 	/**
 	 * The getter of radius
+	 * 
 	 * @return radius
 	 */
 	public float getRadius() {
@@ -396,7 +421,9 @@ public class GNode {
 
 	/**
 	 * The setter of radius
-	 * @param radius the new value of the radius
+	 * 
+	 * @param radius
+	 *            the new value of the radius
 	 */
 	public void setRadius(float radius) {
 		this.radius = radius;
@@ -404,6 +431,7 @@ public class GNode {
 
 	/**
 	 * The getter of distance
+	 * 
 	 * @return DISTANCE
 	 */
 	public static float getDISTANCE() {

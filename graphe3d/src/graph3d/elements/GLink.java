@@ -2,9 +2,9 @@ package graph3d.elements;
 
 import graph3d.exception.GException;
 import graph3d.exception.GLinkAlreadyExistException;
+import graph3d.exception.InvalidAttributeTypeException;
 import graph3d.exception.MissingAttributeForClassException;
 import graph3d.exception.TooMuchAttributesForClassException;
-import graph3d.exception.InvalidAttributeTypeException;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -35,7 +35,7 @@ public class GLink {
 	 * This attribute define the color of the representation of the link
 	 */
 	private String color;
-	
+
 	/**
 	 * The node which is the start of the link if this is oriented. If it's not
 	 * oriented, it a node which is to the extremity of the link
@@ -68,7 +68,7 @@ public class GLink {
 	 *            a node which is an extrenity of this link
 	 * @param _second
 	 *            a node which is another extremity.
-	 * @throws GLinkAlreadyExistException 
+	 * @throws GLinkAlreadyExistException
 	 */
 	public GLink(String _name, GNode _first, GNode _second) {
 		this(false, _name, "white", _first, _second);
@@ -86,20 +86,27 @@ public class GLink {
 	 *            a node which is an extrenity of this link.
 	 * @param _second
 	 *            a node which is another extremity.
-	 * @throws GLinkAlreadyExistException 
+	 * @throws GLinkAlreadyExistException
 	 */
 	public GLink(String _name, String _color, GNode _first, GNode _second) {
 		this(false, _name, _color, _first, _second);
 	}
-	
+
 	/**
-	 * This constructor define the identifier of the link, his type (arrow or bridge)and his
-	 * extremities. By default, a link have the white color.
-	 * @param _type true if this link is an arrow, false else
-	 * @param _name  the identifier of this link 
-	 * @param _first a node which is an extrenity of this link. It's the start of the link if this link is an arrow.
-	 * @param _second a node which is another extremity. It's the end of the link if this link is an arrow.
-	 * @throws GLinkAlreadyExistException 
+	 * This constructor define the identifier of the link, his type (arrow or
+	 * bridge)and his extremities. By default, a link have the white color.
+	 * 
+	 * @param _type
+	 *            true if this link is an arrow, false else
+	 * @param _name
+	 *            the identifier of this link
+	 * @param _first
+	 *            a node which is an extrenity of this link. It's the start of
+	 *            the link if this link is an arrow.
+	 * @param _second
+	 *            a node which is another extremity. It's the end of the link if
+	 *            this link is an arrow.
+	 * @throws GLinkAlreadyExistException
 	 */
 	public GLink(boolean _type, String _name, GNode _first, GNode _second) {
 		this(_type, _name, "white", _first, _second);
@@ -121,7 +128,7 @@ public class GLink {
 	 * @param _second
 	 *            a node which is another extremity. If type is true, this node
 	 *            is the end of the link.
-	 * @throws GLinkAlreadyExistException 
+	 * @throws GLinkAlreadyExistException
 	 */
 	public GLink(boolean _type, String _name, String _color, GNode _first,
 			GNode _second) {
@@ -158,14 +165,17 @@ public class GLink {
 	}
 
 	/**
-	 * This function allow you to modify all link 's attributes. 
-	 * @param _attributes the Hashtable which contains all attributes.
-	 * @throws MissingAttributeForClassException 
+	 * This function allow you to modify all link 's attributes.
+	 * 
+	 * @param _attributes
+	 *            the Hashtable which contains all attributes.
+	 * @throws MissingAttributeForClassException
 	 */
-	public void setAttributes(Hashtable<String, String[]> _attributes) throws MissingAttributeForClassException {
+	public void setAttributes(Hashtable<String, String[]> _attributes)
+			throws MissingAttributeForClassException {
 		Enumeration<String> keyAttributes = this.attributes.keys();
 		Enumeration<String> key_Attributes = _attributes.keys();
-		
+
 		while (keyAttributes.hasMoreElements()) {
 			String key = keyAttributes.nextElement();
 			boolean sameKey = false;
@@ -180,7 +190,7 @@ public class GLink {
 				throw new MissingAttributeForClassException(this);
 			}
 		}
-		
+
 		this.attributes = _attributes;
 	}
 
@@ -288,51 +298,60 @@ public class GLink {
 				try {
 					Short.parseShort(_value);
 				} catch (NumberFormatException e) {
-					throw new InvalidAttributeTypeException(this, _name, _type, _value);
+					throw new InvalidAttributeTypeException(this, _name, _type,
+							_value);
 				}
 			} else if (_type.equals("byte")) {
 				try {
 					Byte.parseByte(_value);
 				} catch (NumberFormatException e) {
-					throw new InvalidAttributeTypeException(this, _name, _type, _value);
+					throw new InvalidAttributeTypeException(this, _name, _type,
+							_value);
 				}
 			} else if (_type.equals("int")) {
 				try {
 					Integer.parseInt(_value);
 				} catch (NumberFormatException e) {
-					throw new InvalidAttributeTypeException(this, _name, _type, _value);
+					throw new InvalidAttributeTypeException(this, _name, _type,
+							_value);
 				}
 			} else if (_type.equals("long")) {
 				try {
 					Long.parseLong(_value);
 				} catch (NumberFormatException e) {
-					throw new InvalidAttributeTypeException(this, _name, _type, _value);
+					throw new InvalidAttributeTypeException(this, _name, _type,
+							_value);
 				}
 			} else if (_type.equals("float")) {
 				try {
 					Float.parseFloat(_value);
 				} catch (NumberFormatException e) {
-					throw new InvalidAttributeTypeException(this, _name, _type, _value);
+					throw new InvalidAttributeTypeException(this, _name, _type,
+							_value);
 				}
 			} else if (_type.equals("double")) {
 				try {
 					Double.parseDouble(_value);
 				} catch (NumberFormatException e) {
-					throw new InvalidAttributeTypeException(this, _name, _type, _value);
+					throw new InvalidAttributeTypeException(this, _name, _type,
+							_value);
 				}
 			} else if (_type.equals("boolean")) {
 				try {
 					Boolean.parseBoolean(_value);
 				} catch (NumberFormatException e) {
-					throw new InvalidAttributeTypeException(this, _name, _type, _value);
+					throw new InvalidAttributeTypeException(this, _name, _type,
+							_value);
 				}
 			} else if (_type.equals("char")) {
 				if (_value.toCharArray().length != 1) {
-					throw new InvalidAttributeTypeException(this, _name, _type, _value);
+					throw new InvalidAttributeTypeException(this, _name, _type,
+							_value);
 				}
 			} else {
 				// type is undefine
-				throw new InvalidAttributeTypeException(this, _name, _type, _value);
+				throw new InvalidAttributeTypeException(this, _name, _type,
+						_value);
 			}
 		} else {
 			// attribute doesn't exist
@@ -382,7 +401,6 @@ public class GLink {
 	public String getColor() {
 		return this.color;
 	}
-	
 
 	/**
 	 * THe setter of color

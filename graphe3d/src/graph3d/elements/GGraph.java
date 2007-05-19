@@ -16,6 +16,8 @@ import java.util.Hashtable;
  */
 public class GGraph {
 
+	private static boolean newCollision = true;
+
 	/**
 	 * This attributes defines the name of the graph
 	 */
@@ -89,13 +91,15 @@ public class GGraph {
 			return false;
 		}
 	}
-	
+
 	/**
-	 * This function define the coordonates of the node to prevent collision into the 3D view
-	 * @param node the node to test his coordonates
+	 * This function define the coordonates of the node to prevent collision
+	 * into the 3D view
+	 * 
+	 * @param node
+	 *            the node to test his coordonates
 	 */
 	public void collision(GNode node) {
-		boolean newCollision = true;
 		Enumeration<String> keys = this.nodes.keys();
 		while (keys.hasMoreElements()) {
 			String key = keys.nextElement();
@@ -114,7 +118,9 @@ public class GGraph {
 
 	/**
 	 * This function test if there are collisions.
-	 * @param node the node which potentially cause collision.
+	 * 
+	 * @param node
+	 *            the node which potentially cause collision.
 	 * @return true if there are collision, false else.
 	 */
 	public boolean haveCollision(GNode node) {
@@ -122,26 +128,31 @@ public class GGraph {
 		while (keys.hasMoreElements()) {
 			String key = keys.nextElement();
 			GNode _node = this.nodes.get(key);
-			if (! (_node.equals(node)) && !this.distanceBetweenIsGood(node, _node)) {
+			if (!(_node.equals(node))
+					&& !this.distanceBetweenIsGood(node, _node)) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	private boolean distanceBetweenIsGood(GNode _aNode, GNode _otherNode) {
-		return ( GNode.getDISTANCE() < (float) Math.sqrt(Math.pow(_aNode.getCoordonnateX() - _otherNode.getCoordonnateX(), 2) + Math.pow(_aNode.getCoordonnateY() - _otherNode.getCoordonnateY(), 2) + Math.pow(_aNode.getCoordonnateZ() - _otherNode.getCoordonnateZ(), 2)));
+		return (GNode.getDISTANCE() < (float) Math.sqrt(Math.pow(_aNode
+				.getCoordonnateX()
+				- _otherNode.getCoordonnateX(), 2)
+				+ Math.pow(_aNode.getCoordonnateY()
+						- _otherNode.getCoordonnateY(), 2)
+				+ Math.pow(_aNode.getCoordonnateZ()
+						- _otherNode.getCoordonnateZ(), 2)));
 	}
-	
+
 	private void putDistanceBetween(GNode _aNode, GNode _otherNode) {
-		float _add = (float)Math.sqrt(Math.pow(GNode.getDISTANCE(), 2)/2);
+		float _add = (float) Math.sqrt(Math.pow(GNode.getDISTANCE(), 2) / 2);
 		_aNode.setCoordonnateX(_otherNode.getCoordonnateX() + _add);
 		_aNode.setCoordonnateY(_otherNode.getCoordonnateY() + _add);
 		_aNode.setCoordonnateZ(_otherNode.getCoordonnateZ() + _add);
-		
+
 	}
-	
-	
 
 	/**
 	 * This function delete a link which is into the Hashtable links
@@ -248,7 +259,7 @@ public class GGraph {
 	public String toString() {
 		String toString = "graph :\n";
 		toString += this.name + "\n";
-		
+
 		Enumeration<GNode> nodes = this.nodes.elements();
 		while (nodes.hasMoreElements()) {
 			GNode node = nodes.nextElement();
