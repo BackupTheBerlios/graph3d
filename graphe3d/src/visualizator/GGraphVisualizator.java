@@ -3,7 +3,7 @@ package visualizator;
 import graph3d.elements.GGraph;
 import graph3d.exception.GException;
 import graph3d.parserXML.GParser;
-import graph3d.universe.GGrapheUniverse;
+import graph3d.universe.GGraphUniverse;
 import graph3d.use.PanelButtonInteraction;
 import graph3d.use.PanelCaracteristique;
 
@@ -30,25 +30,25 @@ import javax.swing.border.TitledBorder;
  * @author Erwan Daubert && Nicolas Magnin
  * @version 1.0
  */
-public class GGrapheVisualizator extends JFrame implements ActionListener, WindowListener {
+public class GGraphVisualizator extends JFrame implements ActionListener, WindowListener {
 
 	JPanel view3d;
 	PanelCaracteristique gLists;
 	PanelButtonInteraction move;
 	JPanel interaction;
-	GGrapheUniverse universe;
+	GGraphUniverse universe;
 	JMenuItem load;
 	JMenuItem quit;
 	JMenuBar menu;
 	JMenu file;
 	
 	
-	public GGrapheVisualizator() {
+	public GGraphVisualizator() {
 		super("Visualizator");
 		
 		JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 		
-		this.universe = new GGrapheUniverse(new GGraph());
+		this.universe = new GGraphUniverse(new GGraph());
 
 		this.menu = new JMenuBar();
 		this.file = new JMenu("Fichier");
@@ -105,7 +105,7 @@ public class GGrapheVisualizator extends JFrame implements ActionListener, Windo
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		new GGrapheVisualizator();
+		new GGraphVisualizator();
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -128,8 +128,12 @@ public class GGrapheVisualizator extends JFrame implements ActionListener, Windo
 				path = choixXML.getCurrentDirectory().toString();
 				file = choixXML.getSelectedFile();
 				try{
-					
-					universe.setGraph(new GParser(path+File.separator+fileName).getGraph());
+					GGraph tmp = this.universe.getGraph();
+					GParser parser = new GParser(path+File.separator+fileName); 
+					GGraph graph = parser.getGraph();
+					if (parser.isValidXMLFile()) {
+						universe.setGraph(graph);
+					}
 
 				}catch(GException ee){
 					ee.printStackTrace();
