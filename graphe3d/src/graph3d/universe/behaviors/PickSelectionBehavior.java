@@ -2,10 +2,16 @@ package graph3d.universe.behaviors;
 
 import graph3d.lists.GAttributesList;
 
-import javax.media.j3d.*;
-import com.sun.j3d.utils.picking.behaviors.*;
-import com.sun.j3d.utils.picking.*;
-import com.sun.j3d.utils.behaviors.mouse.*;
+import javax.media.j3d.Bounds;
+import javax.media.j3d.BranchGroup;
+import javax.media.j3d.Canvas3D;
+import javax.media.j3d.Transform3D;
+import javax.media.j3d.TransformGroup;
+
+import com.sun.j3d.utils.behaviors.mouse.MouseBehaviorCallback;
+import com.sun.j3d.utils.picking.PickResult;
+import com.sun.j3d.utils.picking.behaviors.PickMouseBehavior;
+import com.sun.j3d.utils.picking.behaviors.PickingCallback;
 
 /**
  * This class define the behavior when you select an element into the 3D view.
