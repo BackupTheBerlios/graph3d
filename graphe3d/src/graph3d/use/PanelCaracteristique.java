@@ -1,10 +1,9 @@
 package graph3d.use;
 
-import graph3d.exception.ASCIIFileNotFoundException;
 import graph3d.exception.GException;
 import graph3d.lists.GAttributesList;
 import graph3d.lists.GConnectionsList;
-import graph3d.universe.GGrapheUniverse;
+import graph3d.universe.GGraphUniverse;
 
 import java.awt.GridLayout;
 
@@ -12,13 +11,14 @@ import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
-public class PanelCaracteristique extends JPanel{
-	
-	public PanelCaracteristique(GGrapheUniverse universe){
-		this.setLayout(new GridLayout(2,1));
-		TitledBorder borderDroiteHaut = new TitledBorder(new EtchedBorder(),"Caractéristiques");
+public class PanelCaracteristique extends JPanel {
+
+	public PanelCaracteristique(GGraphUniverse universe) {
+		this.setLayout(new GridLayout(2, 1));
+		TitledBorder borderDroiteHaut = new TitledBorder(new EtchedBorder(),
+				"Caractéristiques");
 		this.setBorder(borderDroiteHaut);
-			
+
 		GAttributesList attributesList;
 		GConnectionsList connectionsList;
 		try {
@@ -32,7 +32,7 @@ public class PanelCaracteristique extends JPanel{
 			e.printStackTrace();
 			e.showError();
 		}
-	
+
 	}
 
 }

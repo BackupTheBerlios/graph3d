@@ -1,6 +1,6 @@
 package graph3d.use;
 
-import graph3d.universe.GGrapheUniverse;
+import graph3d.universe.GGraphUniverse;
 
 import java.awt.GridLayout;
 import java.awt.Label;
@@ -15,9 +15,65 @@ public class PanelButtonInteraction extends JPanel {
 	private JButton bZoomPlus, bZoomMoins, boutonHaut, boutonGauche,
 			boutonDroite, boutonBas, boutonCentrer;
 
-	private GGrapheUniverse universe;
+	private GGraphUniverse universe;
 
-	public PanelButtonInteraction(GGrapheUniverse universe) {
+	public JButton getBoutonBas() {
+		return boutonBas;
+	}
+
+	public void setBoutonBas(JButton boutonBas) {
+		this.boutonBas = boutonBas;
+	}
+
+	public JButton getBoutonCentrer() {
+		return boutonCentrer;
+	}
+
+	public void setBoutonCentrer(JButton boutonCentrer) {
+		this.boutonCentrer = boutonCentrer;
+	}
+
+	public JButton getBoutonDroite() {
+		return boutonDroite;
+	}
+
+	public void setBoutonDroite(JButton boutonDroite) {
+		this.boutonDroite = boutonDroite;
+	}
+
+	public JButton getBoutonGauche() {
+		return boutonGauche;
+	}
+
+	public void setBoutonGauche(JButton boutonGauche) {
+		this.boutonGauche = boutonGauche;
+	}
+
+	public JButton getBoutonHaut() {
+		return boutonHaut;
+	}
+
+	public void setBoutonHaut(JButton boutonHaut) {
+		this.boutonHaut = boutonHaut;
+	}
+
+	public JButton getBZoomMoins() {
+		return bZoomMoins;
+	}
+
+	public void setBZoomMoins(JButton zoomMoins) {
+		bZoomMoins = zoomMoins;
+	}
+
+	public JButton getBZoomPlus() {
+		return bZoomPlus;
+	}
+
+	public void setBZoomPlus(JButton zoomPlus) {
+		bZoomPlus = zoomPlus;
+	}
+
+	public PanelButtonInteraction(GGraphUniverse universe) {
 
 		this.universe = universe;
 
@@ -44,7 +100,7 @@ public class PanelButtonInteraction extends JPanel {
 
 		JPanel panInteracHaut = new JPanel();
 		panInteracHaut.setLayout(new GridLayout(1, 3));
-		
+
 		panInteracHaut.add(new Label(""));
 		boutonHaut = new JButton("^");
 		boutonHaut.addActionListener(universe.getBehavior());
