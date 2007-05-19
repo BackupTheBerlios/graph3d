@@ -2,6 +2,8 @@ package graph3d.universe;
 
 import graph3d.elements.GNode;
 
+import java.net.URL;
+
 import javax.media.j3d.Appearance;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.ColoringAttributes;
@@ -21,9 +23,10 @@ import com.sun.j3d.utils.image.TextureLoader;
 
 /**
  * This class define the view of the GNode
+ * 
  * @author Erwan Daubert && Nicolas Magnin
  * 
- *
+ * 
  */
 public class GNodeView extends BranchGroup {
 
@@ -54,7 +57,8 @@ public class GNodeView extends BranchGroup {
 		this.transformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 		this.update();
 		this.createAppearence();
-		this.sphere = new Sphere(this.node.getRadius(), Primitive.GENERATE_TEXTURE_COORDS, this.appearence);
+		this.sphere = new Sphere(this.node.getRadius(),
+				Primitive.GENERATE_TEXTURE_COORDS, this.appearence);
 		this.transformGroup.addChild(this.sphere);
 		this.addChild(this.transformGroup);
 	}
@@ -73,26 +77,32 @@ public class GNodeView extends BranchGroup {
 	private void createAppearence() {
 		this.appearence = new Appearance();
 
-		TextureLoader loader;
-		try {
-			loader = new TextureLoader("/textures/sphere.jpg", null);
-		} catch (ImageException e) {
-			loader = new TextureLoader("textures/sphere.jpg", null);
-		}
-		ImageComponent2D image = loader.getImage();
-		Texture2D texture = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA,
-				image.getWidth(), image.getHeight());
-		texture.setImage(0, image);
-		texture.setEnable(true);
-		texture.setMagFilter(Texture.BASE_LEVEL_LINEAR);
-		texture.setMinFilter(Texture.BASE_LEVEL_LINEAR);
-		this.appearence.setTexture(texture);
-		this.appearence.setTextureAttributes(new TextureAttributes());
+		TextureLoader loader = null;
+		URL url = getClass().getResource("/textures/sphere.jpg");
 
-		ColoringAttributes bleu=new ColoringAttributes();
-		bleu.setColor(0.1f,0.1f,1.0f);
-		this.appearence.setColoringAttributes(bleu);
-		
+		try {
+			if (url == null) {
+				throw new ImageException();
+			}
+			loader = new TextureLoader(url, null);
+
+			ImageComponent2D image = loader.getImage();
+			Texture2D texture = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA,
+					image.getWidth(), image.getHeight());
+			texture.setImage(0, image);
+			texture.setEnable(true);
+			texture.setMagFilter(Texture.BASE_LEVEL_LINEAR);
+			texture.setMinFilter(Texture.BASE_LEVEL_LINEAR);
+			this.appearence.setTexture(texture);
+			this.appearence.setTextureAttributes(new TextureAttributes());
+
+		} catch (ImageException e) {
+			System.err.println("we can't load Texture");
+
+			ColoringAttributes bleu = new ColoringAttributes();
+			bleu.setColor(0.1f, 0.1f, 1.0f);
+			this.appearence.setColoringAttributes(bleu);
+		}
 
 	}
 
