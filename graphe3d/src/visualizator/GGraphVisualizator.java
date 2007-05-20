@@ -66,6 +66,9 @@ public class GGraphVisualizator extends JFrame implements ActionListener, Window
 		
 		this.createInteraction();
 		this.createView3d();
+
+		this.add(this.view3d,BorderLayout.CENTER);
+		this.add(this.interaction, BorderLayout.EAST);
 		
 
 		this.addWindowListener(this);
@@ -75,12 +78,11 @@ public class GGraphVisualizator extends JFrame implements ActionListener, Window
 	}
 	
 	public void createView3d() {
-		JPanel panelView3d = new JPanel();
-		panelView3d.setLayout(new BorderLayout());
+		this.view3d = new JPanel();
+		this.view3d.setLayout(new BorderLayout());
 		TitledBorder borderCentre = new TitledBorder(new EtchedBorder(),"Scène 3D");
-		panelView3d.setBorder(borderCentre);
-		panelView3d.add(this.universe.getCanvas());
-		this.add(panelView3d,BorderLayout.CENTER);
+		this.view3d.setBorder(borderCentre);
+		this.view3d.add(this.universe.getCanvas());
 	}
 	
 	public void createInteraction() {
@@ -88,7 +90,6 @@ public class GGraphVisualizator extends JFrame implements ActionListener, Window
 		this.interaction.setLayout(new GridLayout(2, 1));
 		this.createGLists();
 		this.createMove();
-		this.add(this.interaction, BorderLayout.EAST);
 	}
 	
 	public void createGLists() {
