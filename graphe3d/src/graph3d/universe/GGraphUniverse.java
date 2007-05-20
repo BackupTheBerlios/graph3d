@@ -235,11 +235,16 @@ public class GGraphUniverse extends SimpleUniverse {
 				this.scene, this.canvas3d, new BoundingSphere(new Point3d(),
 						0.1), _attributesList);
 		this.scene.addChild(selectionBehavior);
+		if (this.behavior != null) {
+			this.behavior.setAttributesList(_attributesList);
+		}
 	}
 
 	public void addListener() {
-		this.behavior = new GBehaviors(this.canvas3d, this);
-		float[] barycenter = BasicFunctions.calcBarycenter(this.graph);
+		if (this.behavior == null) {
+			this.behavior = new GBehaviors(this.canvas3d, this);
+		}
+		float[] barycenter = BasicFunctions.calcBarycenter(this.graph.getNodes());
 		this.behavior.setRotationCenter(new Point3d(barycenter[0],
 				barycenter[1], barycenter[2]));
 		BoundingSphere bounds = new BoundingSphere(new Point3d(), 100.0);

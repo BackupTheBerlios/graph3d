@@ -316,8 +316,8 @@ public class GAttributesList extends JTabbedPane {
 	 */
 	public void attachToBoth(JComponent comp, int inf_limit) {
 		if (this.attached_to_both.containsKey(comp))
-			this.attached_to_nodes.remove(comp);
-		this.attached_to_nodes.put(comp, inf_limit);
+			this.attached_to_both.remove(comp);
+		this.attached_to_both.put(comp, inf_limit);
 	}
 
 	/**

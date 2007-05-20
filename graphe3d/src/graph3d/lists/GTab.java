@@ -11,9 +11,12 @@ import graph3d.exception.TooMuchAttributesForClassException;
 import graph3d.universe.GGraphUniverse;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -32,7 +35,9 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.ScrollPaneLayout;
+import javax.swing.SwingConstants;
 
 /**
  * This class is used to create a graph selection tab.<br>
@@ -45,7 +50,7 @@ import javax.swing.ScrollPaneLayout;
  * @since JDK 1.5
  * @version 1.0
  */
-public class GTab extends JScrollPane {
+public class GTab extends JScrollPane implements ItemListener {
 
 	/*
 	 * the hash table wich contains all the known graph element types
@@ -117,16 +122,17 @@ public class GTab extends JScrollPane {
 	public GTab(Object _element, GAttributesList _attrList,
 			GGraphUniverse _Universe, boolean _editable) throws GException {
 		super();
+		this.setMinimumSize(new Dimension(200, 75));
 		/*
 		 * we check if there is no problem in arguments
 		 */
 		if (_attrList == null)
-			throw new GException("_comp argument cannot be null !");
+			throw new GException("_attrList argument cannot be null !");
 		if (_editable && _Universe == null)
 			throw new GException(
 					"_Universe argument cannot be null because the tab is set editable !");
 		this.element = _element;
-		table_components = new Hashtable<JComponent, String>();
+		this.table_components = new Hashtable<JComponent, String>();
 		this.universe = _Universe;
 		this.editable = _editable;
 
@@ -134,7 +140,7 @@ public class GTab extends JScrollPane {
 
 		ScrollPaneLayout spl = new ScrollPaneLayout();
 		spl
-				.setHorizontalScrollBarPolicy(ScrollPaneLayout.HORIZONTAL_SCROLLBAR_NEVER);
+				.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		setLayout(spl);
 		JPanel panel = new JPanel();
 		String title = "fermer";
@@ -151,17 +157,17 @@ public class GTab extends JScrollPane {
 
 			GridLayout layout = new GridLayout(1, 2);
 			JPanel entry = new JPanel(layout);
-			JLabel label = new JLabel("nom  ", JLabel.RIGHT);
+			JLabel label = new JLabel("nom  ", SwingConstants.RIGHT);
 			JTextField value = new JTextField(node.getName());
 			value.addFocusListener(new LostFocusListener());
-			value.setEditable(editable);
-			table_components.put(value, "name");
+			value.setEditable(this.editable);
+			this.table_components.put(value, "name");
 			entry.add(label);
 			entry.add(value);
 			panel.add(entry);
 
 			entry = new JPanel(layout);
-			label = new JLabel("type  ", JLabel.RIGHT);
+			label = new JLabel("type  ", SwingConstants.RIGHT);
 			String type = table_types.get(node.getClass());
 			type = type == null ? "unknown" : type;
 			value = new JTextField(type);
@@ -186,45 +192,45 @@ public class GTab extends JScrollPane {
 			format.setMaximumFractionDigits(10);
 
 			entry = new JPanel(layout);
-			label = new JLabel("rayon  ", JLabel.RIGHT);
+			label = new JLabel("rayon  ", SwingConstants.RIGHT);
 			value = new JFormattedTextField(format);
 			value.setText((node.getRadius() + "").replace(",", "."));
 			value.addFocusListener(new LostFocusListener());
-			value.setEditable(editable);
-			table_components.put(value, "radius");
+			value.setEditable(this.editable);
+			this.table_components.put(value, "radius");
 			entry.add(label);
 			entry.add(value);
 			panel.add(entry);
 
 			entry = new JPanel(layout);
-			label = new JLabel("coordonnée X  ", JLabel.RIGHT);
+			label = new JLabel("coordonnée X  ", SwingConstants.RIGHT);
 			value = new JFormattedTextField(format);
 			value.setText((node.getCoordonnateX() + "").replace(",", "."));
 			value.addFocusListener(new LostFocusListener());
-			value.setEditable(editable);
-			table_components.put(value, "coord X");
+			value.setEditable(this.editable);
+			this.table_components.put(value, "coord X");
 			entry.add(label);
 			entry.add(value);
 			panel.add(entry);
 
 			entry = new JPanel(layout);
-			label = new JLabel("coordonnée Y  ", JLabel.RIGHT);
+			label = new JLabel("coordonnée Y  ", SwingConstants.RIGHT);
 			value = new JFormattedTextField(format);
 			value.setText((node.getCoordonnateY() + "").replace(",", "."));
 			value.addFocusListener(new LostFocusListener());
-			value.setEditable(editable);
-			table_components.put(value, "coord Y");
+			value.setEditable(this.editable);
+			this.table_components.put(value, "coord Y");
 			entry.add(label);
 			entry.add(value);
 			panel.add(entry);
 
 			entry = new JPanel(layout);
-			label = new JLabel("coordonnée Z  ", JLabel.RIGHT);
+			label = new JLabel("coordonnée Z  ", SwingConstants.RIGHT);
 			value = new JFormattedTextField(format);
 			value.setText((node.getCoordonnateZ() + "").replace(",", "."));
 			value.addFocusListener(new LostFocusListener());
-			value.setEditable(editable);
-			table_components.put(value, "coord Z");
+			value.setEditable(this.editable);
+			this.table_components.put(value, "coord Z");
 			entry.add(label);
 			entry.add(value);
 			panel.add(entry);
@@ -249,17 +255,17 @@ public class GTab extends JScrollPane {
 							1));
 			GridLayout layout = new GridLayout(1, 2);
 			JPanel entry = new JPanel(layout);
-			JLabel label = new JLabel("nom  ", JLabel.RIGHT);
+			JLabel label = new JLabel("nom  ", SwingConstants.RIGHT);
 			JTextField value = new JTextField(link.getName());
 			value.addFocusListener(new LostFocusListener());
-			value.setEditable(editable);
-			table_components.put(value, "name");
+			value.setEditable(this.editable);
+			this.table_components.put(value, "name");
 			entry.add(label);
 			entry.add(value);
 			panel.add(entry);
 
 			entry = new JPanel(layout);
-			label = new JLabel("type  ", JLabel.RIGHT);
+			label = new JLabel("type  ", SwingConstants.RIGHT);
 			String type = table_types.get(link.getClass());
 			type = type == null ? "unknown" : type;
 			String val = link.isType() ? type + " (arc)" : type + " (arête)";
@@ -269,14 +275,50 @@ public class GTab extends JScrollPane {
 			entry.add(value);
 			panel.add(entry);
 
-			entry = new JPanel(layout);
-			label = new JLabel("color  ", JLabel.RIGHT);
-			JComboBox combo = new JComboBox(COLORS);
-			combo.setEditable(editable);
-			combo.addFocusListener(new LostFocusListener());
-			table_components.put(combo, "color");
-			entry.add(label);
-			entry.add(combo);
+			if (this.editable) {
+				entry = new JPanel(layout);
+				label = new JLabel("color", SwingConstants.RIGHT);
+				JComboBox combo = new JComboBox(COLORS);
+				if (link.getColor().equals("black")) {
+					combo.setSelectedIndex(0);
+				} else if (link.getColor().equals("white")) {
+					combo.setSelectedIndex(1);
+				} else if (link.getColor().equals("red")) {
+					combo.setSelectedIndex(2);
+				} else if (link.getColor().equals("blue")) {
+					combo.setSelectedIndex(3);
+				} else if (link.getColor().equals("cyan")) {
+					combo.setSelectedIndex(4);
+				} else if (link.getColor().equals("gray")) {
+					combo.setSelectedIndex(5);
+				} else  if (link.getColor().equals("green")) {
+					combo.setSelectedIndex(6);
+				} else if (link.getColor().equals("magenta")) {
+					combo.setSelectedIndex(7);
+				} else if (link.getColor().equals("orange")) {
+					combo.setSelectedIndex(8);
+				} else if (link.getColor().equals("pink")) {
+					combo.setSelectedIndex(9);
+				} else if (link.getColor().equals("yellow")) {
+					combo.setSelectedIndex(10);
+				}else {
+					combo.setSelectedIndex(-1);
+				}
+				combo.addItemListener(this);
+				//combo.addFocusListener(new LostFocusListener());
+				combo.setEditable(true);
+				this.table_components.put(combo, "color");
+				entry.add(label);
+				entry.add(combo);
+			} else {
+				entry = new JPanel(layout);
+				label = new JLabel("color", SwingConstants.RIGHT);
+				value = new JTextField(link.getColor()); 
+				value.setEditable(false);
+				this.table_components.put(value, "color");
+				entry.add(label);
+				entry.add(value);
+			}
 			panel.add(entry);
 
 			Object[] attributes = link.getAttributes().keySet().toArray();
@@ -297,7 +339,7 @@ public class GTab extends JScrollPane {
 		 * if there are too few attributes the layout is updated to improve
 		 * graphics
 		 */
-		int nb_attributes_min = attributes_list.getSize().height / ENTRY_HEIGHT;
+		int nb_attributes_min = this.attributes_list.getSize().height / ENTRY_HEIGHT;
 		if (nb_attributes < nb_attributes_min) {
 			panel.setLayout(new GridLayout(nb_attributes_min, 1));
 		}// if
@@ -523,8 +565,7 @@ public class GTab extends JScrollPane {
 				if (attr_name.equals("name")) {
 					JTextField text = (JTextField) comp;
 					if (!text.getText().equals(old_value)) {
-						GNode nd = universe.getGraph().getNode(text.getText());
-						if (nd == null) { // not already busy
+						if (universe.getGraph().getNode(text.getText()) == null) { // not already busy
 							universe.deleteGNode(old_value);
 							node.setName(text.getText());
 							universe.addGNode(node);
@@ -650,6 +691,7 @@ public class GTab extends JScrollPane {
 						} else {
 							universe.deleteGNode(node.getName());
 							universe.addGNode(node);
+							
 						}
 					}
 				} else {
@@ -745,5 +787,17 @@ public class GTab extends JScrollPane {
 		if (_table_types.size() != 0 || table_types == null)
 			table_types = _table_types;
 	}// setTableTypes
+
+	public void itemStateChanged(ItemEvent e) {
+		if (this.element instanceof GLink) {
+			String color = ((String)e.getItem());
+			GLink link = ((GLink)this.element);
+			if (!color.equals(link.getColor())) {
+				link.setColor(color);
+				universe.deleteGLink(link.getName());
+				universe.addGLink(link);
+			}
+		}
+	}
 
 }// class GTab

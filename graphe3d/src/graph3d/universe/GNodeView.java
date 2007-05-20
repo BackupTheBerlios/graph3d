@@ -52,23 +52,28 @@ public class GNodeView extends BranchGroup {
 		this.setCapability(Group.ALLOW_CHILDREN_READ);
 		this.setCapability(Group.ALLOW_CHILDREN_EXTEND);
 		this.node = _node;
-		this.transformGroup = new TransformGroup();
-		this.transformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
-		this.transformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 		this.update();
-		this.createAppearence();
-		this.sphere = new Sphere(this.node.getRadius(),
-				Primitive.GENERATE_TEXTURE_COORDS, this.appearence);
-		this.transformGroup.addChild(this.sphere);
+		
 		this.addChild(this.transformGroup);
 	}
 
 	public void update() {
+		if (this.transformGroup == null) {
+			this.transformGroup = new TransformGroup();
+			this.transformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+			this.transformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+		}
 		this.transform3D = new Transform3D();
 		this.transform3D
 				.setTranslation(new Vector3f(this.node.getCoordonates()));
 		this.transformGroup.setTransform(this.transform3D);
-		this.sphere = new Sphere(this.node.getRadius());
+		this.createAppearence();
+		if (this.sphere == null) {
+		this.sphere = new Sphere(this.node.getRadius(),
+				Primitive.GENERATE_TEXTURE_COORDS, this.appearence);
+		this.transformGroup.addChild(this.sphere);
+		}
+		
 	}
 
 	/**

@@ -1,8 +1,9 @@
 package graph3d.universe.behaviors;
 
+import graph3d.elements.GNode;
+import graph3d.lists.GAttributesList;
 import graph3d.universe.BasicFunctions;
 import graph3d.universe.GGraphUniverse;
-import graph3d.use.PanelButtonInteraction;
 
 import java.awt.AWTEvent;
 import java.awt.event.ActionEvent;
@@ -10,6 +11,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.util.Hashtable;
+import java.util.Iterator;
 
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.Transform3D;
@@ -33,7 +36,7 @@ public class GBehaviors extends ViewPlatformAWTBehavior  implements ActionListen
 
 	private GGraphUniverse graphUniverse;
 	
-	
+	private GAttributesList attributesList;
 
 	private Transform3D longditudeTransform;
 
@@ -186,6 +189,10 @@ public class GBehaviors extends ViewPlatformAWTBehavior  implements ActionListen
 	 */
 	protected synchronized void processAWTEvents(AWTEvent aawtevent[]) {
 		this.motion = false;
+		if (this.attributesList == null || this.attributesList.getElements().isEmpty()) {
+			float[] barycenter = BasicFunctions.calcBarycenter(this.graphUniverse.getGraph().getNodes());
+			this.setRotationCenter(new Point3d(barycenter[0], barycenter[1], barycenter[2]));
+		}
 		for (int i = 0; i < aawtevent.length; i++) {
 			if (aawtevent[i] instanceof MouseEvent) {
 				processMouseEvent((MouseEvent) aawtevent[i]);
@@ -881,12 +888,42 @@ public class GBehaviors extends ViewPlatformAWTBehavior  implements ActionListen
 			longditude += rotXMul;
 			motion = true;
 		}
-
 		targetTG = this.graphUniverse.getViewingPlatform().getViewPlatformTransform();
 		this.integrateTransforms();
 		
 		if (((JButton)e.getSource()).getText().equals("Centrer la vue")) {
-			BasicFunctions.createBestView(this.graphUniverse);
+			float[] barycenter = new float[3];
+			if (this.attributesList != null) {
+				Hashtable<String, GNode> nodes = new Hashtable<String, GNode>();
+				for (int i = 0; i < this.attributesList.getElements().size(); i++) {
+					Object element = this.attributesList.getElements().get(i);
+					if (element instanceof GNode) {
+						nodes.put(((GNode)element).getName(), ((GNode)element));
+					}
+				}
+				if (!nodes.isEmpty()) {
+					BasicFunctions.createBestView(this.graphUniverse, nodes);
+					barycenter = BasicFunctions.calcBarycenter(nodes);
+					this.setRotationCenter(new Point3d(barycenter[0], barycenter[1], barycenter[2]));
+				} else {
+					BasicFunctions.createBestView(this.graphUniverse);
+					barycenter = BasicFunctions.calcBarycenter(this.graphUniverse.getGraph().getNodes());
+					this.setRotationCenter(new Point3d(barycenter[0], barycenter[1], barycenter[2]));
+					
+				}
+			} else {
+				BasicFunctions.createBestView(this.graphUniverse);
+				barycenter = BasicFunctions.calcBarycenter(this.graphUniverse.getGraph().getNodes());
+				this.setRotationCenter(new Point3d(barycenter[0], barycenter[1], barycenter[2]));
+			}
 		}
+	}
+
+	public GAttributesList getAttributesList() {
+		return attributesList;
+	}
+
+	public void setAttributesList(GAttributesList attributesList) {
+		this.attributesList = attributesList;
 	}
 }
